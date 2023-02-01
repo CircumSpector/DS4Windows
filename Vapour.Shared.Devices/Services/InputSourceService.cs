@@ -9,7 +9,6 @@ namespace Vapour.Shared.Devices.Services;
 
 internal sealed class InputSourceService : IInputSourceService
 {
-    private readonly ManualResetEventSlim _blueToothFilterWait = new(false);
     private readonly List<ICompatibleHidDevice> _controllers = new();
     private readonly IDeviceFactory _deviceFactory;
     private readonly IFilterService _filterService;
@@ -18,14 +17,12 @@ internal sealed class InputSourceService : IInputSourceService
     private readonly IInputSourceBuilderService _inputSourceBuilderService;
     private readonly IInputSourceConfigurationService _inputSourceConfigurationService;
     private readonly IInputSourceDataSource _inputSourceDataSource;
-
-    private readonly ManualResetEventSlim _usbFilterWait = new(false);
     private readonly IHidDeviceEnumeratorService<HidDeviceOverWinUsb> _winUsbDeviceEnumeratorService;
-    private List<(string DeviceKey, bool InitialFilterState)> _blueToothWaitList;
-
+  
     private bool _isPerformingFilterAction;
-    private string _usbWaitDeviceKey;
-    private bool _usbWaitInitialFilterState;
+
+    private List<ICompatibleHidDevice> _devicesToFilter;
+    private ManualResetEventSlim _devicesFilterWait = new(false);
 
     public InputSourceService(
         IInputSourceBuilderService inputSourceBuilderService,
@@ -114,19 +111,16 @@ internal sealed class InputSourceService : IInputSourceService
 
         if (IsStopping)
         {
+            var hasBtDevices = _controllers.Any(c => c.Connection == ConnectionType.Bluetooth);
             foreach (ICompatibleHidDevice device in _controllers.ToList())
             {
-                if (device.Connection == ConnectionType.Bluetooth)
-                {
-                    // TODO: sdp unfilter
-                }
-                else if (device.Connection == ConnectionType.Usb)
-                {
-                    _filterService.UnfilterController(device.SourceDevice.InstanceId);
-                }
+                _filterService.UnfilterController(device);
             }
 
-            //TODO: restart bt host
+            if (hasBtDevices)
+            {
+                _filterService.RestartBtHost();
+            }
         }
 
         //need some time after stopping input sources before starting more up
@@ -143,119 +137,74 @@ internal sealed class InputSourceService : IInputSourceService
         {
             List<IInputSource> inputSourceList = _inputSourceBuilderService.BuildInputSourceList(_controllers);
             _inputSourceDataSource.InputSources.AddRange(inputSourceList);
-            await PerformFilterActionsIfNeeded(inputSourceList, ct);
+            await CheckPerformFilterActions(inputSourceList);
             StartInputSources();
             ShouldAutoRebuild = existingShouldRebuild;
         }, ct);
     }
-
-    private async Task PerformFilterActionsIfNeeded(List<IInputSource> inputSourceList, CancellationToken ct = default)
+    
+    private Task CheckPerformFilterActions(List<IInputSource> inputSourceList)
     {
-        await CheckPerformBluetoothFilterActions(inputSourceList, ct);
-        await CheckPerformUsbFilterActions(inputSourceList, ct);
-    }
+        _devicesToFilter = new List<ICompatibleHidDevice>();
 
-    private async Task CheckPerformUsbFilterActions(List<IInputSource> inputSourceList, CancellationToken ct = default)
-    {
-        List<(string DeviceKey, string InstanceId, bool IsFiltered, DeviceInfo deviceInfo)> usbDevicesToFilter =
-            GetNeededFilterListByConnectionType(inputSourceList, ConnectionType.Usb)
-                .Where(c => c.deviceInfo.WinUsbEndpoints != null).ToList();
+        _devicesToFilter.AddRange(GetNeededFilterListByConnectionType(inputSourceList, ConnectionType.Usb)
+            .Where(c => c.CurrentDeviceInfo.WinUsbEndpoints != null).ToList());
 
-        if (usbDevicesToFilter.Any())
+        var blueToothDevices = GetNeededFilterListByConnectionType(inputSourceList, ConnectionType.Bluetooth)
+            .Where(c => c.CurrentDeviceInfo.IsBtFilterable).ToList();
+
+        _devicesToFilter.AddRange(blueToothDevices);
+
+        if (_devicesToFilter.Any())
         {
             _isPerformingFilterAction = true;
 
-            foreach ((string deviceKey, string instanceId, bool isFiltered, DeviceInfo _) in usbDevicesToFilter)
+            foreach (var device in _devicesToFilter)
             {
-                _usbWaitDeviceKey = deviceKey;
-                _usbWaitInitialFilterState = isFiltered;
-
-                if (isFiltered)
-                {
-                    await _filterService.UnfilterController(instanceId, ct);
-                }
-                else
-                {
-                    await _filterService.FilterController(instanceId, ct);
-                }
-
-                //dont need to do anything else because if this works existing
-                //compatible hid devices already on input sources should be
-                //updated with a new source device
-
-                _usbFilterWait.Wait(ct);
-                _usbWaitDeviceKey = null;
-                _usbFilterWait.Reset();
-            }
-
-            _isPerformingFilterAction = false;
-        }
-    }
-
-    private async Task CheckPerformBluetoothFilterActions(List<IInputSource> inputSourceList, CancellationToken ct = default)
-    {
-        List<(string DeviceKey, string InstanceId, bool IsFiltered, DeviceInfo deviceInfo)>
-            blueToothDevicesToFilerAction =
-                GetNeededFilterListByConnectionType(inputSourceList, ConnectionType.Bluetooth)
-                    .Where(c => c.deviceInfo.IsBtFilterable).ToList();
-
-        if (blueToothDevicesToFilerAction.Any())
-        {
-            _isPerformingFilterAction = true;
-
-            _blueToothWaitList = new List<(string DeviceKey, bool InitialFilterState)>();
-
-            foreach ((string DeviceKey, string InstanceId, bool IsFiltered, DeviceInfo deviceInfo) device in
-                     blueToothDevicesToFilerAction)
-            {
-                _blueToothWaitList.Add((device.DeviceKey, device.IsFiltered));
-
                 if (device.IsFiltered)
                 {
-                    await _filterService.UnfilterController(device.InstanceId, ct);
+                    _filterService.UnfilterController(device);
                 }
                 else
                 {
-                    await _filterService.FilterController(device.InstanceId, ct);
+                    _filterService.FilterController(device);
                 }
             }
 
-            // TODO: await restart bt host
+            if (blueToothDevices.Any())
+            {
+                _filterService.RestartBtHost();
+            }
 
-            //dont need to do anything else because if this works existing
-            //compatible hid devices already on input sources should be
-            //updated with a new source device
-            _blueToothFilterWait.Wait(ct);
-            _blueToothWaitList = null;
-            _blueToothFilterWait.Reset();
+            _devicesFilterWait.Wait();
+            _devicesToFilter = null;
+            _devicesFilterWait.Reset();
 
             _isPerformingFilterAction = false;
         }
+
+        return Task.CompletedTask;
     }
 
-    private IEnumerable<(string DeviceKey, string InstanceId, bool IsFiltered, DeviceInfo deviceInfo)>
-        GetNeededFilterListByConnectionType(IEnumerable<IInputSource> inputSourceList, ConnectionType connectionType)
+    private IEnumerable<ICompatibleHidDevice> GetNeededFilterListByConnectionType(IEnumerable<IInputSource> inputSourceList, ConnectionType connectionType)
     {
-        List<(string DeviceKey, string InstanceId, bool IsFiltered, DeviceInfo deviceInfo)> finalList = new();
+        var finalList = new List<ICompatibleHidDevice>();
         foreach (ICompatibleHidDevice controller in inputSourceList
                      .SelectMany(i => i.Controllers.Where(c => c.Connection == connectionType))
                      .ToList())
         {
             if (controller.IsFiltered && !_filterService.IsFilterDriverEnabled)
             {
-                finalList.Add((controller.DeviceKey, controller.SourceDevice.InstanceId, controller.IsFiltered,
-                    controller.CurrentDeviceInfo));
+                finalList.Add(controller);
             }
             else if (controller.IsFiltered && controller.CurrentConfiguration.OutputDeviceType == OutputDeviceType.None)
             {
-                finalList.Add((controller.DeviceKey, controller.SourceDevice.InstanceId, controller.IsFiltered,
-                    controller.CurrentDeviceInfo));
+                finalList.Add(controller);
             }
             else if (!controller.IsFiltered && _filterService.IsFilterDriverEnabled &&
                      controller.CurrentConfiguration.OutputDeviceType != OutputDeviceType.None)
             {
-                finalList.Add((controller.DeviceKey, controller.SourceDevice.InstanceId, controller.IsFiltered,
-                    controller.CurrentDeviceInfo));
+                finalList.Add(controller);
             }
         }
 
@@ -292,22 +241,27 @@ internal sealed class InputSourceService : IInputSourceService
                 return;
             }
 
-            ICompatibleHidDevice device = GetDevice(hidDevice, deviceInfo);
+            var device = GetDevice(hidDevice, deviceInfo);
+            device.Device.Setup(hidDevice, deviceInfo);
+            device.Device.Initialize();
 
-            // TODO: take Bluetooth into account
-            if (hidDevice is HidDeviceOverWinUsb)
+            if (device.Device.Connection == ConnectionType.Bluetooth)
             {
-                device.IsFiltered = true;
+                device.Device.IsFiltered = _filterService.IsBtFiltered(device.Device.SourceDevice.InstanceId);
+            }
+            else if (hidDevice is HidDeviceOverWinUsb)
+            {
+                device.Device.IsFiltered = true;
             }
             else
             {
-                device.IsFiltered = false;
+                device.Device.IsFiltered = false;
             }
 
-            device.Setup(hidDevice, deviceInfo);
-            device.Initialize();
-
-            CheckIfWaitingAfterFilterAction(device);
+            if (device.ExistingFilterState.HasValue)
+            {
+                CheckIfWaitingAfterFilterAction(device.Device, device.ExistingFilterState.Value);
+            }
 
             if (ShouldAutoRebuild)
             {
@@ -316,33 +270,24 @@ internal sealed class InputSourceService : IInputSourceService
         }
     }
 
-    private void CheckIfWaitingAfterFilterAction(ICompatibleHidDevice device)
+    private void CheckIfWaitingAfterFilterAction(ICompatibleHidDevice device, bool previousFilterState)
     {
-        if (device.Connection == ConnectionType.Usb && !string.IsNullOrWhiteSpace(_usbWaitDeviceKey) &&
-            _usbWaitDeviceKey == device.DeviceKey &&
-            _usbWaitInitialFilterState == !device.IsFiltered)
+        var existingWait = _devicesToFilter.SingleOrDefault(c =>
+            c.DeviceKey == device.DeviceKey && device.IsFiltered == !previousFilterState);
+        if (existingWait != default)
         {
-            _usbFilterWait.Set();
-        }
-        else if (device.Connection == ConnectionType.Bluetooth && _blueToothWaitList != null)
-        {
-            (string DeviceKey, bool InitialFilterState) existingWait = _blueToothWaitList.SingleOrDefault(c =>
-                c.DeviceKey == device.DeviceKey && c.InitialFilterState == !device.IsFiltered);
-            if (existingWait != default)
+            _devicesToFilter.Remove(existingWait);
+            if (_devicesToFilter.Count == 0)
             {
-                _blueToothWaitList.Remove(existingWait);
-                if (_blueToothWaitList.Count == 0)
-                {
-                    _blueToothFilterWait.Set();
-                }
+                _devicesFilterWait.Set();
             }
         }
     }
 
-    private ICompatibleHidDevice GetDevice(IHidDevice hidDevice, DeviceInfo deviceInfo)
+    private (ICompatibleHidDevice Device, bool? ExistingFilterState) GetDevice(IHidDevice hidDevice, DeviceInfo deviceInfo)
     {
         ICompatibleHidDevice device = null;
-
+        bool? existingFilterState = null;
         if (hidDevice is HidDeviceOverWinUsb)
         {
             IInputSource existingInputSource = _inputSourceDataSource.GetByDeviceParentInstanceId(hidDevice.InstanceId);
@@ -351,6 +296,7 @@ internal sealed class InputSourceService : IInputSourceService
                 existingInputSource.Stop();
                 device = existingInputSource.GetControllerByParentInstanceId(hidDevice.InstanceId);
                 device.SourceDevice.CloseDevice();
+                existingFilterState = device.IsFiltered;
             }
         }
         else
@@ -361,6 +307,7 @@ internal sealed class InputSourceService : IInputSourceService
                 existingInputSource.Stop();
                 device = existingInputSource.GetControllerByInstanceId(hidDevice.ParentInstance);
                 device.SourceDevice.CloseDevice();
+                existingFilterState = device.IsFiltered;
             }
         }
 
@@ -372,6 +319,7 @@ internal sealed class InputSourceService : IInputSourceService
                 existingInputSource.Stop();
                 device = existingInputSource.GetControllerByInstanceId(hidDevice.InstanceId);
                 device.SourceDevice.CloseDevice();
+                existingFilterState = device.IsFiltered;
             }
         }
 
@@ -381,7 +329,7 @@ internal sealed class InputSourceService : IInputSourceService
             _controllers.Add(device);
         }
 
-        return device;
+        return (device, existingFilterState);
     }
 
     private async void RemoveDevice(string instanceId)

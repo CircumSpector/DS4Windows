@@ -1,4 +1,6 @@
-﻿namespace Vapour.Shared.Devices.Services.Configuration;
+﻿using Vapour.Shared.Devices.HID;
+
+namespace Vapour.Shared.Devices.Services.Configuration;
 
 public interface IFilterService
 {
@@ -30,20 +32,14 @@ public interface IFilterService
     /// </summary>
     Task UninstallFilterDriver();
 
-    /// <summary>
-    ///     Applies USB or Bluetooth filtering/patching for the given Instance ID.
-    /// </summary>
-    /// <param name="instanceId">The HID device Instance ID.</param>
-    Task FilterController(string instanceId, CancellationToken ct = default);
+    void FilterController(ICompatibleHidDevice deviceToFilter);
 
-    /// <summary>
-    ///     Reverts USB or Bluetooth filtering/patching for the given Instance ID.
-    /// </summary>
-    /// <param name="instanceId">The HID device Instance ID.</param>
-    Task UnfilterController(string instanceId, CancellationToken ct = default);
+    void UnfilterController(ICompatibleHidDevice deviceToUnfilter);
 
     /// <summary>
     ///     Gets invoked when the filter enabled state has changed.
     /// </summary>
     event Action<bool> FilterDriverEnabledChanged;
+    void RestartBtHost();
+    bool IsBtFiltered(string instanceId);
 }

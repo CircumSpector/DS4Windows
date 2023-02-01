@@ -1,11 +1,9 @@
-﻿using System.Diagnostics.CodeAnalysis;
-
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 
 using Nefarius.Drivers.Nssidswap;
-using Nefarius.Utilities.DeviceManagement.Exceptions;
-using Nefarius.Utilities.DeviceManagement.Extensions;
 using Nefarius.Utilities.DeviceManagement.PnP;
+
+using Vapour.Shared.Devices.HID;
 
 namespace Vapour.Shared.Devices.Services.Configuration;
 
@@ -80,91 +78,40 @@ public partial class FilterService : IFilterService
         SetFilterDriverEnabled(false);
     }
 
-    /// <inheritdoc />
-    public async Task FilterController(string instanceId, CancellationToken ct = default)
-    {
-        (PnPDevice device, string hardwareId) = GetDeviceToFilter(instanceId);
-
-        try
-        {
-            UsbPnPDevice usbDevice = device.ToUsbPnPDevice();
-
-            using RewriteEntry entry = _filterDriver.AddOrUpdateRewriteEntry(hardwareId);
-            entry.IsReplacingEnabled = true;
-            entry.CompatibleIds = new[]
-            {
-                @"USB\MS_COMP_WINUSB", @"USB\Class_FF&SubClass_5D&Prot_01", @"USB\Class_FF&SubClass_5D",
-                @"USB\Class_FF"
-            };
-
-            CyclePort(usbDevice);
-        }
-        catch (UsbPnPDeviceConversionException)
-        {
-            await FilterBtController(instanceId, ct);
-        }
-        catch (UsbPnPDeviceRestartException ex)
-        {
-            _logger.LogError(ex, "Device restart failed");
-            throw;
-        }
-    }
-
-    /// <inheritdoc />
-    public async Task UnfilterController(string instanceId, CancellationToken ct = default)
-    {
-        (PnPDevice device, string hardwareId) = GetDeviceToFilter(instanceId);
-
-        try
-        {
-            UsbPnPDevice usbDevice = device.ToUsbPnPDevice();
-
-            using RewriteEntry entry = _filterDriver.GetRewriteEntryFor(hardwareId);
-
-            if (entry is null)
-            {
-                return;
-            }
-
-            entry.IsReplacingEnabled = false;
-
-            CyclePort(usbDevice);
-        }
-        catch (UsbPnPDeviceConversionException)
-        {
-            await UnfilterBtController(instanceId, ct);
-        }
-        catch (UsbPnPDeviceRestartException ex)
-        {
-            _logger.LogError(ex, "Device restart failed");
-            throw;
-        }
-    }
-
     /// <summary>
-    ///     Power-cycles the port the given device is attached to.
+    ///     Filters a particular USB device instance.
     /// </summary>
-    /// <param name="usbDevice">The USB device to restart.</param>
-    [SuppressMessage("ReSharper", "AccessToDisposedClosure")]
-    private static void CyclePort(UsbPnPDevice usbDevice)
+    /// <param name="deviceToFilter"></param>
+    public void FilterController(ICompatibleHidDevice deviceToFilter)
     {
-        ManualResetEvent wait = new(false);
-        DeviceNotificationListener listener = new();
+        (PnPDevice device, string hardwareId) = GetDeviceToFilter(deviceToFilter.SourceDevice.InstanceId);
 
-        listener.RegisterDeviceArrived(args =>
+        if (deviceToFilter.Connection == ConnectionType.Bluetooth)
         {
-            wait.Set();
-        });
-        listener.StartListen(FilterDriver.RewrittenDeviceInterfaceId);
-        listener.StartListen(DeviceInterfaceIds.HidDevice);
+            FilterBtController(deviceToFilter.SourceDevice.InstanceId);
+        }
+        else
+        {
+            FilterUsbDevice(device, hardwareId);
+        }
+    }
+    
+    /// <summary>
+    ///     Reverts filtering a particular USB device instance.
+    /// </summary>
+    /// <param name="deviceToUnfilter"></param>
+    public void UnfilterController(ICompatibleHidDevice deviceToUnfilter)
+    {
+        (PnPDevice device, string hardwareId) = GetDeviceToFilter(deviceToUnfilter.SourceDevice.InstanceId);
 
-        usbDevice.CyclePort();
-
-        wait.WaitOne(TimeSpan.FromSeconds(1));
-
-        listener.StopListen();
-        listener.Dispose();
-        wait.Dispose();
+        if (deviceToUnfilter.Connection == ConnectionType.Bluetooth)
+        {
+            UnfilterBtController(deviceToUnfilter.SourceDevice.InstanceId);
+        }
+        else
+        {
+            UnfilterUsbDevice(device, hardwareId);
+        }
     }
 
     /// <summary>
