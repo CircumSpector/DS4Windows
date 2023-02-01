@@ -35,19 +35,17 @@ public interface IFilterService
     /// <summary>
     ///     Filters a particular device instance.
     /// </summary>
-    Task FilterController(ICompatibleHidDevice deviceToFilter, CancellationToken ct = default);
+    void FilterController(ICompatibleHidDevice deviceToFilter, CancellationToken ct = default);
 
     /// <summary>
     ///     Reverts filtering a particular device instance.
     /// </summary>
-    Task UnfilterController(ICompatibleHidDevice deviceToUnfilter, CancellationToken ct = default);
+    void UnfilterController(ICompatibleHidDevice deviceToUnfilter, CancellationToken ct = default);
 
     /// <summary>
     ///     Gets invoked when the filter enabled state has changed.
     /// </summary>
     event Action<bool> FilterDriverEnabledChanged;
-    
-    void RestartBtHost();
-    
+
     bool IsBtFiltered(string instanceId);
 }

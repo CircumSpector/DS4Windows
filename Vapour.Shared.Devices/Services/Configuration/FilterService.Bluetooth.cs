@@ -1,16 +1,15 @@
 ﻿using System.Net.NetworkInformation;
 
-using Windows.Win32.Devices.DeviceAndDriverInstallation;
 using Windows.Win32.Foundation;
 
 using Microsoft.Extensions.Logging;
 
 using Nefarius.Utilities.Bluetooth;
 using Nefarius.Utilities.Bluetooth.SDP;
-using Nefarius.Utilities.DeviceManagement.Exceptions;
 using Nefarius.Utilities.DeviceManagement.PnP;
 
 using Vapour.Shared.Common.Util;
+using Vapour.Shared.Devices.HID;
 
 namespace Vapour.Shared.Devices.Services.Configuration;
 
@@ -23,12 +22,6 @@ public partial class FilterService
         Guid.Parse("{0x2bd67d8b, 0x8beb, 0x48d5, {0x87, 0xe0, 0x6c, 0xda, 0x34, 0x28, 0x04, 0x0a}}"), 1,
         typeof(string));
 
-    public void RestartBtHost()
-    {
-        using HostRadio radio = new();
-        radio.RestartRadio();
-    }
-
     public bool IsBtFiltered(string instanceId)
     {
         BthPortDevice bthDevice = GetBthDevice(instanceId);
@@ -39,10 +32,10 @@ public partial class FilterService
         return bthDevice.IsCachedServicesPatched;
     }
 
-    private async Task FilterBtController(string instanceId, bool shouldRestartBtHost = false,
-        CancellationToken ct = default)
+    private void FilterBtController(ICompatibleHidDevice device, CancellationToken ct = default)
     {
-        BthPortDevice bthDevice = GetBthDevice(instanceId, out PnPDevice parentDevice);
+        device.Close();
+        BthPortDevice bthDevice = GetBthDevice(device.SourceDevice.InstanceId, out PnPDevice parentDevice);
 
         if (bthDevice.IsCachedServicesPatched)
         {
@@ -63,53 +56,19 @@ public partial class FilterService
         // overwrite patched record
         bthDevice.CachedServices = patched;
 
-        try
-        {
-            // disconnect device
-            using HostRadio radio = new();
-            radio.DisconnectRemoteDevice(bthDevice.RemoteAddress);
-        }
-        catch (HostRadioException hre)
-        {
-            if (hre.NativeErrorCode != (uint)WIN32_ERROR.ERROR_DEVICE_NOT_CONNECTED)
-            {
-                throw;
-            }
-        }
-
-        int maxRetries = 5;
-
-        while (!ct.IsCancellationRequested && maxRetries-- > 0)
-        {
-            // enforces reloading patched records from registry
-            try
-            {
-                parentDevice.Disable();
-                await Task.Delay(TimeSpan.FromSeconds(1), ct);
-                parentDevice.Enable();
-            }
-            catch (ConfigManagerException cme)
-            {
-                if (cme.Value != (uint)CONFIGRET.CR_REMOVE_VETOED)
-                {
-                    // unexpected error
-                    throw;
-                }
-
-                await Task.Delay(TimeSpan.FromSeconds(1), ct);
-            }
-        }
+        ResetDevice(ct, bthDevice, parentDevice);
     }
 
     /// <summary>
     ///     Reverts the patched SDP records of a given wireless device to original state and optionally restarts the Bluetooth
     ///     host radio.
     /// </summary>
-    /// <param name="instanceId">The Instance ID of the HID device connected via Bluetooth.</param>
+    /// <param name="device">The Compatible HID device connected via Bluetooth.</param>
     /// <param name="ct">Optional cancellation token.</param>
-    private async Task UnfilterBtController(string instanceId, CancellationToken ct = default)
+    private void UnfilterBtController(ICompatibleHidDevice device, CancellationToken ct = default)
     {
-        BthPortDevice bthDevice = GetBthDevice(instanceId, out PnPDevice parentDevice);
+        device.Close();
+        BthPortDevice bthDevice = GetBthDevice(device.SourceDevice.InstanceId, out PnPDevice parentDevice);
 
         if (!bthDevice.IsCachedServicesPatched)
         {
@@ -124,6 +83,11 @@ public partial class FilterService
         bthDevice.CachedServices = bthDevice.OriginalCachedServices;
         bthDevice.DeleteOriginalCachedServices();
 
+        ResetDevice(ct, bthDevice, parentDevice);
+    }
+
+    private void ResetDevice(CancellationToken ct, BthPortDevice bthDevice, PnPDevice parentDevice)
+    {
         try
         {
             // disconnect device
@@ -138,28 +102,10 @@ public partial class FilterService
             }
         }
 
-        int maxRetries = 5;
-
-        while (!ct.IsCancellationRequested && maxRetries-- > 0)
-        {
-            // enforces reloading patched records from registry
-            try
-            {
-                parentDevice.Disable();
-                await Task.Delay(TimeSpan.FromSeconds(1), ct);
-                parentDevice.Enable();
-            }
-            catch (ConfigManagerException cme)
-            {
-                if (cme.Value != (uint)CONFIGRET.CR_REMOVE_VETOED)
-                {
-                    // unexpected error
-                    throw;
-                }
-
-                await Task.Delay(TimeSpan.FromSeconds(1), ct);
-            }
-        }
+        _logger.LogInformation("Attempting to disable parent device for bth filtering");
+        parentDevice.Disable();
+        _logger.LogInformation("Attempting to enable parent device for bth filtering");
+        parentDevice.Enable();
     }
 
     private static BthPortDevice GetBthDevice(string instanceId)
