@@ -28,9 +28,9 @@ public enum DualSenseButtons3 : byte
     Home = 0x01,
     Pad = 0x02,
     Mute = 0x04,
-    R2 = 0x08,
-    LFunction = 0x10,
-    RFunction = 0x20,
-    LPaddle = 0x40,
-    RPaddle = 0x80
+    LFunction = 0x08,
+    RFunction = 0x10,
+    LPaddle = 0x20,
+    RPaddle = 0x40,
+    Unknown = 0x80
 }
