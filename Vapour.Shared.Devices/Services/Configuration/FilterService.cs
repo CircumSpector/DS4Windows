@@ -79,52 +79,30 @@ public partial class FilterService : IFilterService
     }
 
     /// <inheritdoc />
-    public async Task FilterController(ICompatibleHidDevice deviceToFilter, CancellationToken ct = default)
+    public void FilterController(ICompatibleHidDevice deviceToFilter, CancellationToken ct = default)
     {
         (PnPDevice device, string hardwareId) = GetDeviceToFilter(deviceToFilter.SourceDevice.InstanceId);
 
         if (deviceToFilter.Connection == ConnectionType.Bluetooth)
         {
-            await FilterBtController(deviceToFilter.SourceDevice.InstanceId, ct: ct);
+            FilterBtController(deviceToFilter, ct);
         }
         else
         {
-            FilterUsbDevice(device, hardwareId);
+            FilterUsbDevice(deviceToFilter);
         }
     }
 
     /// <inheritdoc />
-    public async Task UnfilterController(ICompatibleHidDevice deviceToUnfilter, CancellationToken ct = default)
+    public void UnfilterController(ICompatibleHidDevice deviceToUnfilter, CancellationToken ct = default)
     {
-        (PnPDevice device, string hardwareId) = GetDeviceToFilter(deviceToUnfilter.SourceDevice.InstanceId);
-
         if (deviceToUnfilter.Connection == ConnectionType.Bluetooth)
         {
-            await UnfilterBtController(deviceToUnfilter.SourceDevice.InstanceId, ct);
+            UnfilterBtController(deviceToUnfilter, ct);
         }
         else
         {
-            UnfilterUsbDevice(device, hardwareId);
+            UnfilterUsbDevice(deviceToUnfilter);
         }
-    }
-
-    /// <summary>
-    ///     Finds the correct parent USB instance for a HID device.
-    /// </summary>
-    /// <param name="instanceId">The HID (or, if rewritten already, USB) instance ID.</param>
-    private static Tuple<PnPDevice, string> GetDeviceToFilter(string instanceId)
-    {
-        PnPDevice device = PnPDevice.GetDeviceByInstanceId(instanceId);
-
-        string[] hardwareIds = device.GetProperty<string[]>(DevicePropertyKey.Device_HardwareIds);
-
-        if (hardwareIds.First().StartsWith("HID"))
-        {
-            string parentInputDeviceId = device.GetProperty<string>(DevicePropertyKey.Device_Parent);
-            device = PnPDevice.GetDeviceByInstanceId(parentInputDeviceId);
-            hardwareIds = device.GetProperty<string[]>(DevicePropertyKey.Device_HardwareIds);
-        }
-
-        return new Tuple<PnPDevice, string>(device, hardwareIds.First());
     }
 }

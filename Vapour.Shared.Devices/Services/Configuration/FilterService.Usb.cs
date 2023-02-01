@@ -6,12 +6,15 @@ using Nefarius.Utilities.DeviceManagement.Exceptions;
 using Nefarius.Utilities.DeviceManagement.Extensions;
 using Nefarius.Utilities.DeviceManagement.PnP;
 
+using Vapour.Shared.Devices.HID;
+
 namespace Vapour.Shared.Devices.Services.Configuration;
 
 public partial class FilterService
 {
-    private void FilterUsbDevice(PnPDevice device, string hardwareId)
+    private void FilterUsbDevice(ICompatibleHidDevice deviceToFilter)
     {
+        (PnPDevice device, string hardwareId) = GetDeviceToFilter(deviceToFilter.SourceDevice.InstanceId);
         try
         {
             UsbPnPDevice usbDevice = device.ToUsbPnPDevice();
@@ -33,8 +36,9 @@ public partial class FilterService
         }
     }
 
-    private void UnfilterUsbDevice(PnPDevice device, string hardwareId)
+    private void UnfilterUsbDevice(ICompatibleHidDevice deviceToUnfilter)
     {
+        (PnPDevice device, string hardwareId) = GetDeviceToFilter(deviceToUnfilter.SourceDevice.InstanceId);
         try
         {
             UsbPnPDevice usbDevice = device.ToUsbPnPDevice();
@@ -81,5 +85,25 @@ public partial class FilterService
         listener.StopListen();
         listener.Dispose();
         wait.Dispose();
+    }
+
+    /// <summary>
+    ///     Finds the correct parent USB instance for a HID device.
+    /// </summary>
+    /// <param name="instanceId">The HID (or, if rewritten already, USB) instance ID.</param>
+    private static Tuple<PnPDevice, string> GetDeviceToFilter(string instanceId)
+    {
+        PnPDevice device = PnPDevice.GetDeviceByInstanceId(instanceId);
+
+        string[] hardwareIds = device.GetProperty<string[]>(DevicePropertyKey.Device_HardwareIds);
+
+        if (hardwareIds.First().StartsWith("HID"))
+        {
+            string parentInputDeviceId = device.GetProperty<string>(DevicePropertyKey.Device_Parent);
+            device = PnPDevice.GetDeviceByInstanceId(parentInputDeviceId);
+            hardwareIds = device.GetProperty<string[]>(DevicePropertyKey.Device_HardwareIds);
+        }
+
+        return new Tuple<PnPDevice, string>(device, hardwareIds.First());
     }
 }

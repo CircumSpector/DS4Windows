@@ -111,15 +111,9 @@ internal sealed class InputSourceService : IInputSourceService
 
         if (IsStopping)
         {
-            bool hasBtDevices = _controllers.Any(c => c.Connection == ConnectionType.Bluetooth);
             foreach (ICompatibleHidDevice device in _controllers.ToList())
             {
                 _filterService.UnfilterController(device);
-            }
-
-            if (hasBtDevices)
-            {
-                _filterService.RestartBtHost();
             }
         }
 
@@ -133,17 +127,17 @@ internal sealed class InputSourceService : IInputSourceService
         ShouldAutoRebuild = false;
         ClearExistingSources();
 
-        await Task.Run(async () =>
+        await Task.Run(() =>
         {
             List<IInputSource> inputSourceList = _inputSourceBuilderService.BuildInputSourceList(_controllers);
             _inputSourceDataSource.InputSources.AddRange(inputSourceList);
-            await CheckPerformFilterActions(inputSourceList, ct);
+            CheckPerformFilterActions(inputSourceList, ct);
             StartInputSources();
             ShouldAutoRebuild = existingShouldRebuild;
         }, ct);
     }
 
-    private async Task CheckPerformFilterActions(IReadOnlyCollection<IInputSource> inputSourceList,
+    private void CheckPerformFilterActions(IReadOnlyCollection<IInputSource> inputSourceList,
         CancellationToken ct = default)
     {
         _devicesToFilter = new List<ICompatibleHidDevice>();
@@ -161,21 +155,16 @@ internal sealed class InputSourceService : IInputSourceService
         {
             _isPerformingFilterAction = true;
 
-            foreach (ICompatibleHidDevice device in _devicesToFilter)
+            foreach (ICompatibleHidDevice device in _devicesToFilter.ToList())
             {
                 if (device.IsFiltered)
                 {
-                    await _filterService.UnfilterController(device, ct);
+                    _filterService.UnfilterController(device, ct);
                 }
                 else
                 {
-                    await _filterService.FilterController(device, ct);
+                    _filterService.FilterController(device, ct);
                 }
-            }
-
-            if (blueToothDevices.Any())
-            {
-                _filterService.RestartBtHost();
             }
 
             _devicesFilterWait.Wait(ct);
