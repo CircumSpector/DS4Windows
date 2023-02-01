@@ -104,30 +104,35 @@ public partial class FilterService
             }
         }
 
-        int maxRetries = 5;
+        //disable in a separate task and continue
+        Task.Run(parentDevice.Disable);
 
-        while (!ct.IsCancellationRequested && maxRetries-- > 0)
-        {
-            // enforces reloading patched records from registry
-            try
-            {
-                parentDevice.Disable();
-                Thread.Sleep(1000);
-                parentDevice.Enable();
+        //int maxRetries = 5;
 
-                break;
-            }
-            catch (ConfigManagerException cme)
-            {
-                if (cme.Value != (uint)CONFIGRET.CR_REMOVE_VETOED)
-                {
-                    // unexpected error
-                    throw;
-                }
+        //while (!ct.IsCancellationRequested && maxRetries-- > 0)
+        //{
+        //    // enforces reloading patched records from registry
+        //    try
+        //    {
+        //        _logger.LogInformation("attemping to disable parent device");
+        //        parentDevice.Disable();
+        //        Thread.Sleep(1000);
+        //        _logger.LogInformation("attempting to re enable parent device");
+        //        parentDevice.Enable();
 
-                Thread.Sleep(1000);
-            }
-        }
+        //        break;
+        //    }
+        //    catch (ConfigManagerException cme)
+        //    {
+        //        if (cme.Value != (uint)CONFIGRET.CR_REMOVE_VETOED)
+        //        {
+        //            // unexpected error
+        //            throw;
+        //        }
+
+        //        Thread.Sleep(1000);
+        //    }
+        //}
     }
 
     private static BthPortDevice GetBthDevice(string instanceId)
