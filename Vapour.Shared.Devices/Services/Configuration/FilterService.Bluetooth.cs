@@ -87,6 +87,8 @@ public partial class FilterService
                 parentDevice.Disable();
                 await Task.Delay(TimeSpan.FromSeconds(1), ct);
                 parentDevice.Enable();
+
+                break;
             }
             catch (ConfigManagerException cme)
             {
@@ -148,6 +150,8 @@ public partial class FilterService
                 parentDevice.Disable();
                 await Task.Delay(TimeSpan.FromSeconds(1), ct);
                 parentDevice.Enable();
+
+                break;
             }
             catch (ConfigManagerException cme)
             {
