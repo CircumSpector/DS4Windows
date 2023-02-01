@@ -1,9 +1,11 @@
 ﻿using System.Net.NetworkInformation;
 
 using Windows.Win32.Devices.DeviceAndDriverInstallation;
+using Windows.Win32.Foundation;
 
 using Microsoft.Extensions.Logging;
 
+using Nefarius.Utilities.Bluetooth;
 using Nefarius.Utilities.Bluetooth.SDP;
 using Nefarius.Utilities.DeviceManagement.Exceptions;
 using Nefarius.Utilities.DeviceManagement.PnP;
@@ -60,6 +62,20 @@ public partial class FilterService
 
         // overwrite patched record
         bthDevice.CachedServices = patched;
+
+        try
+        {
+            // disconnect device
+            using HostRadio radio = new();
+            radio.DisconnectRemoteDevice(bthDevice.RemoteAddress);
+        }
+        catch (HostRadioException hre)
+        {
+            if (hre.NativeErrorCode != (uint)WIN32_ERROR.ERROR_DEVICE_NOT_CONNECTED)
+            {
+                throw;
+            }
+        }
 
         int maxRetries = 5;
 
@@ -120,6 +136,20 @@ public partial class FilterService
         // restore original record, remove backup copy
         bthDevice.CachedServices = bthDevice.OriginalCachedServices;
         bthDevice.DeleteOriginalCachedServices();
+
+        try
+        {
+            // disconnect device
+            using HostRadio radio = new();
+            radio.DisconnectRemoteDevice(remoteAddress);
+        }
+        catch (HostRadioException hre)
+        {
+            if (hre.NativeErrorCode != (uint)WIN32_ERROR.ERROR_DEVICE_NOT_CONNECTED)
+            {
+                throw;
+            }
+        }
 
         int maxRetries = 5;
 
