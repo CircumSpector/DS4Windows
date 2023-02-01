@@ -53,10 +53,7 @@ public partial class FilterService
         // overwrite patched record
         bthDevice.CachedServices = patched;
 
-        try
-        {
-            RestartBtHost();
-        }
+        
     }
 
     /// <summary>
@@ -80,10 +77,7 @@ public partial class FilterService
         bthDevice.CachedServices = bthDevice.OriginalCachedServices;
         bthDevice.DeleteOriginalCachedServices();
 
-        if (shouldRestartBtHost)
-        {
-            RestartBtHost();
-        }
+        
     }
 
     private static BthPortDevice GetBthDevice(string instanceId)
