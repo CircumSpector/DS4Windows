@@ -24,15 +24,23 @@ public interface IFilterService
     ///     Installs the class filter driver.
     /// </summary>
     Task<Version> InstallFilterDriver();
-    
+
     /// <summary>
     ///     Uninstalls the class filter driver.
     /// </summary>
     Task UninstallFilterDriver();
 
-    void FilterController(string instanceId);
+    /// <summary>
+    ///     Applies USB or Bluetooth filtering/patching for the given Instance ID.
+    /// </summary>
+    /// <param name="instanceId">The HID device Instance ID.</param>
+    Task FilterController(string instanceId, CancellationToken ct = default);
 
-    void UnfilterController(string instanceId);
+    /// <summary>
+    ///     Reverts USB or Bluetooth filtering/patching for the given Instance ID.
+    /// </summary>
+    /// <param name="instanceId">The HID device Instance ID.</param>
+    Task UnfilterController(string instanceId, CancellationToken ct = default);
 
     /// <summary>
     ///     Gets invoked when the filter enabled state has changed.

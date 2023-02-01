@@ -53,7 +53,7 @@ internal sealed class InputSourceService : IInputSourceService
 
     public event Action InputSourceListReady;
 
-    public async Task Start()
+    public async Task Start(CancellationToken ct = default)
     {
         _hidEnumeratorService.DeviceArrived += SetupDevice;
         _hidEnumeratorService.DeviceRemoved += RemoveDevice;
@@ -66,7 +66,7 @@ internal sealed class InputSourceService : IInputSourceService
         _hidEnumeratorService.Start();
         _winUsbDeviceEnumeratorService.Start();
 
-        await RebuildInputSourceList();
+        await RebuildInputSourceList(ct);
 
         ShouldAutoRebuild = true;
 
@@ -133,7 +133,7 @@ internal sealed class InputSourceService : IInputSourceService
         Thread.Sleep(250);
     }
 
-    private async Task RebuildInputSourceList()
+    private async Task RebuildInputSourceList(CancellationToken ct = default)
     {
         bool existingShouldRebuild = ShouldAutoRebuild;
         ShouldAutoRebuild = false;
@@ -143,19 +143,19 @@ internal sealed class InputSourceService : IInputSourceService
         {
             List<IInputSource> inputSourceList = _inputSourceBuilderService.BuildInputSourceList(_controllers);
             _inputSourceDataSource.InputSources.AddRange(inputSourceList);
-            await PerformFilterActionsIfNeeded(inputSourceList);
+            await PerformFilterActionsIfNeeded(inputSourceList, ct);
             StartInputSources();
             ShouldAutoRebuild = existingShouldRebuild;
-        });
+        }, ct);
     }
 
-    private async Task PerformFilterActionsIfNeeded(List<IInputSource> inputSourceList)
+    private async Task PerformFilterActionsIfNeeded(List<IInputSource> inputSourceList, CancellationToken ct = default)
     {
-        await CheckPerformBluetoothFilterActions(inputSourceList);
-        await CheckPerformUsbFilterActions(inputSourceList);
+        await CheckPerformBluetoothFilterActions(inputSourceList, ct);
+        await CheckPerformUsbFilterActions(inputSourceList, ct);
     }
 
-    private Task CheckPerformUsbFilterActions(List<IInputSource> inputSourceList)
+    private async Task CheckPerformUsbFilterActions(List<IInputSource> inputSourceList, CancellationToken ct = default)
     {
         List<(string DeviceKey, string InstanceId, bool IsFiltered, DeviceInfo deviceInfo)> usbDevicesToFilter =
             GetNeededFilterListByConnectionType(inputSourceList, ConnectionType.Usb)
@@ -172,29 +172,27 @@ internal sealed class InputSourceService : IInputSourceService
 
                 if (isFiltered)
                 {
-                    _filterService.UnfilterController(instanceId);
+                    await _filterService.UnfilterController(instanceId, ct);
                 }
                 else
                 {
-                    _filterService.FilterController(instanceId);
+                    await _filterService.FilterController(instanceId, ct);
                 }
 
                 //dont need to do anything else because if this works existing
                 //compatible hid devices already on input sources should be
                 //updated with a new source device
 
-                _usbFilterWait.Wait();
+                _usbFilterWait.Wait(ct);
                 _usbWaitDeviceKey = null;
                 _usbFilterWait.Reset();
             }
 
             _isPerformingFilterAction = false;
         }
-
-        return Task.CompletedTask;
     }
 
-    private Task CheckPerformBluetoothFilterActions(List<IInputSource> inputSourceList)
+    private async Task CheckPerformBluetoothFilterActions(List<IInputSource> inputSourceList, CancellationToken ct = default)
     {
         List<(string DeviceKey, string InstanceId, bool IsFiltered, DeviceInfo deviceInfo)>
             blueToothDevicesToFilerAction =
@@ -214,11 +212,11 @@ internal sealed class InputSourceService : IInputSourceService
 
                 if (device.IsFiltered)
                 {
-                    _filterService.UnfilterController(device.InstanceId);
+                    await _filterService.UnfilterController(device.InstanceId, ct);
                 }
                 else
                 {
-                    _filterService.FilterController(device.InstanceId);
+                    await _filterService.FilterController(device.InstanceId, ct);
                 }
             }
 
@@ -227,14 +225,12 @@ internal sealed class InputSourceService : IInputSourceService
             //dont need to do anything else because if this works existing
             //compatible hid devices already on input sources should be
             //updated with a new source device
-            _blueToothFilterWait.Wait();
+            _blueToothFilterWait.Wait(ct);
             _blueToothWaitList = null;
             _blueToothFilterWait.Reset();
 
             _isPerformingFilterAction = false;
         }
-
-        return Task.CompletedTask;
     }
 
     private IEnumerable<(string DeviceKey, string InstanceId, bool IsFiltered, DeviceInfo deviceInfo)>
@@ -430,10 +426,10 @@ internal sealed class InputSourceService : IInputSourceService
         await QuickRebuild();
     }
 
-    private async Task QuickRebuild()
+    private async Task QuickRebuild(CancellationToken ct = default)
     {
         ShouldAutoRebuild = false;
-        await RebuildInputSourceList();
+        await RebuildInputSourceList(ct);
         ShouldAutoRebuild = true;
     }
 

@@ -1,9 +1,11 @@
 ﻿using System.Net.NetworkInformation;
 
+using Windows.Win32.Devices.DeviceAndDriverInstallation;
+
 using Microsoft.Extensions.Logging;
 
-using Nefarius.Utilities.Bluetooth;
 using Nefarius.Utilities.Bluetooth.SDP;
+using Nefarius.Utilities.DeviceManagement.Exceptions;
 using Nefarius.Utilities.DeviceManagement.PnP;
 
 using Vapour.Shared.Common.Util;
@@ -23,8 +25,8 @@ public partial class FilterService
     ///     Patches the SDP record of a given wireless device and optionally restarts the Bluetooth host radio.
     /// </summary>
     /// <param name="instanceId">The Instance ID of the HID device connected via Bluetooth.</param>
-    /// <param name="shouldRestartBtHost">True to cycle the radio, default is not to.</param>
-    private void FilterBtController(string instanceId, bool shouldRestartBtHost = false)
+    /// <param name="ct">Optional cancellation token.</param>
+    private async Task FilterBtController(string instanceId, CancellationToken ct = default)
     {
         PnPDevice hidDevice = PnPDevice.GetDeviceByInstanceId(instanceId);
 
@@ -59,10 +61,27 @@ public partial class FilterService
         // overwrite patched record
         bthDevice.CachedServices = patched;
 
-        if (shouldRestartBtHost)
+        int maxRetries = 5;
+
+        while (!ct.IsCancellationRequested && maxRetries-- > 0)
         {
-            using HostRadio radio = new();
-            radio.RestartRadio();
+            // enforces reloading patched records from registry
+            try
+            {
+                parentDevice.Disable();
+                await Task.Delay(TimeSpan.FromSeconds(1), ct);
+                parentDevice.Enable();
+            }
+            catch (ConfigManagerException cme)
+            {
+                if (cme.Value != (uint)CONFIGRET.CR_REMOVE_VETOED)
+                {
+                    // unexpected error
+                    throw;
+                }
+
+                await Task.Delay(TimeSpan.FromSeconds(1), ct);
+            }
         }
     }
 
@@ -71,8 +90,8 @@ public partial class FilterService
     ///     host radio.
     /// </summary>
     /// <param name="instanceId">The Instance ID of the HID device connected via Bluetooth.</param>
-    /// <param name="shouldRestartBtHost">True to cycle the radio, default is not to.</param>
-    private void UnfilterBtController(string instanceId, bool shouldRestartBtHost = false)
+    /// <param name="ct">Optional cancellation token.</param>
+    private async Task UnfilterBtController(string instanceId, CancellationToken ct = default)
     {
         PnPDevice hidDevice = PnPDevice.GetDeviceByInstanceId(instanceId);
 
@@ -80,8 +99,9 @@ public partial class FilterService
 
         PnPDevice parentDevice = PnPDevice.GetDeviceByInstanceId(parentId);
 
-        PhysicalAddress remoteAddress =
-            PhysicalAddress.Parse(parentDevice.GetProperty<string>(BluetoothDeviceAddressProperty));
+        string remoteAddressString = parentDevice.GetProperty<string>(BluetoothDeviceAddressProperty);
+
+        PhysicalAddress remoteAddress = PhysicalAddress.Parse(remoteAddressString);
 
         BthPortDevice bthDevice = BthPort.Devices.FirstOrDefault(d => d.RemoteAddress.Equals(remoteAddress));
 
@@ -101,10 +121,27 @@ public partial class FilterService
         bthDevice.CachedServices = bthDevice.OriginalCachedServices;
         bthDevice.DeleteOriginalCachedServices();
 
-        if (shouldRestartBtHost)
+        int maxRetries = 5;
+
+        while (!ct.IsCancellationRequested && maxRetries-- > 0)
         {
-            using HostRadio radio = new();
-            radio.RestartRadio();
+            // enforces reloading patched records from registry
+            try
+            {
+                parentDevice.Disable();
+                await Task.Delay(TimeSpan.FromSeconds(1), ct);
+                parentDevice.Enable();
+            }
+            catch (ConfigManagerException cme)
+            {
+                if (cme.Value != (uint)CONFIGRET.CR_REMOVE_VETOED)
+                {
+                    // unexpected error
+                    throw;
+                }
+
+                await Task.Delay(TimeSpan.FromSeconds(1), ct);
+            }
         }
     }
 }

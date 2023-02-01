@@ -80,11 +80,8 @@ public partial class FilterService : IFilterService
         SetFilterDriverEnabled(false);
     }
 
-    /// <summary>
-    ///     Filters a particular USB device instance.
-    /// </summary>
-    /// <param name="instanceId">The instance ID of the device to filter.</param>
-    public void FilterController(string instanceId)
+    /// <inheritdoc />
+    public async Task FilterController(string instanceId, CancellationToken ct = default)
     {
         (PnPDevice device, string hardwareId) = GetDeviceToFilter(instanceId);
 
@@ -104,7 +101,7 @@ public partial class FilterService : IFilterService
         }
         catch (UsbPnPDeviceConversionException)
         {
-            FilterBtController(instanceId);
+            await FilterBtController(instanceId, ct);
         }
         catch (UsbPnPDeviceRestartException ex)
         {
@@ -113,11 +110,8 @@ public partial class FilterService : IFilterService
         }
     }
 
-    /// <summary>
-    ///     Reverts filtering a particular USB device instance.
-    /// </summary>
-    /// <param name="instanceId">The instance ID of the device to revert.</param>
-    public void UnfilterController(string instanceId)
+    /// <inheritdoc />
+    public async Task UnfilterController(string instanceId, CancellationToken ct = default)
     {
         (PnPDevice device, string hardwareId) = GetDeviceToFilter(instanceId);
 
@@ -138,7 +132,7 @@ public partial class FilterService : IFilterService
         }
         catch (UsbPnPDeviceConversionException)
         {
-            UnfilterBtController(instanceId);
+            await UnfilterBtController(instanceId, ct);
         }
         catch (UsbPnPDeviceRestartException ex)
         {
