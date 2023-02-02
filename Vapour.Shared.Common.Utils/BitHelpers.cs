@@ -40,23 +40,12 @@ public static class BitHelpers
         return (int)((value >> offset) & BitCountConversions[count]);
     }
 
-    public static byte[] StructToByte(object value, int length)
+    public static byte[] StructToByte<T>(this T value, int length)
+    where T : struct
     {
-        int size = length;
-        byte[] arr = new byte[size];
-
-        IntPtr ptr = IntPtr.Zero;
-        try
-        {
-            ptr = Marshal.AllocHGlobal(size);
-            Marshal.StructureToPtr(value, ptr, true);
-            Marshal.Copy(ptr, arr, 0, size);
-        }
-        finally
-        {
-            Marshal.FreeHGlobal(ptr);
-        }
-
-        return arr;
+        Span<byte> span = stackalloc byte[length];
+        MemoryMarshal.Write(span, ref value);
+        var array = span.ToArray();
+        return array;
     }
 }

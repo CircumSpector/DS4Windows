@@ -18,7 +18,7 @@ public struct UsbOutputReport
 
     public byte[] GetBytes(int length)
     {
-        return BitHelpers.StructToByte(this, length);
+        return this.StructToByte(length);
     }
 }
 
@@ -37,7 +37,7 @@ public struct BtOutputReport
 
     public byte[] GetBytes(int length)
     {
-        var outputReportPacket = BitHelpers.StructToByte(this, length);
+        var outputReportPacket = this.StructToByte(length);
         uint crc = CRC32Utils.ComputeCRC32(outputReportPacket, DualSense.Out.BtCrcCalculateLength);
         byte[] checksumBytes = BitConverter.GetBytes(crc);
         Array.Copy(checksumBytes, 0, outputReportPacket, DualSense.Out.BtCrcCalculateLength,
