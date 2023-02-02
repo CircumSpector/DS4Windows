@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace Vapour.Shared.Common.Util;
 
@@ -40,12 +41,11 @@ public static class BitHelpers
         return (int)((value >> offset) & BitCountConversions[count]);
     }
 
-    public static byte[] StructToByte<T>(this T value, int length)
+    public static byte[] StructToBytes<T>(this T value)
     where T : struct
     {
-        Span<byte> span = stackalloc byte[length];
-        MemoryMarshal.Write(span, ref value);
-        var array = span.ToArray();
-        return array;
+        var span = MemoryMarshal.CreateReadOnlySpan(ref value, 1);
+        var bytesSpan = MemoryMarshal.Cast<T, byte>(span);
+        return bytesSpan.ToArray();
     }
 }

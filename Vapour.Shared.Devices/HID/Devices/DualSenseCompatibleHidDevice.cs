@@ -1,8 +1,10 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.DirectoryServices.ActiveDirectory;
+using System.Runtime.InteropServices;
 using System.Windows.Media;
 
 using Microsoft.Extensions.Logging;
 
+using Vapour.Shared.Common.Util;
 using Vapour.Shared.Devices.HID.DeviceInfos;
 using Vapour.Shared.Devices.HID.Devices.Reports;
 using Vapour.Shared.Devices.HID.InputTypes.DualSense;
@@ -67,12 +69,10 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
     {
         var reportData = new OutputReportData
         {
-            Config1 = DualSense.Out.Config1.EnableRumbleEmulation | DualSense.Out.Config1.UseRumbleNotHaptics,
-            RumbleData = new RumbleData
-            {
-                LeftMotor = outputDeviceReport.StrongMotor, RightMotor = outputDeviceReport.WeakMotor
-            }
+            Config1 = DualSense.Out.Config1.EnableRumbleEmulation | DualSense.Out.Config1.UseRumbleNotHaptics
         };
+        reportData.RumbleData.LeftMotor = outputDeviceReport.StrongMotor;
+        reportData.RumbleData.RightMotor = outputDeviceReport.WeakMotor;
 
         SendReport(reportData);
     }
@@ -84,7 +84,7 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
             Config2 = DualSense.Out.Config2.AllowLedColor | DualSense.Out.Config2.AllowPlayerIndicators
         };
         reportData.LedData.SetPlayerNumber(CurrentConfiguration.PlayerNumber);
-        reportData.LedData.PlayerLedBrightness = DualSense.Out.PlayeLedBrightness.Medium;
+        reportData.LedData.PlayerLedBrightness = DualSense.Out.PlayerLedBrightness.Medium;
 
         if (CurrentConfiguration.LoadedLightbar != null)
         {
@@ -108,12 +108,13 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
         if (Connection == ConnectionType.Usb)
         {
             var report = new UsbOutputReport { ReportData = reportData };
-            bytes = report.GetBytes(SourceDevice.OutputReportByteLength);
+            bytes = report.StructToBytes();
         }
         else if (Connection == ConnectionType.Bluetooth)
         {
             var report = new BtOutputReport { ReportData = reportData };
-            bytes = report.GetBytes(SourceDevice.OutputReportByteLength);
+            bytes = report.StructToBytes();
+            bytes.SetCrcData(DualSense.Out.BtCrcCalculateLength);
         }
 
         if (bytes != null)

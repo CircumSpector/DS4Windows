@@ -48,4 +48,11 @@ public static class CRC32Utils
             hashResult = ChecksumTableCRC32[(hashResult & 0xFF) ^ byteData[i]] ^ (hashResult >> 8);
         return hashResult;
     }
+
+    public static void SetCrcData(this byte[] data, int calculateLength)
+    {
+        uint crc = ComputeCRC32(data, calculateLength);
+        byte[] checksumBytes = BitConverter.GetBytes(crc);
+        Array.Copy(checksumBytes, 0, data, calculateLength, 4);
+    }
 }

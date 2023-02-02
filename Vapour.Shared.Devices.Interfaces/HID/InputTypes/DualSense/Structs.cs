@@ -5,7 +5,7 @@ using Vapour.Shared.Common.Util;
 
 namespace Vapour.Shared.Devices.HID.InputTypes.DualSense;
 
-[StructLayout(LayoutKind.Sequential, Pack = 1)]
+[StructLayout(LayoutKind.Sequential, Pack = 1, Size = DualSense.Out.UsbReportLength)]
 public struct UsbOutputReport
 {
     public UsbOutputReport()
@@ -14,16 +14,11 @@ public struct UsbOutputReport
     }
 
     public byte ReportId = DualSense.Out.UsbReportId;
-    public OutputReportData ReportData = new();
-
-    public byte[] GetBytes(int length)
-    {
-        return this.StructToByte(length);
-    }
+    public OutputReportData ReportData;
 }
 
 
-[StructLayout(LayoutKind.Sequential, Pack = 1)]
+[StructLayout(LayoutKind.Sequential, Pack = 1, Size = DualSense.Out.BtReportLength)]
 public struct BtOutputReport
 {
     public BtOutputReport()
@@ -32,18 +27,8 @@ public struct BtOutputReport
     }
 
     public byte ReportId = DualSense.Out.BtReportId;
-    public byte ExtraConfig = DualSense.Out.BtExtraConfig.EnableHid;
-    public OutputReportData ReportData = new();
-
-    public byte[] GetBytes(int length)
-    {
-        var outputReportPacket = this.StructToByte(length);
-        uint crc = CRC32Utils.ComputeCRC32(outputReportPacket, DualSense.Out.BtCrcCalculateLength);
-        byte[] checksumBytes = BitConverter.GetBytes(crc);
-        Array.Copy(checksumBytes, 0, outputReportPacket, DualSense.Out.BtCrcCalculateLength,
-            DualSense.Out.BtCrcDataLength);
-        return outputReportPacket;
-    }
+    public DualSense.Out.BtExtraConfig ExtraConfig = DualSense.Out.BtExtraConfig.EnableHid;
+    public OutputReportData ReportData;
 }
 
 [StructLayout(LayoutKind.Explicit, Pack=1)]
@@ -54,8 +39,8 @@ public struct OutputReportData
         
     }
 
-    [FieldOffset(DualSense.Out.Config1Index)] public byte Config1;
-    [FieldOffset(DualSense.Out.Config2Index)] public byte Config2;
+    [FieldOffset(DualSense.Out.Config1Index)] public DualSense.Out.Config1 Config1;
+    [FieldOffset(DualSense.Out.Config2Index)] public DualSense.Out.Config2 Config2;
     [FieldOffset(DualSense.Out.RumbleOffset)] public RumbleData RumbleData = new();
 
     [FieldOffset(DualSense.Out.LedOffset)]
@@ -72,15 +57,15 @@ public struct RumbleData
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
 public struct LedData
 {
-    public byte PlayerLedBrightness;
-    private byte _playerLed;
+    public DualSense.Out.PlayerLedBrightness PlayerLedBrightness;
+    private DualSense.Out.PlayerLedLights _playerLed;
     private byte _ledR;
     private byte _ledG;
     private byte _ledB;
 
     public void SetPlayerNumber(int playerNumber)
     {
-        byte playerLed = playerNumber switch
+        var playerLed = playerNumber switch
         {
             1 => DualSense.Out.PlayerLedLights.Player1,
             2 => DualSense.Out.PlayerLedLights.Player2,
@@ -89,7 +74,7 @@ public struct LedData
             _ => DualSense.Out.PlayerLedLights.None
         };
 
-        _playerLed = (byte)(playerLed | DualSense.Out.PlayerLedLights.PlayerLightsFade);
+        _playerLed = playerLed | DualSense.Out.PlayerLedLights.PlayerLightsFade;
     }
 
     public void SetLightbarColor(Color lightbarColor)

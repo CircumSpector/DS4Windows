@@ -29,79 +29,83 @@ public static class DualSense
 
     public static class Out
     {
+        public const int UsbReportLength = 64;
+        public const int BtReportLength = 547;
         public const byte UsbReportId = 0x02;
         public const byte BtReportId = 0x31;
         public const byte BtCrcCalculateLength = 74;
-        public const byte BtCrcDataLength = 4;
 
         public const byte Config1Index = 0;
         public const byte Config2Index = 1;
         public const byte RumbleOffset = 2;
         public const byte LedOffset = 42;
 
-        public static class Config1
+        [Flags]
+        public enum Config1 : byte
         {
-            public const byte EnableRumbleEmulation = 0x01;
-            public const byte UseRumbleNotHaptics = 0x02;
-            public const byte AllowRightTriggerFFB = 0x04;
-            public const byte AllowLeftTriggerFFB = 0x08;
-            public const byte AllowHeadphoneVolume = 0x10;
-            public const byte AllowSpeakerVolume = 0x20;
-            public const byte AllowMicVolume = 0x40;
-            public const byte AllowAudioControl = 0x80;
+            EnableRumbleEmulation = 0x01,
+            UseRumbleNotHaptics = 0x02,
+            AllowRightTriggerFFB = 0x04,
+            AllowLeftTriggerFFB = 0x08,
+            AllowHeadphoneVolume = 0x10,
+            AllowSpeakerVolume = 0x20,
+            AllowMicVolume = 0x40,
+            AllowAudioControl = 0x80,
 
-            public const byte All = EnableRumbleEmulation | UseRumbleNotHaptics | AllowRightTriggerFFB |
+            All = EnableRumbleEmulation | UseRumbleNotHaptics | AllowRightTriggerFFB |
                                     AllowLeftTriggerFFB | AllowHeadphoneVolume | AllowSpeakerVolume |
-                                    AllowMicVolume | AllowAudioControl;
+                                    AllowMicVolume | AllowAudioControl
         }
 
-        public static class Config2
+        [Flags]
+        public enum Config2 : byte
         {
-            public const byte AllowMuteLight = 0x01;
-            public const byte AllowAudioMute = 0x02;
-            public const byte AllowLedColor = 0x04;
-            public const byte ResetLights = 0x08;
-            public const byte AllowPlayerIndicators = 0x10;
-            public const byte AllowHapticLowPassFilter = 0x20;
-            public const byte AllowMotorPowerLevel = 0x40;
+            AllowMuteLight = 0x01,
+            AllowAudioMute = 0x02,
+            AllowLedColor = 0x04,
+            ResetLights = 0x08,
+            AllowPlayerIndicators = 0x10,
+            AllowHapticLowPassFilter = 0x20,
+            AllowMotorPowerLevel = 0x40,
+            AllowAudioControl2 = 0x80,
 
-            public const byte AllowAudioControl2 = 0x80;
-
-            public const byte All = AllowMuteLight | AllowAudioMute | AllowLedColor | AllowPlayerIndicators |
-                                     AllowHapticLowPassFilter | AllowMotorPowerLevel | AllowAudioControl2 | ResetLights;
+            All = AllowMuteLight | AllowAudioMute | AllowLedColor | AllowPlayerIndicators |
+                                     AllowHapticLowPassFilter | AllowMotorPowerLevel | AllowAudioControl2 | ResetLights
         }
         
-        public static class BtExtraConfig
+        [Flags]
+        public enum BtExtraConfig : byte
         {
-            public const byte Unknown1 = 0x01;
-            public const byte EnableHid = 0x02;
-            public const byte Unknown2 = 0x04;
-            public const byte Unknown3 = 0x08;
+            Unknown1 = 0x01,
+            EnableHid = 0x02,
+            Unknown2 = 0x04,
+            Unknown3 = 0x08
         }
 
-        public static class PlayeLedBrightness
+        public enum PlayerLedBrightness : byte
         {
-            public const byte Bright = 0x01;
-            public const byte Medium = 0x02;
-            public const byte Dim = 0x04;
+            Bright = 0x01,
+            Medium = 0x02,
+            Dim = 0x04,
         }
 
+        [Flags]
         [SuppressMessage("ReSharper", "UnusedMember.Local")]
-        public static class PlayerLedLights
+        public enum PlayerLedLights : byte
         {
-            public const byte None = 0x00;
-            public const byte Left = 0x01;
-            public const byte MiddleLeft = 0x02;
-            public const byte Middle = 0x04;
-            public const byte MiddleRight = 0x08;
-            public const byte Right = 0x10;
-            public const byte Player1 = Middle;
-            public const byte Player2 = MiddleLeft | MiddleRight;
-            public const byte Player3 = Left | Middle | Right;
-            public const byte Player4 = Left | MiddleLeft | MiddleRight | Right;
-            public const byte All = Left | MiddleLeft | Middle | MiddleRight | Right;
+            None = 0x00,
+            Left = 0x01,
+            MiddleLeft = 0x02,
+            Middle = 0x04,
+            MiddleRight = 0x08,
+            Right = 0x10,
+            Player1 = Middle,
+            Player2 = MiddleLeft | MiddleRight,
+            Player3 = Left | Middle | Right,
+            Player4 = Left | MiddleLeft | MiddleRight | Right,
+            All = Left | MiddleLeft | Middle | MiddleRight | Right,
 
-            public const byte PlayerLightsFade = 0x20;
+            PlayerLightsFade = 0x20
         }
     }
     
