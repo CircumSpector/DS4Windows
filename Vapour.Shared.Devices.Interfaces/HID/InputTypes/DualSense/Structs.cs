@@ -5,6 +5,8 @@ using Vapour.Shared.Common.Util;
 
 namespace Vapour.Shared.Devices.HID.InputTypes.DualSense;
 
+#region Output Report
+
 [StructLayout(LayoutKind.Sequential, Pack = 1, Size = DualSense.Out.UsbReportLength)]
 public struct UsbOutputReport
 {
@@ -84,6 +86,40 @@ public struct LedData
         _ledB = lightbarColor.B;
     }
 }
+#endregion
+
+#region Input Report
+
+[StructLayout(LayoutKind.Explicit, Pack = 1)]
+public struct InputReportData
+{
+    [FieldOffset(DualSense.In.SticksAndTriggersOffSet)]
+    public SticksAndTriggers SticksAndTriggers;
+    [FieldOffset(DualSense.In.ButtonsOffset)]
+    public Buttons Buttons;
+    [FieldOffset(DualSense.In.TouchDataOffset)]
+    public TouchData TouchData;
+}
+
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public struct SticksAndTriggers
+{
+    public byte LeftStickX;
+    public byte LeftStickY;
+    public byte RightStickX;
+    public byte RightStickY;
+    public byte TriggerLeft;
+    public byte TriggerRight;
+}
+
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public struct Buttons
+{
+    public DPadDirection DPad => (DPadDirection)((byte)Buttons1).GetBitsAsByte(0, 4);
+    public DualSense.In.DualSenseButtons1 Buttons1;
+    public DualSense.In.DualSenseButtons2 Buttons2;
+    public DualSense.In.DualSenseButtons3 Buttons3;
+}
 
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
 public struct TouchData
@@ -113,9 +149,10 @@ public struct TouchData
 public readonly struct TouchFingerData
 {
     private readonly uint _data;
-
+    public byte RawTrackingNumber => _data.GetBitsAsByte(0, 8);
     public byte Index => _data.GetBitsAsByte(0, 7);
     public bool IsActive => _data.GetBitsAsByte(7, 1) == 0;
     public short FingerX => _data.GetBitsAsShort(8, 12);
     public short FingerY => _data.GetBitsAsShort(20, 12);
 }
+#endregion

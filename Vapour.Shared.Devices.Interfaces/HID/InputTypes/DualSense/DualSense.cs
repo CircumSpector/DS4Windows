@@ -12,19 +12,46 @@ public static class DualSense
         public const byte BtReportDataOffset = 2;
 
         public const byte ReportIdIndex = 0;
-        public const byte LeftThumbXIndex = 0;
-        public const byte LeftThumbYIndex = 1;
-        public const byte RightThumbXIndex = 2;
-        public const byte RightThumbYIndex = 3;
-        public const byte LeftTriggerIndex = 4;
-        public const byte RightTriggerIndex = 5;
-        public const byte Buttons1Index = 7;
-        public const byte Buttons2Index = 8;
-        public const byte Buttons3Index = 9;
+        public const byte SticksAndTriggersOffSet = 0;
+        public const byte ButtonsOffset = 7;
 
-        public const byte Touch1Index = 32;
-        public const byte Touch2Index = 36;
-        public const byte TouchDataLength = 9;
+        public const byte TouchDataOffset = 32;
+
+
+        [Flags]
+        public enum DualSenseButtons1 : byte
+        {
+            Square = 0x10,
+            Cross = 0x20,
+            Circle = 0x40,
+            Triangle = 0x80
+        }
+
+        [Flags]
+        public enum DualSenseButtons2 : byte
+        {
+            L1 = 0x01,
+            R1 = 0x02,
+            L2 = 0x04,
+            R2 = 0x08,
+            Create = 0x10,
+            Options = 0x20,
+            L3 = 0x40,
+            R3 = 0x80
+        }
+
+        [Flags]
+        public enum DualSenseButtons3 : byte
+        {
+            Home = 0x01,
+            Pad = 0x02,
+            Mute = 0x04,
+            LFunction = 0x08,
+            RFunction = 0x10,
+            LPaddle = 0x20,
+            RPaddle = 0x40,
+            Unknown = 0x80
+        }
     }
 
     public static class Out
