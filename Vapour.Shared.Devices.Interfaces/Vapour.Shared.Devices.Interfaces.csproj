@@ -30,4 +30,8 @@
 		<ProjectReference Include="..\Vapour.Shared.Configuration.Profiles.Interfaces\Vapour.Shared.Configuration.Profiles.Interfaces.csproj" />
 	</ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="HID\InputTypes\Xbox\Out\" />
+    </ItemGroup>
+
 </Project>

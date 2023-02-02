@@ -9,6 +9,10 @@ using Microsoft.Extensions.Logging;
 using Vapour.Shared.Devices.HID.DeviceInfos;
 using Vapour.Shared.Devices.HID.DeviceInfos.Meta;
 using Vapour.Shared.Devices.HID.Devices.Reports;
+using Vapour.Shared.Devices.HID.InputTypes.Xbox;
+using Vapour.Shared.Devices.HID.InputTypes.Xbox.Feature;
+using Vapour.Shared.Devices.HID.InputTypes.Xbox.In;
+using Vapour.Shared.Devices.HID.InputTypes.Xbox.Out;
 using Vapour.Shared.Devices.Services.Reporting;
 using Vapour.Shared.Devices.Util;
 
@@ -19,15 +23,11 @@ namespace Vapour.Shared.Devices.HID.Devices;
 /// </summary>
 public sealed class XboxCompositeCompatibleHidDevice : CompatibleHidDevice
 {
-    private const byte SerialFeatureId = 0x03;
-
-    private const uint IoctlXinputBase = 0x8000;
-
-    private static readonly uint IoctlXusbGetState = IoControlCodes.CTL_CODE(IoctlXinputBase, 0x803,
+    private static readonly uint IoctlXusbGetState = IoControlCodes.CTL_CODE(CommonConstants.IoctlXinputBase, InConstants.GetState,
         PInvoke.METHOD_BUFFERED,
         FILE_ACCESS_FLAGS.FILE_READ_DATA | FILE_ACCESS_FLAGS.FILE_WRITE_DATA);
 
-    private static readonly uint IoctlXusbSetState = IoControlCodes.CTL_CODE(IoctlXinputBase, 0x804,
+    private static readonly uint IoctlXusbSetState = IoControlCodes.CTL_CODE(CommonConstants.IoctlXinputBase, OutConstants.SetState,
         PInvoke.METHOD_BUFFERED, FILE_ACCESS_FLAGS.FILE_WRITE_DATA);
 
     private readonly AutoResetEvent _readEvent = new(false);
@@ -46,10 +46,10 @@ public sealed class XboxCompositeCompatibleHidDevice : CompatibleHidDevice
 
     protected override void OnInitialize()
     {
-        Serial = ReadSerial(SerialFeatureId);
+        Serial = ReadSerial(FeatureConstants.SerialFeatureId);
 
         //The input report byte length returned by standard hid caps is incorrect
-        SourceDevice.InputReportByteLength = 29;
+        SourceDevice.InputReportByteLength = InConstants.InputReportLength;
 
         if (Serial is null)
         {
@@ -103,7 +103,7 @@ public sealed class XboxCompositeCompatibleHidDevice : CompatibleHidDevice
         {
             BOOL ret;
 
-            fixed (byte* bytesIn = stackalloc byte[] { 0x01, 0x01, 0x00 })
+            fixed (byte* bytesIn = stackalloc byte[] { 0x01, 0x01, 0x00 }) // any way to use InConstants.GetReportCode?
             {
                 ret = PInvoke.DeviceIoControl(
                     SourceDevice.Handle,
