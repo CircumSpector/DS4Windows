@@ -11,7 +11,7 @@ public class XboxCompatibleInputReport : InputSourceReport
 
     public override void Parse(ReadOnlySpan<byte> input)
     {
-        var inputReportData = MemoryMarshal.AsRef<InputReportData>(input.Slice(11));
+        var inputReportData = MemoryMarshal.AsRef<InputReportData>(input.Slice(InConstants.InputReportDataOffset));
        
         Triangle = inputReportData.Buttons.HasFlag(XboxButtons.Y);
         Circle = inputReportData.Buttons.HasFlag(XboxButtons.B);

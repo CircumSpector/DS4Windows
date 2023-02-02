@@ -59,6 +59,11 @@ public sealed class XboxCompositeCompatibleHidDevice : CompatibleHidDevice
         Logger.LogInformation("Got serial {Serial} for {Device}", Serial, this);
     }
 
+    public override void OnAfterStartListening()
+    {
+        //TODO: set any other initial state configurations we might be missing
+    }
+
     public override unsafe void OutputDeviceReportReceived(OutputDeviceReport outputDeviceReport)
     {
         NativeOverlapped overlapped = new() { EventHandle = _writeEvent.SafeWaitHandle.DangerousGetHandle() };
@@ -91,6 +96,11 @@ public sealed class XboxCompositeCompatibleHidDevice : CompatibleHidDevice
         {
             throw new HidDeviceException("GetOverlappedResult on input report failed.");
         }
+    }
+
+    public override void SetPlayerLedAndColor()
+    {
+        //TODO: update player number and led color from CurrentConfiguration.PlayerNumber and CurrentConfiguration.LoadedLightbar
     }
 
     public override unsafe int ReadInputReport(Span<byte> buffer)
