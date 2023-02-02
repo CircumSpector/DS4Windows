@@ -2,6 +2,7 @@
 
 using Vapour.Shared.Devices.HID.InputTypes;
 using Vapour.Shared.Devices.HID.InputTypes.DualSense;
+using Vapour.Shared.Devices.HID.InputTypes.DualSense.In;
 
 namespace Vapour.Shared.Devices.HID.Devices.Reports;
 
@@ -13,7 +14,7 @@ public sealed class DualSenseCompatibleInputReport : DualShock4CompatibleInputRe
 
     public override void Parse(ReadOnlySpan<byte> input)
     {
-        ReportId = input[DualSense.In.ReportIdIndex];
+        ReportId = input[InConstants.ReportIdIndex];
         
         input = input.Slice(ReportDataStartIndex);
 
@@ -26,25 +27,25 @@ public sealed class DualSenseCompatibleInputReport : DualShock4CompatibleInputRe
         LeftTrigger = reportData.SticksAndTriggers.TriggerLeft;
         RightTrigger = reportData.SticksAndTriggers.TriggerRight;
         
-        Triangle = reportData.Buttons.Buttons1.HasFlag(DualSense.In.DualSenseButtons1.Triangle);
-        Circle = reportData.Buttons.Buttons1.HasFlag(DualSense.In.DualSenseButtons1.Circle);
-        Cross = reportData.Buttons.Buttons1.HasFlag(DualSense.In.DualSenseButtons1.Cross);
-        Square = reportData.Buttons.Buttons1.HasFlag(DualSense.In.DualSenseButtons1.Square);
+        Triangle = reportData.Buttons.Buttons1.HasFlag(DualSenseButtons1.Triangle);
+        Circle = reportData.Buttons.Buttons1.HasFlag(DualSenseButtons1.Circle);
+        Cross = reportData.Buttons.Buttons1.HasFlag(DualSenseButtons1.Cross);
+        Square = reportData.Buttons.Buttons1.HasFlag(DualSenseButtons1.Square);
 
         DPad = reportData.Buttons.DPad;
 
-        LeftThumb = reportData.Buttons.Buttons2.HasFlag(DualSense.In.DualSenseButtons2.L3);
-        RightThumb = reportData.Buttons.Buttons2.HasFlag(DualSense.In.DualSenseButtons2.R3);
-        Options = reportData.Buttons.Buttons2.HasFlag(DualSense.In.DualSenseButtons2.Options);
-        Share = reportData.Buttons.Buttons2.HasFlag(DualSense.In.DualSenseButtons2.Create);
-        RightTriggerButton = reportData.Buttons.Buttons2.HasFlag(DualSense.In.DualSenseButtons2.R2);
-        LeftTriggerButton = reportData.Buttons.Buttons2.HasFlag(DualSense.In.DualSenseButtons2.L2);
-        RightShoulder = reportData.Buttons.Buttons2.HasFlag(DualSense.In.DualSenseButtons2.R1);
-        LeftShoulder = reportData.Buttons.Buttons2.HasFlag(DualSense.In.DualSenseButtons2.L1);
+        LeftThumb = reportData.Buttons.Buttons2.HasFlag(DualSenseButtons2.L3);
+        RightThumb = reportData.Buttons.Buttons2.HasFlag(DualSenseButtons2.R3);
+        Options = reportData.Buttons.Buttons2.HasFlag(DualSenseButtons2.Options);
+        Share = reportData.Buttons.Buttons2.HasFlag(DualSenseButtons2.Create);
+        RightTriggerButton = reportData.Buttons.Buttons2.HasFlag(DualSenseButtons2.R2);
+        LeftTriggerButton = reportData.Buttons.Buttons2.HasFlag(DualSenseButtons2.L2);
+        RightShoulder = reportData.Buttons.Buttons2.HasFlag(DualSenseButtons2.R1);
+        LeftShoulder = reportData.Buttons.Buttons2.HasFlag(DualSenseButtons2.L1);
 
-        PS = reportData.Buttons.Buttons3.HasFlag(DualSense.In.DualSenseButtons3.Home);
-        TouchClick = reportData.Buttons.Buttons3.HasFlag(DualSense.In.DualSenseButtons3.Pad);
-        Mute = reportData.Buttons.Buttons3.HasFlag(DualSense.In.DualSenseButtons3.Mute);
+        PS = reportData.Buttons.Buttons3.HasFlag(DualSenseButtons3.Home);
+        TouchClick = reportData.Buttons.Buttons3.HasFlag(DualSenseButtons3.Pad);
+        Mute = reportData.Buttons.Buttons3.HasFlag(DualSenseButtons3.Mute);
 
         var touchData = reportData.TouchData;
 
