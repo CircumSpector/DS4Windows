@@ -1,4 +1,4 @@
-﻿namespace Vapour.Shared.Devices.HID.InputTypes.JoyCon;
+﻿namespace Vapour.Shared.Devices.HID.InputTypes.JoyCon.In;
 
 [Flags]
 public enum JoyConButtonsLeft : byte

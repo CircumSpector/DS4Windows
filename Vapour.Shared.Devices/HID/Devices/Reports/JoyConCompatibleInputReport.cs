@@ -1,5 +1,8 @@
-﻿using Vapour.Shared.Devices.HID.InputTypes;
+﻿using System.Runtime.InteropServices;
+
+using Vapour.Shared.Devices.HID.InputTypes;
 using Vapour.Shared.Devices.HID.InputTypes.JoyCon;
+using Vapour.Shared.Devices.HID.InputTypes.JoyCon.In;
 using Vapour.Shared.Devices.Services.Configuration;
 
 namespace Vapour.Shared.Devices.HID.Devices.Reports;
@@ -18,15 +21,17 @@ public sealed class JoyConCompatibleInputReport : InputSourceReport
     /// <inheritdoc />
     public override void Parse(ReadOnlySpan<byte> input)
     {
-        SetButtons(input);
-        SetSticks(input);
+        var inputReportData = MemoryMarshal.AsRef<InputReportData>(input.Slice(InConstants.InputReportDataOffset));
+
+        SetButtons(inputReportData);
+        SetSticks(inputReportData);
     }
 
-    private void SetButtons(ReadOnlySpan<byte> buttonData)
+    private void SetButtons(InputReportData reportData)
     {
-        JoyConButtonsShared sharedButtons = (JoyConButtonsShared)buttonData[4];
-        JoyConButtonsLeft leftButtons = (JoyConButtonsLeft)buttonData[5];
-        JoyConButtonsRight rightButtons = (JoyConButtonsRight)buttonData[3];
+        var sharedButtons = reportData.SharedButtons;
+        var leftButtons = reportData.LeftButtons;
+        var rightButtons = reportData.RightButtons;
 
         if (MultiControllerConfigurationType != MultiControllerConfigurationType.None)
         {
@@ -36,7 +41,7 @@ public sealed class JoyConCompatibleInputReport : InputSourceReport
                 Share = sharedButtons.HasFlag(JoyConButtonsShared.Minus);
                 LeftThumb = sharedButtons.HasFlag(JoyConButtonsShared.LStick);
                 LeftShoulder = leftButtons.HasFlag(JoyConButtonsLeft.L1);
-                LeftTrigger = leftButtons.HasFlag(JoyConButtonsLeft.L2) ? byte.MaxValue : byte.MinValue;
+                LeftTrigger = reportData.LeftTrigger;
             }
             else
             {
@@ -47,7 +52,7 @@ public sealed class JoyConCompatibleInputReport : InputSourceReport
                 Square = rightButtons.HasFlag(JoyConButtonsRight.X);
                 Triangle = rightButtons.HasFlag(JoyConButtonsRight.Y);
                 RightShoulder = rightButtons.HasFlag(JoyConButtonsRight.R1);
-                RightTrigger = rightButtons.HasFlag(JoyConButtonsRight.R2) ? byte.MaxValue : byte.MinValue;
+                RightTrigger = reportData.RightTrigger;
             }
         }
         else
@@ -57,9 +62,9 @@ public sealed class JoyConCompatibleInputReport : InputSourceReport
                 Options = sharedButtons.HasFlag(JoyConButtonsShared.Capture);
                 Share = sharedButtons.HasFlag(JoyConButtonsShared.Minus);
                 LeftShoulder = leftButtons.HasFlag(JoyConButtonsLeft.SL);
-                LeftTrigger = leftButtons.HasFlag(JoyConButtonsLeft.L1) ? byte.MaxValue : byte.MinValue;
+                LeftTrigger = reportData.L1AsTrigger;
                 RightShoulder = leftButtons.HasFlag(JoyConButtonsLeft.SR);
-                RightTrigger = leftButtons.HasFlag(JoyConButtonsLeft.L2) ? byte.MaxValue : byte.MinValue;
+                RightTrigger = reportData.LeftTrigger;
                 Cross = leftButtons.HasFlag(JoyConButtonsLeft.DpadDown);
                 Circle = leftButtons.HasFlag(JoyConButtonsLeft.DpadLeft);
                 Square = leftButtons.HasFlag(JoyConButtonsLeft.DpadRight);
@@ -70,9 +75,9 @@ public sealed class JoyConCompatibleInputReport : InputSourceReport
                 Options = sharedButtons.HasFlag(JoyConButtonsShared.Plus);
                 Share = sharedButtons.HasFlag(JoyConButtonsShared.Home);
                 LeftShoulder = rightButtons.HasFlag(JoyConButtonsRight.SL);
-                LeftTrigger = rightButtons.HasFlag(JoyConButtonsRight.R1) ? byte.MaxValue : byte.MinValue;
+                LeftTrigger = reportData.R1AsTrigger;
                 RightShoulder = rightButtons.HasFlag(JoyConButtonsRight.SR);
-                RightTrigger = rightButtons.HasFlag(JoyConButtonsRight.R2) ? byte.MaxValue : byte.MinValue;
+                RightTrigger = reportData.RightTrigger;
                 Cross = rightButtons.HasFlag(JoyConButtonsRight.X);
                 Circle = rightButtons.HasFlag(JoyConButtonsRight.A);
                 Square = rightButtons.HasFlag(JoyConButtonsRight.Y);
@@ -81,17 +86,17 @@ public sealed class JoyConCompatibleInputReport : InputSourceReport
         }
     }
 
-    private void SetSticks(ReadOnlySpan<byte> input)
+    private void SetSticks(InputReportData reportData)
     {
         if (IsLeft)
         {
-            SetStick(input.Slice(6, 3));
+            SetStick(reportData.LeftAxis1, reportData.LeftAxis2, reportData.LeftAxis3);
             LeftThumbX = _finalStickData[0];
             LeftThumbY = _finalStickData[1];
         }
         else
         {
-            SetStick(input.Slice(9, 3));
+            SetStick(reportData.RightAxis1, reportData.RightAxis2, reportData.RightAxis3);
 
             if (MultiControllerConfigurationType == MultiControllerConfigurationType.None)
             {
@@ -106,10 +111,10 @@ public sealed class JoyConCompatibleInputReport : InputSourceReport
         }
     }
 
-    private void SetStick(ReadOnlySpan<byte> stickData)
+    private void SetStick(byte axis1, byte axis2, byte axis3)
     {
-        ushort tempX = (ushort)(stickData[0] | ((stickData[1] & 0xf) << 8));
-        ushort tempY = (ushort)((stickData[1] >> 4) | (stickData[2] << 4));
+        ushort tempX = (ushort)(axis1 | ((axis2 & 0xf) << 8));
+        ushort tempY = (ushort)((axis2 >> 4) | (axis3 << 4));
 
         CenterSticks(tempX, tempY);
 
