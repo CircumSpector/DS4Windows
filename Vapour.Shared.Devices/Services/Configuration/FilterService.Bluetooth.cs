@@ -1,6 +1,5 @@
 ﻿using System.Net.NetworkInformation;
 
-using Windows.Win32.Devices.DeviceAndDriverInstallation;
 using Windows.Win32.Foundation;
 
 using Microsoft.Extensions.Logging;
@@ -11,7 +10,6 @@ using Nefarius.Utilities.DeviceManagement.PnP;
 
 using Vapour.Shared.Common.Util;
 using Vapour.Shared.Devices.HID;
-using Nefarius.Utilities.DeviceManagement.Exceptions;
 
 namespace Vapour.Shared.Devices.Services.Configuration;
 
@@ -58,7 +56,7 @@ public partial class FilterService
         // overwrite patched record
         bthDevice.CachedServices = patched;
 
-        ResetDevice(ct, bthDevice, parentDevice);
+        ResetDevice(bthDevice, parentDevice, ct);
     }
 
     /// <summary>
@@ -85,10 +83,10 @@ public partial class FilterService
         bthDevice.CachedServices = bthDevice.OriginalCachedServices;
         bthDevice.DeleteOriginalCachedServices();
 
-        ResetDevice(ct, bthDevice, parentDevice);
+        ResetDevice(bthDevice, parentDevice, ct);
     }
 
-    private void ResetDevice(CancellationToken ct, BthPortDevice bthDevice, PnPDevice parentDevice)
+    private static void ResetDevice(BthPortDevice bthDevice, PnPDevice parentDevice, CancellationToken ct)
     {
         try
         {
@@ -104,8 +102,8 @@ public partial class FilterService
             }
         }
 
-        //disable in a separate task and continue
-        Task.Run(parentDevice.Disable);
+        // disable in a separate task and continue
+        _ = Task.Run(parentDevice.Disable, ct);
 
         //int maxRetries = 5;
 
