@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using Vapour.Shared.Common.Util;
 using Vapour.Shared.Devices.HID.DeviceInfos;
 using Vapour.Shared.Devices.HID.Devices.Reports;
-using Vapour.Shared.Devices.HID.InputTypes.DualSense;
 using Vapour.Shared.Devices.HID.InputTypes.DualSense.Feature;
 using Vapour.Shared.Devices.HID.InputTypes.DualSense.In;
 using Vapour.Shared.Devices.HID.InputTypes.DualSense.Out;

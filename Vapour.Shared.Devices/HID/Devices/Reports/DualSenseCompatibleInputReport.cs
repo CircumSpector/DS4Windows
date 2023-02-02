@@ -1,7 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
 using Vapour.Shared.Devices.HID.InputTypes;
-using Vapour.Shared.Devices.HID.InputTypes.DualSense;
 using Vapour.Shared.Devices.HID.InputTypes.DualSense.In;
 
 namespace Vapour.Shared.Devices.HID.Devices.Reports;
