@@ -31,6 +31,7 @@
 	</ItemGroup>
 
     <ItemGroup>
+      <Folder Include="HID\InputTypes\SteamDeck\In\" />
       <Folder Include="HID\InputTypes\Xbox\Out\" />
     </ItemGroup>
 
