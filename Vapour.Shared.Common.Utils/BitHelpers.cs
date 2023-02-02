@@ -1,4 +1,6 @@
-﻿namespace Vapour.Shared.Common.Util;
+﻿using System.Runtime.InteropServices;
+
+namespace Vapour.Shared.Common.Util;
 
 public static class BitHelpers
 {
@@ -36,5 +38,25 @@ public static class BitHelpers
     public static int GetBitsAsInt(this uint value, byte offset, byte count)
     {
         return (int)((value >> offset) & BitCountConversions[count]);
+    }
+
+    public static byte[] StructToByte(object value, int length)
+    {
+        int size = length;
+        byte[] arr = new byte[size];
+
+        IntPtr ptr = IntPtr.Zero;
+        try
+        {
+            ptr = Marshal.AllocHGlobal(size);
+            Marshal.StructureToPtr(value, ptr, true);
+            Marshal.Copy(ptr, arr, 0, size);
+        }
+        finally
+        {
+            Marshal.FreeHGlobal(ptr);
+        }
+
+        return arr;
     }
 }

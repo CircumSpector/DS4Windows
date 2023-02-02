@@ -29,27 +29,15 @@ public static class DualSense
 
     public static class Out
     {
-        public const byte ReportDataLength = 47;
         public const byte UsbReportId = 0x02;
         public const byte BtReportId = 0x31;
-        public const byte BtCommandCountMax = 0xF0;
         public const byte BtCrcCalculateLength = 74;
         public const byte BtCrcDataLength = 4;
 
-        public const byte ReportIdIndex = 0;
-        public const byte BtExtraConfigIndex = 1;
-        public const byte UsbReportDataOffset = 1;
-        public const byte BtReportDataOffset = 2;
-
         public const byte Config1Index = 0;
         public const byte Config2Index = 1;
-        public const byte RumbleLeftIndex = 2;
-        public const byte RumbleRightIndex = 3;
-        public const byte PlayerLedBrightnessIndex = 42;
-        public const byte PlayerLedIndex = 43;
-        public const byte LedRIndex = 44;
-        public const byte LedGIndex = 45;
-        public const byte LedBIndex = 46;
+        public const byte RumbleOffset = 2;
+        public const byte LedOffset = 42;
 
         public static class Config1
         {

@@ -1,8 +1,8 @@
-﻿using System.Windows.Media;
+﻿using System.Runtime.InteropServices;
+using System.Windows.Media;
 
 using Microsoft.Extensions.Logging;
 
-using Vapour.Shared.Common.Util;
 using Vapour.Shared.Devices.HID.DeviceInfos;
 using Vapour.Shared.Devices.HID.Devices.Reports;
 using Vapour.Shared.Devices.HID.InputTypes.DualSense;
@@ -14,7 +14,6 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
 {
     private byte _inputReportId;
     private readonly DualSenseCompatibleInputReport _inputReport;
-    private byte _commandCount;
 
     public DualSenseCompatibleHidDevice(ILogger<DualSenseCompatibleHidDevice> logger, List<DeviceInfo> deviceInfos)
         : base(logger, deviceInfos)
@@ -56,20 +55,43 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
 
     public override void OnAfterStartListening()
     {
-        byte[] reportData = BuildConfigurationReportData();
-        SendOutputReport(BuildOutputReport(reportData));
+        var report = new OutputReportData
+        {
+            Config1 = DualSense.Out.Config1.All, 
+            Config2 = DualSense.Out.Config2.All
+        };
+        SendReport(report);
     }
 
     public override void OutputDeviceReportReceived(OutputDeviceReport outputDeviceReport)
     {
-        byte[] reportData = BuildRumbleReportData(outputDeviceReport.StrongMotor, outputDeviceReport.WeakMotor);
-        SendOutputReport(BuildOutputReport(reportData));
+        var reportData = new OutputReportData
+        {
+            Config1 = DualSense.Out.Config1.EnableRumbleEmulation | DualSense.Out.Config1.UseRumbleNotHaptics,
+            RumbleData = new RumbleData
+            {
+                LeftMotor = outputDeviceReport.StrongMotor, RightMotor = outputDeviceReport.WeakMotor
+            }
+        };
+
+        SendReport(reportData);
     }
 
     public override void SetPlayerLedAndColor()
     {
-        byte[] reportData = BuildLedData();
-        SendOutputReport(BuildOutputReport(reportData));
+        var reportData = new OutputReportData
+        {
+            Config2 = DualSense.Out.Config2.AllowLedColor | DualSense.Out.Config2.AllowPlayerIndicators
+        };
+        reportData.LedData.SetPlayerNumber(CurrentConfiguration.PlayerNumber);
+        reportData.LedData.PlayerLedBrightness = DualSense.Out.PlayeLedBrightness.Medium;
+
+        if (CurrentConfiguration.LoadedLightbar != null)
+        {
+            Color rgb = (Color)ColorConverter.ConvertFromString(CurrentConfiguration.LoadedLightbar);
+            reportData.LedData.SetLightbarColor(rgb);
+        }
+        SendReport(reportData);
     }
 
     public override void ProcessInputReport(ReadOnlySpan<byte> input)
@@ -80,77 +102,23 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
         }
     }
 
-    private byte[] BuildOutputReport(byte[] reportData)
+    private void SendReport(OutputReportData reportData)
     {
-        byte[] outputReportPacket = new byte[SourceDevice.OutputReportByteLength];
+        byte[] bytes = null;
         if (Connection == ConnectionType.Usb)
         {
-            outputReportPacket[DualSense.Out.ReportIdIndex] = DualSense.Out.UsbReportId;
-            Array.Copy(reportData, 0, outputReportPacket, DualSense.Out.UsbReportDataOffset, DualSense.Out.ReportDataLength);
+            var report = new UsbOutputReport { ReportData = reportData };
+            bytes = report.GetBytes(SourceDevice.OutputReportByteLength);
         }
         else if (Connection == ConnectionType.Bluetooth)
         {
-            outputReportPacket[DualSense.Out.ReportIdIndex] = DualSense.Out.BtReportId;
-            outputReportPacket[DualSense.Out.BtExtraConfigIndex] = (byte)(_commandCount | DualSense.Out.BtExtraConfig.EnableHid);
-            _commandCount = (byte)(++_commandCount & DualSense.Out.BtCommandCountMax);
-
-            Array.Copy(reportData, 0, outputReportPacket, DualSense.Out.BtReportDataOffset, DualSense.Out.ReportDataLength);
-            uint crc = CRC32Utils.ComputeCRC32(outputReportPacket, DualSense.Out.BtCrcCalculateLength);
-            byte[] checksumBytes = BitConverter.GetBytes(crc);
-            Array.Copy(checksumBytes, 0, outputReportPacket, DualSense.Out.BtCrcCalculateLength,
-                DualSense.Out.BtCrcDataLength);
+            var report = new BtOutputReport { ReportData = reportData };
+            bytes = report.GetBytes(SourceDevice.OutputReportByteLength);
         }
 
-        return outputReportPacket;
-    }
-
-    private byte[] BuildConfigurationReportData()
-    {
-        byte[] reportData = new byte[DualSense.Out.ReportDataLength];
-
-        reportData[DualSense.Out.Config1Index] = DualSense.Out.Config1.All;
-        reportData[DualSense.Out.Config2Index] = DualSense.Out.Config2.All;
-
-        return reportData;
-    }
-
-    private byte[] BuildRumbleReportData(byte strongMotor, byte weakMotor)
-    {
-        byte[] reportData = new byte[DualSense.Out.ReportDataLength];
-        reportData[DualSense.Out.Config1Index] = DualSense.Out.Config1.EnableRumbleEmulation |
-                                                 DualSense.Out.Config1.UseRumbleNotHaptics;
-        reportData[DualSense.Out.RumbleRightIndex] = weakMotor;
-        reportData[DualSense.Out.RumbleLeftIndex] = strongMotor;
-
-        return reportData;
-    }
-
-    private byte[] BuildLedData()
-    {
-        byte[] reportData = new byte[DualSense.Out.ReportDataLength];
-        reportData[DualSense.Out.Config2Index] = DualSense.Out.Config2.AllowLedColor |
-                                                 DualSense.Out.Config2.AllowPlayerIndicators;
-        reportData[DualSense.Out.PlayerLedBrightnessIndex] = DualSense.Out.PlayeLedBrightness.Medium; //player led brightness
-
-        byte playerLed = CurrentConfiguration.PlayerNumber switch
+        if (bytes != null)
         {
-            1 => DualSense.Out.PlayerLedLights.Player1,
-            2 => DualSense.Out.PlayerLedLights.Player2,
-            3 => DualSense.Out.PlayerLedLights.Player3,
-            4 => DualSense.Out.PlayerLedLights.Player4,
-            _ => DualSense.Out.PlayerLedLights.None
-        };
-
-        reportData[DualSense.Out.PlayerLedIndex] = (byte)(DualSense.Out.PlayerLedLights.PlayerLightsFade | playerLed); //player led number
-
-        if (CurrentConfiguration.LoadedLightbar != null)
-        {
-            Color rgb = (Color)ColorConverter.ConvertFromString(CurrentConfiguration.LoadedLightbar);
-            reportData[DualSense.Out.LedRIndex] = rgb.R;
-            reportData[DualSense.Out.LedGIndex] = rgb.G;
-            reportData[DualSense.Out.LedBIndex] = rgb.B;
+            SendOutputReport(bytes);
         }
-
-        return reportData;
     }
 }
