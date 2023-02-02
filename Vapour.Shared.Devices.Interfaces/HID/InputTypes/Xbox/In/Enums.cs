@@ -1,4 +1,4 @@
-﻿namespace Vapour.Shared.Devices.HID.InputTypes.Xbox;
+﻿namespace Vapour.Shared.Devices.HID.InputTypes.Xbox.In;
 
 [Flags]
 public enum XboxButtons : UInt16
