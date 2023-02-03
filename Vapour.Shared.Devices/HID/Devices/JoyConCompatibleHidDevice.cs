@@ -1,12 +1,15 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Runtime.InteropServices;
 
 using Microsoft.Extensions.Logging;
 
+using Vapour.Shared.Common.Util;
 using Vapour.Shared.Devices.HID.DeviceInfos;
 using Vapour.Shared.Devices.HID.DeviceInfos.Meta;
 using Vapour.Shared.Devices.HID.Devices.Reports;
 using Vapour.Shared.Devices.HID.InputTypes.JoyCon.In;
 using Vapour.Shared.Devices.HID.InputTypes.JoyCon.Out;
+using Vapour.Shared.Devices.Services.Configuration;
 using Vapour.Shared.Devices.Services.Reporting;
 
 namespace Vapour.Shared.Devices.HID.Devices;
@@ -20,9 +23,7 @@ public sealed class JoyConCompatibleHidDevice : CompatibleHidDevice
     private byte _commandCount;
     private byte _lastSubCommandCodeSent;
     private byte[] _subCommandResult;
-
-    private readonly byte[] _rumbleCommandData = new byte[OutConstants.RumbleCommandLength];
-
+    
     private readonly float _clampedLowFreq;
     private readonly float _clampedHighFreq;
 
@@ -49,10 +50,10 @@ public sealed class JoyConCompatibleHidDevice : CompatibleHidDevice
 
     public override void OnAfterStartListening()
     {
-        SubCommand(OutConstants.SubCommand_EnableRumble, OutConstants.Rumble_On);
-        SubCommand(OutConstants.SubCommand_EnableIMU, OutConstants.EnableIMU_On);
+        SendValueCommand(OutConstants.SubCommand_EnableRumble, OutConstants.Rumble_On);
+        SendValueCommand(OutConstants.SubCommand_EnableIMU, OutConstants.EnableIMU_On);
         GetCalibrationData();
-        SubCommand(OutConstants.SubCommand_InputMode, OutConstants.InputMode_Standard);
+        SendValueCommand(OutConstants.SubCommand_InputMode, OutConstants.InputMode_Standard);
     }
 
     public override void SetPlayerLedAndColor()
@@ -65,15 +66,23 @@ public sealed class JoyConCompatibleHidDevice : CompatibleHidDevice
             4 => OutConstants.SetPlayerLED4,
             _ => OutConstants.SetPlayerLED1
         };
-
-        SubCommand(OutConstants.SubCommand_SetPlayerLED, playerCode);
+        
+        SendValueCommand(OutConstants.SubCommand_SetPlayerLED, playerCode);
     }
 
     public override void OutputDeviceReportReceived(OutputDeviceReport outputDeviceReport)
     {
-        if (outputDeviceReport.StrongMotor > 0 || outputDeviceReport.WeakMotor > 0)
+        if (outputDeviceReport.StrongMotor > 0 && IsLeft && MultiControllerConfigurationType != MultiControllerConfigurationType.None)
         {
-            SendRumbleCommand(Math.Max(outputDeviceReport.StrongMotor, outputDeviceReport.WeakMotor / (float)255));
+            SendRumbleCommand(outputDeviceReport.StrongMotor / (float)255);
+        }
+        else if (outputDeviceReport.WeakMotor > 0 && !IsLeft && MultiControllerConfigurationType != MultiControllerConfigurationType.None)
+        {
+            SendRumbleCommand(outputDeviceReport.WeakMotor / (float)255);
+        }
+        else if ((outputDeviceReport.StrongMotor > 0 || outputDeviceReport.WeakMotor > 0) && MultiControllerConfigurationType == MultiControllerConfigurationType.None)
+        {
+            SendRumbleCommand(Math.Max(outputDeviceReport.WeakMotor, outputDeviceReport.StrongMotor) / (float)255);
         }
     }
 
@@ -81,24 +90,83 @@ public sealed class JoyConCompatibleHidDevice : CompatibleHidDevice
     {
         InputSourceReport.Parse(input);
 
-        if (_lastSubCommandCodeSent != 0 && input[InConstants.InputReportIdIndex] == InConstants.SubCommandReportId &&
-            input[InConstants.SubCommandResponseIdIndex] == _lastSubCommandCodeSent)
+        var inputReport = MemoryMarshal.AsRef<InputReport>(input);
+
+        if (_lastSubCommandCodeSent != 0 && inputReport.ReportId == InConstants.SubCommandReportId &&
+            inputReport.SubCommandResponseId == _lastSubCommandCodeSent)
         {
             _subCommandResult = input.ToArray();
             _sendSubCommandWait.Set();
         }
     }
 
-    private void GetCalibrationData()
+    private byte[] SendSubCommand(SubCommand command, bool shouldWait = true)
+    {
+        command.CommandCount = _commandCount;
+        _commandCount = (byte)(++_commandCount & 0x0F);
+
+        Logger.LogInformation("JoyCon Serial {Serial} sending subCommand {SubCommand}", SerialString, command.SubCommandId);
+        _lastSubCommandCodeSent = command.SubCommandId;
+        SendOutputReport(command.StructToBytes());
+
+        if (shouldWait)
+        {
+            bool received = _sendSubCommandWait.Wait(2000);
+            Logger.LogInformation("JoyCon serial {Serial} {Received} subCommand {SubCommand}", SerialString,
+                received ? "received" : "did not receive",
+                command.SubCommandId);
+
+            byte[] resultData = _subCommandResult;
+
+            _subCommandResult = null;
+            _lastSubCommandCodeSent = 0;
+            _sendSubCommandWait.Reset();
+
+            return resultData;
+        }
+
+        return null;
+    }
+
+    private ReadOnlySpan<byte> SendValueCommand(byte subCommandId, byte value)
+    {
+        var command = new SubCommand 
+        { 
+            ReportId = OutConstants.SubCommandReportId, 
+            SubCommandId = subCommandId
+        };
+        command.Data[0] = value;
+
+        return SendSubCommand(command);
+    }
+
+    private ReadOnlySpan<byte> SendArrayCommand(byte subCommandId, byte[] data)
+    {
+        var command = new SubCommand
+        {
+            ReportId = OutConstants.SubCommandReportId,
+            SubCommandId = subCommandId
+        };
+
+        for (var i = 0; i < data.Length; i++)
+        {
+            command.Data[i] = data[i];
+        }
+
+        return SendSubCommand(command);
+    }
+
+    private unsafe void GetCalibrationData()
     {
         bool userCalibrationFound = false;
-        ReadOnlySpan<byte> resultData = SubCommand(OutConstants.SubCommand_SpiFlashRead,
+        ReadOnlySpan<byte> resultData = SendArrayCommand(OutConstants.SubCommand_SpiFlashRead,
             IsLeft ? OutConstants.GetLeftStickUserCalibration : OutConstants.GetRightStickUserCalibration);
-        ReadOnlySpan<byte> spiData = resultData.Slice(OutConstants.SpiDataOffset, OutConstants.SpiCalibrationDataLength);
 
-        for (int i = 0; i < OutConstants.SpiCalibrationDataLength; ++i)
+        var inputReport = MemoryMarshal.AsRef<InputReport>(resultData);
+
+        for (byte i = 0; i < OutConstants.SpiCalibrationDataLength; ++i)
         {
-            if (spiData[i] != 0xff)
+            if (inputReport.SpiReadResult[i] != 0xff)
             {
                 userCalibrationFound = true;
                 break;
@@ -107,10 +175,12 @@ public sealed class JoyConCompatibleHidDevice : CompatibleHidDevice
 
         if (!userCalibrationFound)
         {
-            resultData = SubCommand(OutConstants.SubCommand_SpiFlashRead,
+            resultData = SendArrayCommand(OutConstants.SubCommand_SpiFlashRead,
                 IsLeft ? OutConstants.GetLeftStickFactoryCalibration : OutConstants.GetRightStickFactoryCalibration);
-            spiData = resultData.Slice(OutConstants.SpiDataOffset, OutConstants.SpiCalibrationDataLength);
+            inputReport = MemoryMarshal.AsRef<InputReport>(resultData);
         }
+
+        var spiData = inputReport.SpiReadResult;
 
         _report.StickCalibration[IsLeft ? 0 : 2] =
             (ushort)(((spiData[1] << 8) & 0xF00) | spiData[0]); // X Axis Max above center
@@ -123,54 +193,20 @@ public sealed class JoyConCompatibleHidDevice : CompatibleHidDevice
         _report.StickCalibration[IsLeft ? 5 : 1] =
             (ushort)((spiData[8] << 4) | (spiData[7] >> 4)); // Y Axis Min below center
 
-        resultData = SubCommand(OutConstants.SubCommand_SpiFlashRead, OutConstants.GetStickParameters);
-        spiData = resultData.Slice(OutConstants.SpiDataOffset, OutConstants.SpiStickParametersDataLength);
+        resultData = SendArrayCommand(OutConstants.SubCommand_SpiFlashRead, OutConstants.GetStickParameters);
+        inputReport = MemoryMarshal.AsRef<InputReport>(resultData);
+        spiData = inputReport.SpiReadResult;
         _report.DeadZone = (ushort)(((spiData[4] << 8) & 0xF00) | spiData[3]);
-    }
-
-    private ReadOnlySpan<byte> SubCommand(byte subCommand, byte[] data)
-    {
-        byte[] commandData = new byte[OutConstants.SubCommandLength];
-        Array.Copy(OutConstants.SubCommandHeader, 0, commandData, OutConstants.SubCommandHeaderOffset, OutConstants.SubCommandHeaderLength);
-        Array.Copy(data, 0, commandData, OutConstants.SubCommandDataOffset, data.Length);
-
-        commandData[OutConstants.SubCommandReportIdIndex] = OutConstants.SubCommandReportId;
-        commandData[OutConstants.SubCommandCountIndex] = _commandCount;
-        _commandCount = (byte)(++_commandCount & 0x0F);
-        commandData[OutConstants.SubCommandTypeIndex] = subCommand;
-
-        Logger.LogInformation("JoyCon Serial {Serial} sending subCommand {SubCommand}", SerialString, subCommand);
-        _lastSubCommandCodeSent = subCommand;
-        SendOutputReport(commandData);
-
-        bool received = _sendSubCommandWait.Wait(2000);
-        Logger.LogInformation("JoyCon serial {Serial} {Received} subCommand {SubCommand}", SerialString,
-            received ? "received" : "did not receive",
-            subCommand);
-
-        byte[] resultData = _subCommandResult;
-
-        _subCommandResult = null;
-        _lastSubCommandCodeSent = 0;
-        _sendSubCommandWait.Reset();
-
-        return resultData;
     }
 
     private void SendRumbleCommand(float amp)
     {
-        _rumbleCommandData[OutConstants.SubCommandReportIdIndex] = OutConstants.RumbleCommand;
-        _rumbleCommandData[1] = _commandCount;
-        _commandCount = (byte)(++_commandCount & 0x0F);
+        var command = new SubCommand 
+        { 
+            ReportId = OutConstants.RumbleCommand
+        };
 
-        if (amp == 0.0f)
-        {
-            _rumbleCommandData[0] = 0x0;
-            _rumbleCommandData[1] = 0x1;
-            _rumbleCommandData[2] = 0x40;
-            _rumbleCommandData[3] = 0x40;
-        }
-        else
+        if (amp != 0.0F)
         {
             var clampedAmp = Clamp(amp, 0.0f, 1.0f);
 
@@ -190,13 +226,14 @@ public sealed class JoyConCompatibleHidDevice : CompatibleHidDevice
             if (parity > 0) lowFrequencyAmp |= 0x8000;
 
             highFrequencyAmp = (byte)(highFrequencyAmp - (highFrequencyAmp % 2));
-            _rumbleCommandData[IsLeft ? 2 : 6] = (byte)(hf & 0xff);
-            _rumbleCommandData[IsLeft ? 3 : 7] = (byte)(((hf >> 8) & 0xff) + highFrequencyAmp);
-            _rumbleCommandData[IsLeft ? 4 : 8] = (byte)(((lowFrequencyAmp >> 8) & 0xff) + lf);
-            _rumbleCommandData[IsLeft ? 5 : 9] = (byte)(lowFrequencyAmp & 0xff);
+
+            command.RumbleData[IsLeft ? 0 : 4] = (byte)(hf & 0xff);
+            command.RumbleData[IsLeft ? 1 : 5] = (byte)(((hf >> 8) & 0xff) + highFrequencyAmp);
+            command.RumbleData[IsLeft ? 2 : 6] = (byte)(((lowFrequencyAmp >> 8) & 0xff) + lf);
+            command.RumbleData[IsLeft ? 3 : 7] = (byte)(lowFrequencyAmp & 0xff);
         }
 
-        SendOutputReport(_rumbleCommandData);
+        SendSubCommand(command, false);
     }
 
     private float Clamp(float x, float min, float max)

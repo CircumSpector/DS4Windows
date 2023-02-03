@@ -44,7 +44,7 @@ public static class BitHelpers
     where T : struct
     {
         var span = MemoryMarshal.CreateReadOnlySpan(ref value, 1);
-        var bytesSpan = MemoryMarshal.Cast<T, byte>(span);
+        var bytesSpan = MemoryMarshal.AsBytes(span);
         return bytesSpan.ToArray();
     }
 }
