@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using System.Runtime.InteropServices;
 
 using Microsoft.Extensions.Logging;
 
@@ -90,7 +89,7 @@ public sealed class JoyConCompatibleHidDevice : CompatibleHidDevice
     {
         InputSourceReport.Parse(input);
 
-        var inputReport = MemoryMarshal.AsRef<InputReport>(input);
+        var inputReport = input.ToStruct<InputReport>();
 
         if (_lastSubCommandCodeSent != 0 && inputReport.ReportId == InConstants.SubCommandReportId &&
             inputReport.SubCommandResponseId == _lastSubCommandCodeSent)
@@ -156,13 +155,13 @@ public sealed class JoyConCompatibleHidDevice : CompatibleHidDevice
         return SendSubCommand(command);
     }
 
-    private unsafe void GetCalibrationData()
+    private void GetCalibrationData()
     {
         bool userCalibrationFound = false;
         ReadOnlySpan<byte> resultData = SendArrayCommand(OutConstants.SubCommand_SpiFlashRead,
             IsLeft ? OutConstants.GetLeftStickUserCalibration : OutConstants.GetRightStickUserCalibration);
 
-        var inputReport = MemoryMarshal.AsRef<InputReport>(resultData);
+        var inputReport = resultData.ToStruct<InputReport>();
 
         for (byte i = 0; i < OutConstants.SpiCalibrationDataLength; ++i)
         {
@@ -177,7 +176,7 @@ public sealed class JoyConCompatibleHidDevice : CompatibleHidDevice
         {
             resultData = SendArrayCommand(OutConstants.SubCommand_SpiFlashRead,
                 IsLeft ? OutConstants.GetLeftStickFactoryCalibration : OutConstants.GetRightStickFactoryCalibration);
-            inputReport = MemoryMarshal.AsRef<InputReport>(resultData);
+            inputReport = resultData.ToStruct<InputReport>();
         }
 
         var spiData = inputReport.SpiReadResult;
@@ -194,7 +193,7 @@ public sealed class JoyConCompatibleHidDevice : CompatibleHidDevice
             (ushort)((spiData[8] << 4) | (spiData[7] >> 4)); // Y Axis Min below center
 
         resultData = SendArrayCommand(OutConstants.SubCommand_SpiFlashRead, OutConstants.GetStickParameters);
-        inputReport = MemoryMarshal.AsRef<InputReport>(resultData);
+        inputReport = resultData.ToStruct<InputReport>();
         spiData = inputReport.SpiReadResult;
         _report.DeadZone = (ushort)(((spiData[4] << 8) & 0xF00) | spiData[3]);
     }

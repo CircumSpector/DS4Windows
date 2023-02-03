@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices;
-
+﻿using Vapour.Shared.Common.Util;
 using Vapour.Shared.Devices.HID.InputTypes;
 using Vapour.Shared.Devices.HID.InputTypes.Xbox.In;
 
@@ -11,24 +10,25 @@ public class XboxCompatibleInputReport : InputSourceReport
 
     public override void Parse(ReadOnlySpan<byte> input)
     {
-        var inputReportData = MemoryMarshal.AsRef<InputReportData>(input.Slice(InConstants.InputReportDataOffset));
-       
-        Triangle = inputReportData.Buttons.HasFlag(XboxButtons.Y);
-        Circle = inputReportData.Buttons.HasFlag(XboxButtons.B);
-        Cross = inputReportData.Buttons.HasFlag(XboxButtons.A);
-        Square = inputReportData.Buttons.HasFlag(XboxButtons.X);
+        var inputReportData =input.Slice(InConstants.InputReportDataOffset).ToStruct<InputReportData>();
 
-        LeftShoulder = inputReportData.Buttons.HasFlag(XboxButtons.L1);
-        RightShoulder = inputReportData.Buttons.HasFlag(XboxButtons.R1);
+        var buttons = inputReportData.Buttons;
+        Triangle = buttons.HasFlag(XboxButtons.Y);
+        Circle = buttons.HasFlag(XboxButtons.B);
+        Cross = buttons.HasFlag(XboxButtons.A);
+        Square = buttons.HasFlag(XboxButtons.X);
 
-        Options = inputReportData.Buttons.HasFlag(XboxButtons.Start);
-        Share = inputReportData.Buttons.HasFlag(XboxButtons.Back);
-        PS = inputReportData.Buttons.HasFlag(XboxButtons.Xbox);
+        LeftShoulder = buttons.HasFlag(XboxButtons.L1);
+        RightShoulder = buttons.HasFlag(XboxButtons.R1);
+
+        Options = buttons.HasFlag(XboxButtons.Start);
+        Share = buttons.HasFlag(XboxButtons.Back);
+        PS = buttons.HasFlag(XboxButtons.Xbox);
 
         SetDPad(inputReportData.Buttons);
 
-        LeftThumb = inputReportData.Buttons.HasFlag(XboxButtons.L3);
-        RightThumb = inputReportData.Buttons.HasFlag(XboxButtons.R3);
+        LeftThumb = buttons.HasFlag(XboxButtons.L3);
+        RightThumb = buttons.HasFlag(XboxButtons.R3);
 
         LeftTrigger = inputReportData.LeftTrigger;
         RightTrigger = inputReportData.RightTrigger;
