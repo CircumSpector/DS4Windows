@@ -1,7 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
 using Vapour.Shared.Devices.HID.InputTypes;
-using Vapour.Shared.Devices.HID.InputTypes.JoyCon;
 using Vapour.Shared.Devices.HID.InputTypes.JoyCon.In;
 using Vapour.Shared.Devices.Services.Configuration;
 
@@ -21,10 +20,10 @@ public sealed class JoyConCompatibleInputReport : InputSourceReport
     /// <inheritdoc />
     public override void Parse(ReadOnlySpan<byte> input)
     {
-        var inputReportData = MemoryMarshal.AsRef<InputReportData>(input.Slice(InConstants.InputReportDataOffset));
+        var inputReport = MemoryMarshal.AsRef<InputReport>(input);
 
-        SetButtons(inputReportData);
-        SetSticks(inputReportData);
+        SetButtons(inputReport.ReportData);
+        SetSticks(inputReport.ReportData);
     }
 
     private void SetButtons(InputReportData reportData)
