@@ -31,6 +31,7 @@
 	</ItemGroup>
 
     <ItemGroup>
+      <Folder Include="HID\InputTypes\DualShock4\Feature\" />
       <Folder Include="HID\InputTypes\JoyCon\In\" />
       <Folder Include="HID\InputTypes\JoyCon\Out\" />
       <Folder Include="HID\InputTypes\SteamDeck\In\" />

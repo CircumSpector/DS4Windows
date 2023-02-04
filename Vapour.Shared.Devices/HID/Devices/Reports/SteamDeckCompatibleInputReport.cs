@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices;
-
+﻿using Vapour.Shared.Common.Util;
 using Vapour.Shared.Devices.HID.InputTypes;
 using Vapour.Shared.Devices.HID.InputTypes.SteamDeck.In;
 
@@ -11,7 +10,7 @@ public sealed class SteamDeckCompatibleInputReport : InputSourceReport
 
     public override void Parse(ReadOnlySpan<byte> input)
     {
-        var reportData = MemoryMarshal.AsRef<InputReportData>(input.Slice(InConstants.ReportDataOffset));
+        var reportData = input.Slice(InConstants.ReportDataOffset).ToStruct<InputReportData>();
 
         var buttons0 = reportData.Buttons.Buttons0;
         Triangle = buttons0.HasFlag(SteamDeckButtons0.Y);

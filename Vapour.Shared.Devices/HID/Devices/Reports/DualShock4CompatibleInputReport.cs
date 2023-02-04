@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
+using Vapour.Shared.Common.Util;
 using Vapour.Shared.Devices.HID.InputTypes;
+using Vapour.Shared.Devices.HID.InputTypes.DualShock4.In;
 
 namespace Vapour.Shared.Devices.HID.Devices.Reports;
 
@@ -53,69 +55,73 @@ public class DualShock4CompatibleInputReport : InputSourceReport
 
     public bool TouchClick { get; protected set; }
 
+    public int ReportDataStartIndex { get; set; }
+
     /// <inheritdoc />
     public override void Parse(ReadOnlySpan<byte> input)
     {
-        // Eliminate bounds checks
-        input = input.Slice(0, 43);
+        ReportId = input[InConstants.ReportIdIndex];
 
-        ReportId = input[0];
+        var reportData = input.Slice(ReportDataStartIndex).ToStruct<InputReportData>();
 
-        LeftThumbX = input[1];
-        LeftThumbY = input[2];
-        RightThumbX = input[3];
-        RightThumbY = input[4];
-        LeftTrigger = input[8];
-        RightTrigger = input[9];
+        var sticks = reportData.Sticks;
+        LeftThumbX = sticks.LeftStickX;
+        LeftThumbY = sticks.LeftStickY;
+        RightThumbX = sticks.RightStickX;
+        RightThumbY = sticks.RightStickY;
 
-        Triangle = (input[5] & (1 << 7)) != 0;
-        Circle = (input[5] & (1 << 6)) != 0;
-        Cross = (input[5] & (1 << 5)) != 0;
-        Square = (input[5] & (1 << 4)) != 0;
+        var buttons1 = reportData.Buttons.Buttons1;
+        Triangle = buttons1.HasFlag(DualShock4Buttons1.Triangle);
+        Circle = buttons1.HasFlag(DualShock4Buttons1.Circle);
+        Cross = buttons1.HasFlag(DualShock4Buttons1.Cross);
+        Square = buttons1.HasFlag(DualShock4Buttons1.Square);
 
-        DPad = (DPadDirection)(input[5] & 0x0F);
+        DPad = reportData.Buttons.DPad;
 
-        LeftThumb = (input[6] & (1 << 6)) != 0;
-        RightThumb = (input[6] & (1 << 7)) != 0;
-        Options = (input[6] & (1 << 5)) != 0;
-        Share = (input[6] & (1 << 4)) != 0;
-        RightTriggerButton = (input[6] & (1 << 3)) != 0;
-        LeftTriggerButton = (input[6] & (1 << 2)) != 0;
-        RightShoulder = (input[6] & (1 << 1)) != 0;
-        LeftShoulder = (input[6] & (1 << 0)) != 0;
+        var buttons2 = reportData.Buttons.Buttons2;
+        LeftThumb = buttons2.HasFlag(DualShock4Buttons2.L3);
+        RightThumb = buttons2.HasFlag(DualShock4Buttons2.R3);
+        Options = buttons2.HasFlag(DualShock4Buttons2.Options);
+        Share = buttons2.HasFlag(DualShock4Buttons2.Create);
+        RightTriggerButton = buttons2.HasFlag(DualShock4Buttons2.R2);
+        LeftTriggerButton = buttons2.HasFlag(DualShock4Buttons2.L2);
+        RightShoulder = buttons2.HasFlag(DualShock4Buttons2.R1);
+        LeftShoulder = buttons2.HasFlag(DualShock4Buttons2.L1);
 
-        PS = (input[7] & (1 << 0)) != 0;
-        TouchClick = (input[7] & (1 << 1)) != 0;
+        var buttons3 = reportData.Buttons.Buttons3;
+        PS = buttons3.HasFlag(DualShock4Buttons3.Home);
+        TouchClick = buttons3.HasFlag(DualShock4Buttons3.Pad);
+        FrameCounter = reportData.Buttons.FrameCounter;
 
-        FrameCounter = (byte)(input[7] >> 2);
+        LeftTrigger = reportData.Buttons.LeftTrigger;
+        RightTrigger = reportData.Buttons.RightTrigger;
 
-        var touchX = ((input[35] & 0xF) << 8) | input[34];
-
+        var finger1 = reportData.TouchData.Finger1;
         TrackPadTouch1 = new TrackPadTouch
         {
-            RawTrackingNum = input[35],
-            Id = (byte)(input[35] & 0x7f),
-            IsActive = (input[35] & 0x80) == 0,
-            X = (short)(((ushort)(input[37] & 0x0f) << 8) |
-                        input[36]),
-            Y = (short)((input[39] << 4) |
-                        ((ushort)(input[37] & 0xf0) >> 4))
+            RawTrackingNum = finger1.RawTrackingNumber,
+            Id = finger1.Index,
+            IsActive = finger1.IsActive,
+            X = finger1.FingerX,
+            Y = finger1.FingerY
         };
+
+        var finger2 = reportData.TouchData.Finger2;
         TrackPadTouch2 = new TrackPadTouch
         {
-            RawTrackingNum = input[39],
-            Id = (byte)(input[39] & 0x7f),
-            IsActive = (input[39] & 0x80) == 0,
-            X = (short)(((ushort)(input[41] & 0x0f) << 8) |
-                        input[40]),
-            Y = (short)((input[42] << 4) |
-                        ((ushort)(input[41] & 0xf0) >> 4))
+            RawTrackingNum = finger2.RawTrackingNumber,
+            Id = finger2.Index,
+            IsActive = finger2.IsActive,
+            X = finger2.FingerX,
+            Y = finger2.FingerY
         };
-        TouchPacketCounter = input[34];
-        Touch1 = input[35] >> 7 == 0;
-        Touch2 = input[39] >> 7 == 0;
-        TouchIsOnLeftSide = !(touchX >= 1920 * 2 / 5); // TODO: port const
-        TouchIsOnRightSide = !(touchX < 1920 * 2 / 5); // TODO: port const
+
+        var touchData = reportData.TouchData;
+        TouchPacketCounter = touchData.Timestamp;
+        Touch1 = finger1.IsActive;
+        Touch2 = finger2.IsActive;
+        TouchIsOnLeftSide = touchData.IsTouchOnLeftSide;
+        TouchIsOnRightSide = touchData.IsTouchOnRightSide;
     }
 
     /// <inheritdoc />
