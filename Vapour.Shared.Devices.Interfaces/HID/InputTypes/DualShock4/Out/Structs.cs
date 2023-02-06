@@ -26,7 +26,7 @@ public struct BtOutputReport
 
     }
 
-    public byte ReportId = OutConstants.BtReportId;
+    public byte ReportId;
     private byte _config;
 
     public byte SendRateInMs

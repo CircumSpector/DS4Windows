@@ -19,6 +19,7 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
     private readonly DualShock4CompatibleInputReport _inputReport;
     private static readonly PhysicalAddress BlankSerial = PhysicalAddress.Parse("00:00:00:00:00:00");
     private byte[] _outputReport;
+    private byte _btOutputReportId;
 
     public DualShock4CompatibleHidDevice(ILogger<DualShock4CompatibleHidDevice> logger, List<DeviceInfo> deviceInfos)
         : base(logger, deviceInfos)
@@ -48,6 +49,10 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
         Logger.LogInformation("Got serial {Serial} for {Device}", Serial, this);
 
         _outputReport = new byte[SourceDevice.OutputReportByteLength];
+        if (Connection == ConnectionType.Bluetooth)
+        {
+            _btOutputReportId = OutConstants.BtReportIds[SourceDevice.OutputReportByteLength];
+        }
     }
 
     public override void OnAfterStartListening()
@@ -141,6 +146,7 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
         {
             var report = new BtOutputReport
             {
+                ReportId = _btOutputReportId,
                 SendRateInMs = 4,
                 ExtraConfig = BtExtraConfig.EnableCrc | BtExtraConfig.EnableHid,
                 ExtraConfig2 = BtExtraConfig2.EnableSomething | BtExtraConfig2.EnableAudio,
