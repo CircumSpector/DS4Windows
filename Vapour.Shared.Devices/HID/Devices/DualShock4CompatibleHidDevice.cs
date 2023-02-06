@@ -128,7 +128,7 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
         }
 
         _inputReport.ReportId = reportId;
-        _inputReport.Parse(reportData);
+        _inputReport.Parse(ref reportData);
     }
 
     private void SendReport(OutputReportData reportData)

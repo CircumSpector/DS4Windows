@@ -3,5 +3,5 @@
 public interface IStructInputSourceReport<T> : IInputSourceReport
     where T : struct
 {
-    void Parse(T input);
+    void Parse(ref T input);
 }

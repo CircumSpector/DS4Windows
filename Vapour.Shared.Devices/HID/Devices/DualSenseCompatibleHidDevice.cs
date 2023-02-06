@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices;
-using System.Windows.Media;
+﻿using System.Windows.Media;
 
 using Microsoft.Extensions.Logging;
 
@@ -45,17 +44,6 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
 
         Logger.LogInformation("Got serial {Serial} for {Device}", Serial, this);
 
-        if (Connection is ConnectionType.Usb or ConnectionType.SonyWirelessAdapter)
-        {
-            _inputReportId = InConstants.UsbReportId;
-            _inputReport.ReportDataStartIndex = InConstants.UsbReportDataOffset;
-        }
-        else
-        {
-            _inputReportId = InConstants.BtReportId;
-            _inputReport.ReportDataStartIndex = InConstants.BtReportDataOffset;
-        }
-
         _outputReport = new byte[SourceDevice.OutputReportByteLength];
     }
 
@@ -100,10 +88,21 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
 
     public override void ProcessInputReport(ReadOnlySpan<byte> input)
     {
-        if (input[InConstants.ReportIdIndex] == _inputReportId)
+        InputReportData reportData;
+        var reportId = input[InConstants.ReportIdIndex];
+        if (reportId == InConstants.StandardReportId)
         {
-            _inputReport.Parse(input);
+            var report = input.ToStruct<StandardInputReport>();
+            reportData = report.InputReportData;
         }
+        else
+        {
+            var report = input.ToStruct<ExtendedInputReport>();
+            reportData = report.InputReportData;
+        }
+
+        _inputReport.ReportId = reportId;
+        _inputReport.Parse(ref reportData);
     }
 
     private void SendReport(OutputReportData reportData)

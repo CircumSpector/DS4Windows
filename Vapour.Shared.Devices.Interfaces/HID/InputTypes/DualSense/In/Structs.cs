@@ -3,6 +3,21 @@ using Vapour.Shared.Common.Util;
 
 namespace Vapour.Shared.Devices.HID.InputTypes.DualSense.In;
 
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public struct StandardInputReport
+{
+    public byte ReportId;
+    public InputReportData InputReportData;
+}
+
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public struct ExtendedInputReport
+{
+    public byte ReportId;
+    public byte UnusedPos2;
+    public InputReportData InputReportData;
+}
+
 [StructLayout(LayoutKind.Explicit, Pack = 1)]
 public struct InputReportData
 {
