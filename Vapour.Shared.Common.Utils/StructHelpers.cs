@@ -23,15 +23,6 @@ public static class StructHelpers
     {
         return ToStruct<T>((ReadOnlySpan<byte>)data);
     }
-
-    public static void Load<T>(this Span<T> span, T[] data)
-    where T : unmanaged
-    {
-        for (int i = 0; i < data.Length; i++)
-        {
-            span[i] = data[i];
-        }
-    }
 }
 
 public interface IStructArray<T> where T : unmanaged
@@ -50,7 +41,7 @@ public struct StructArray1<T> : IStructArray<T> where T : unmanaged
 
     public StructArray1(T[] data)
     {
-        AsSpan().Load(data);
+        data.CopyTo(AsSpan());
     }
 
     private T _first;
@@ -68,7 +59,7 @@ public struct StructArray2<T> : IStructArray<T> where T : unmanaged
 
     public StructArray2(T[] data)
     {
-        AsSpan().Load(data);
+        data.CopyTo(AsSpan());
     }
 
     private T _first;
@@ -87,7 +78,7 @@ public struct StructArray3<T> : IStructArray<T> where T : unmanaged
 
     public StructArray3(T[] data)
     {
-        AsSpan().Load(data);
+        data.CopyTo(AsSpan());
     }
 
     private T _first;
@@ -106,7 +97,7 @@ public struct StructArray4<T> : IStructArray<T> where T : unmanaged
 
     public StructArray4(T[] data)
     {
-        AsSpan().Load(data);
+        data.CopyTo(AsSpan());
     }
 
     private T _first;
@@ -125,7 +116,7 @@ public struct StructArray5<T> : IStructArray<T> where T : unmanaged
 
     public StructArray5(T[] data)
     {
-        AsSpan().Load(data);
+        data.CopyTo(AsSpan());
     }
 
     private T _first;
@@ -144,7 +135,7 @@ public struct StructArray6<T> : IStructArray<T> where T : unmanaged
 
     public StructArray6(T[] data)
     {
-        AsSpan().Load(data);
+        data.CopyTo(AsSpan());
     }
 
     private T _first;
@@ -163,7 +154,7 @@ public struct StructArray7<T> : IStructArray<T> where T : unmanaged
 
     public StructArray7(T[] data)
     {
-        AsSpan().Load(data);
+        data.CopyTo(AsSpan());
     }
 
     private T _first;
@@ -182,7 +173,7 @@ public struct StructArray8<T> : IStructArray<T> where T : unmanaged
 
     public StructArray8(T[] data)
     {
-        AsSpan().Load(data);
+        data.CopyTo(AsSpan());
     }
 
     private T _first;
@@ -201,7 +192,7 @@ public struct StructArray9<T> : IStructArray<T> where T : unmanaged
 
     public StructArray9(T[] data)
     {
-        AsSpan().Load(data);
+        data.CopyTo(AsSpan());
     }
 
     private T _first;
@@ -220,7 +211,7 @@ public struct StructArray10<T> : IStructArray<T> where T : unmanaged
 
     public StructArray10(T[] data)
     {
-        AsSpan().Load(data);
+        data.CopyTo(AsSpan());
     }
 
     private T _first;
