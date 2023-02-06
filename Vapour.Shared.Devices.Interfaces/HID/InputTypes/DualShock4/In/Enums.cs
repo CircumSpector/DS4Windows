@@ -1,6 +1,14 @@
 ﻿namespace Vapour.Shared.Devices.HID.InputTypes.DualShock4.In;
 
 [Flags]
+public enum InputReportedConfig : ushort
+{
+    EnableCrc = 0x0040,
+    EnableHid = 0x0080,
+    EnableAudio = 0x8000
+}
+
+[Flags]
 public enum DualShock4Buttons1 : byte
 {
     Square = 0x10,

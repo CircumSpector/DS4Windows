@@ -3,7 +3,7 @@
 public static class OutConstants
 {
     public const int UsbReportLength = 64;
-    public const int BtReportLength = 547;
+    public const int BtReportLength = 78;
     public const byte UsbReportId = 0x05;
-    public const byte BtReportId = 0x15;
+    public const byte BtReportId = 0x11;
 }

@@ -5,7 +5,7 @@ using Vapour.Shared.Devices.Services.Configuration;
 
 namespace Vapour.Shared.Devices.HID.Devices.Reports;
 
-public sealed class JoyConCompatibleInputReport : InputSourceReport
+public sealed class JoyConCompatibleInputReport : InputSourceReport, IRawInputSourceReport
 {
     private readonly short[] _finalStickData = new short[2];
     private readonly float[] _tempStickData = new float[2];
@@ -17,7 +17,7 @@ public sealed class JoyConCompatibleInputReport : InputSourceReport
     public bool IsLeft { get; set; }
 
     /// <inheritdoc />
-    public override void Parse(ReadOnlySpan<byte> input)
+    public void Parse(ReadOnlySpan<byte> input)
     {
         var inputReport = input.ToStruct<InputReport>();
 

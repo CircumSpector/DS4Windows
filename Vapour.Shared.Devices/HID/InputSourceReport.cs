@@ -13,7 +13,7 @@ public abstract class InputSourceReport : IInputSourceReport
     /// <summary>
     ///     Gets the report ID.
     /// </summary>
-    public byte ReportId { get; protected set; }
+    public byte ReportId { get; set; }
 
     /// <summary>
     ///     Gets the battery state.
@@ -123,12 +123,6 @@ public abstract class InputSourceReport : IInputSourceReport
     ///     Gets the Right Thumb Y axis value.
     /// </summary>
     public short RightThumbY { get; set; } = 128;
-
-    /// <summary>
-    ///     Parse a raw byte buffer into <see cref="InputSourceReport" />.
-    /// </summary>
-    /// <param name="input">The raw input report buffer.</param>
-    public abstract void Parse(ReadOnlySpan<byte> input);
 
     public MultiControllerConfigurationType MultiControllerConfigurationType
     {

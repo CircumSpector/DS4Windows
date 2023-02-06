@@ -15,5 +15,5 @@ public sealed class DualSenseDeviceInfo : DeviceInfo
         InterruptInEndpointAddress = 0x84, InterruptOutEndpointAddress = 0x03
     };
 
-    public override bool IsBtFilterable => true;
+    public override bool IsBtFilterable => false;
 }

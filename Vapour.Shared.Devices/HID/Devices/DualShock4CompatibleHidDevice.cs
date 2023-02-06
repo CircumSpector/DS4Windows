@@ -45,15 +45,6 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
         }
 
         Logger.LogInformation("Got serial {Serial} for {Device}", Serial, this);
-
-        if (Connection is ConnectionType.Usb or ConnectionType.SonyWirelessAdapter)
-        {
-            _inputReport.ReportDataStartIndex = InConstants.UsbReportDataOffset;
-        }
-        else
-        {
-            _inputReport.ReportDataStartIndex = InConstants.BtReportDataOffset;
-        }
     }
 
     public override void OnAfterStartListening()
@@ -91,13 +82,26 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
 
     public override void ProcessInputReport(ReadOnlySpan<byte> input)
     {
+        var reportId = input[InConstants.ReportIdIndex];
+
         // invalid input report ID
-        if (input[InConstants.ReportIdIndex] == 0)
+        if (reportId == 0)
         {
             return;
         }
 
-        var reportData = input.Slice(_inputReport.ReportDataStartIndex).ToStruct<InputReportData>();
+        InputReportData reportData;
+
+        if (reportId == InConstants.StandardReportId)
+        {
+            var inputReport = input.ToStruct<StandardInputReport>();
+            reportData = inputReport.ReportData;
+        }
+        else
+        {
+            var inputReport = input.ToStruct<ExtendedInputReport>();
+            reportData = inputReport.ReportData;
+        }
 
         // device is Sony Wireless Adapter...
         if (Connection == ConnectionType.SonyWirelessAdapter)
@@ -115,7 +119,8 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
             }
         }
 
-        InputSourceReport.Parse(input);
+        _inputReport.ReportId = reportId;
+        _inputReport.Parse(reportData);
     }
 
     private void SendReport(OutputReportData reportData)

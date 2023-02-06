@@ -34,13 +34,22 @@ public sealed class XboxCompositeCompatibleHidDevice : CompatibleHidDevice
 
     private readonly AutoResetEvent _writeEvent = new(false);
 
+    private readonly XboxCompatibleInputReport _inputReport;
+
     public XboxCompositeCompatibleHidDevice(ILogger<XboxCompositeCompatibleHidDevice> logger,
         List<DeviceInfo> deviceInfos) : base(logger,
         deviceInfos)
     {
+        _inputReport = new XboxCompatibleInputReport();
     }
 
-    public override InputSourceReport InputSourceReport { get; } = new XboxCompatibleInputReport();
+    public override InputSourceReport InputSourceReport
+    {
+        get
+        {
+            return _inputReport;
+        }
+    }
 
     protected override Type InputDeviceType => typeof(XboxCompositeDeviceInfo);
 
@@ -142,6 +151,6 @@ public sealed class XboxCompositeCompatibleHidDevice : CompatibleHidDevice
 
     public override void ProcessInputReport(ReadOnlySpan<byte> input)
     {
-        InputSourceReport.Parse(input);
+        _inputReport.Parse(input);
     }
 }
