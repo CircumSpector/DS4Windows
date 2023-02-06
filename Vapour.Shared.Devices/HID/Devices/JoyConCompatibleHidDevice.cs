@@ -144,13 +144,9 @@ public sealed class JoyConCompatibleHidDevice : CompatibleHidDevice
         var command = new SubCommand
         {
             ReportId = OutConstants.SubCommandReportId,
-            SubCommandId = subCommandId
+            SubCommandId = subCommandId,
+            Data = new StructArray5<byte>(data)
         };
-
-        for (var i = 0; i < data.Length; i++)
-        {
-            command.Data[i] = data[i];
-        }
 
         return SendSubCommand(command);
     }
