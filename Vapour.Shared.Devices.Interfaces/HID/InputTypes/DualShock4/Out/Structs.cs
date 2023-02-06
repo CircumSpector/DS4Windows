@@ -45,7 +45,7 @@ public struct BtOutputReport
     {
         get
         {
-            return (BtExtraConfig)_config.GetBitsAsByte(6, 2);
+            return (BtExtraConfig)(_config - _config.GetBitsAsByte(0, 6));
         }
         set
         {
@@ -66,7 +66,7 @@ public struct OutputReportData
     }
 
     public Config1 Config1;
-    public byte UnusedPos2;
+    public byte UnknownPos2 = 0x04;
     public byte UnusedPos3;
     public RumbleData RumbleData = new();
     public LedData LedData = new();

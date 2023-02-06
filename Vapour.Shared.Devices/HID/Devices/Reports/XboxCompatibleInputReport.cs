@@ -4,11 +4,11 @@ using Vapour.Shared.Devices.HID.InputTypes.Xbox.In;
 
 namespace Vapour.Shared.Devices.HID.Devices.Reports;
 
-public class XboxCompatibleInputReport : InputSourceReport
+public class XboxCompatibleInputReport : InputSourceReport, IRawInputSourceReport
 {
     public override InputAxisType AxisScaleInputType => InputAxisType.Xbox;
 
-    public override void Parse(ReadOnlySpan<byte> input)
+    public void Parse(ReadOnlySpan<byte> input)
     {
         var inputReportData =input.Slice(InConstants.InputReportDataOffset).ToStruct<InputReportData>();
 

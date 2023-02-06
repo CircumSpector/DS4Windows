@@ -23,7 +23,7 @@ public struct TrackPadTouch
 [SuppressMessage("ReSharper", "MemberCanBeProtected.Global")]
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
-public class DualShock4CompatibleInputReport : InputSourceReport
+public class DualShock4CompatibleInputReport : InputSourceReport, IStructInputSourceReport<InputReportData>
 {
     public override InputAxisType AxisScaleInputType => InputAxisType.DualShock4;
 
@@ -58,12 +58,8 @@ public class DualShock4CompatibleInputReport : InputSourceReport
     public int ReportDataStartIndex { get; set; }
 
     /// <inheritdoc />
-    public override void Parse(ReadOnlySpan<byte> input)
+    public void Parse(InputReportData reportData)
     {
-        ReportId = input[InConstants.ReportIdIndex];
-
-        var reportData = input.Slice(ReportDataStartIndex).ToStruct<InputReportData>();
-
         var sticks = reportData.Sticks;
         LeftThumbX = sticks.LeftStickX;
         LeftThumbY = sticks.LeftStickY;

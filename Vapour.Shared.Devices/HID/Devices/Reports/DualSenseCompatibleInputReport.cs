@@ -4,11 +4,41 @@ using Vapour.Shared.Devices.HID.InputTypes.DualSense.In;
 
 namespace Vapour.Shared.Devices.HID.Devices.Reports;
 
-public sealed class DualSenseCompatibleInputReport : DualShock4CompatibleInputReport
+public sealed class DualSenseCompatibleInputReport : InputSourceReport, IRawInputSourceReport
 {
     public override InputAxisType AxisScaleInputType => InputAxisType.DualShock4;
 
-    public override void Parse(ReadOnlySpan<byte> input)
+    public TrackPadTouch TrackPadTouch1 { get; protected set; }
+
+    public TrackPadTouch TrackPadTouch2 { get; protected set; }
+
+    public byte TouchPacketCounter { get; protected set; }
+
+    public bool TouchOneFingerActive => Touch1 || Touch2;
+
+    public bool TouchTwoFingersActive => Touch1 && Touch2;
+
+    public bool Mute { get; protected set; }
+
+    /// <summary>
+    ///     First (one finger) touch is registered.
+    /// </summary>
+    public bool Touch1 { get; protected set; }
+
+    /// <summary>
+    ///     Second (two fingers) touch is registered.
+    /// </summary>
+    public bool Touch2 { get; protected set; }
+
+    public bool TouchIsOnLeftSide { get; protected set; }
+
+    public bool TouchIsOnRightSide { get; protected set; }
+
+    public bool TouchClick { get; protected set; }
+
+    public int ReportDataStartIndex { get; set; }
+
+    public void Parse(ReadOnlySpan<byte> input)
     {
         ReportId = input[InConstants.ReportIdIndex];
         input = input.Slice(ReportDataStartIndex);

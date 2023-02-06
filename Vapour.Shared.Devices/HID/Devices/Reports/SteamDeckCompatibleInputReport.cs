@@ -4,11 +4,11 @@ using Vapour.Shared.Devices.HID.InputTypes.SteamDeck.In;
 
 namespace Vapour.Shared.Devices.HID.Devices.Reports;
 
-public sealed class SteamDeckCompatibleInputReport : InputSourceReport
+public sealed class SteamDeckCompatibleInputReport : InputSourceReport, IRawInputSourceReport
 {
     public override InputAxisType AxisScaleInputType => InputAxisType.Xbox;
 
-    public override void Parse(ReadOnlySpan<byte> input)
+    public void Parse(ReadOnlySpan<byte> input)
     {
         var reportData = input.Slice(InConstants.ReportDataOffset).ToStruct<InputReportData>();
 

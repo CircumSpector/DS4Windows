@@ -9,12 +9,21 @@ namespace Vapour.Shared.Devices.HID.Devices;
 
 public class SteamDeckCompatibleHidDevice : CompatibleHidDevice
 {
+    private readonly SteamDeckCompatibleInputReport _inputReport;
+
     public SteamDeckCompatibleHidDevice(ILogger<SteamDeckCompatibleHidDevice> logger, List<DeviceInfo> deviceInfos)
         : base(logger, deviceInfos)
     {
+        _inputReport = new SteamDeckCompatibleInputReport();
     }
 
-    public override InputSourceReport InputSourceReport { get; } = new SteamDeckCompatibleInputReport();
+    public override InputSourceReport InputSourceReport
+    {
+        get
+        {
+            return _inputReport;
+        }
+    }
 
     protected override Type InputDeviceType => typeof(SteamDeckDeviceInfo);
 
@@ -34,7 +43,7 @@ public class SteamDeckCompatibleHidDevice : CompatibleHidDevice
     {
         if (input[InConstants.ReportIdIndex] == InConstants.ReportId)
         {
-            InputSourceReport.Parse(input);
+            _inputReport.Parse(input);
         }
     }
 }

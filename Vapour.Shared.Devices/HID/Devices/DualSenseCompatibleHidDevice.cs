@@ -98,7 +98,7 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
     {
         if (input[InConstants.ReportIdIndex] == _inputReportId)
         {
-            InputSourceReport.Parse(input);
+            _inputReport.Parse(input);
         }
     }
 

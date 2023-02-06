@@ -87,7 +87,7 @@ public sealed class JoyConCompatibleHidDevice : CompatibleHidDevice
 
     public override void ProcessInputReport(ReadOnlySpan<byte> input)
     {
-        InputSourceReport.Parse(input);
+        _report.Parse(input);
 
         var inputReport = input.ToStruct<InputReport>();
 
