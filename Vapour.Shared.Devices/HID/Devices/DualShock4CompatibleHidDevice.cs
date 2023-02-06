@@ -18,6 +18,7 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
 {
     private readonly DualShock4CompatibleInputReport _inputReport;
     private static readonly PhysicalAddress BlankSerial = PhysicalAddress.Parse("00:00:00:00:00:00");
+    private byte[] _outputReport;
 
     public DualShock4CompatibleHidDevice(ILogger<DualShock4CompatibleHidDevice> logger, List<DeviceInfo> deviceInfos)
         : base(logger, deviceInfos)
@@ -45,6 +46,8 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
         }
 
         Logger.LogInformation("Got serial {Serial} for {Device}", Serial, this);
+
+        _outputReport = new byte[SourceDevice.OutputReportByteLength];
     }
 
     public override void OnAfterStartListening()
@@ -125,14 +128,14 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
 
     private void SendReport(OutputReportData reportData)
     {
-        byte[] bytes = null;
         if (Connection == ConnectionType.Usb)
         {
             var report = new UsbOutputReport
             {
                 ReportData = reportData
             };
-            bytes = report.StructToBytes();
+            
+            report.ToBytes(_outputReport);
         }
         else if (Connection == ConnectionType.Bluetooth)
         {
@@ -143,13 +146,11 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
                 ExtraConfig2 = BtExtraConfig2.EnableSomething | BtExtraConfig2.EnableAudio,
                 ReportData = reportData
             };
-            bytes = report.StructToBytes();
-            bytes.SetCrcData(bytes.Length - 4);
+            
+            report.ToBytes(_outputReport);
+            _outputReport.SetCrcData(_outputReport.Length - 4);
         }
-
-        if (bytes != null)
-        {
-            SendOutputReport(bytes);
-        }
+        
+        SendOutputReport(_outputReport);
     }
 }

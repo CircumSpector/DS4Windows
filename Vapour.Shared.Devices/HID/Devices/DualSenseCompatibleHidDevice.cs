@@ -111,12 +111,12 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
         if (Connection == ConnectionType.Usb)
         {
             var report = new UsbOutputReport { ReportData = reportData };
-            MemoryMarshal.Write(_outputReport, ref report);
+            report.ToBytes(_outputReport);
         }
         else if (Connection == ConnectionType.Bluetooth)
         {
             var report = new BtOutputReport { ReportData = reportData };
-            MemoryMarshal.Write(_outputReport, ref report);
+            report.ToBytes(_outputReport);
             _outputReport.SetCrcData(OutConstants.BtCrcCalculateLength);
         }
         
