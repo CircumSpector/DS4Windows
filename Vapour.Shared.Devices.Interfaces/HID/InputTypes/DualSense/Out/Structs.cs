@@ -3,7 +3,7 @@ using System.Windows.Media;
 
 namespace Vapour.Shared.Devices.HID.InputTypes.DualSense.Out;
 
-[StructLayout(LayoutKind.Sequential, Pack = 1, Size = OutConstants.UsbReportLength)]
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
 public struct UsbOutputReport
 {
     public UsbOutputReport()
@@ -16,7 +16,7 @@ public struct UsbOutputReport
 }
 
 
-[StructLayout(LayoutKind.Sequential, Pack = 1, Size = OutConstants.BtReportLength)]
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
 public struct BtOutputReport
 {
     public BtOutputReport()

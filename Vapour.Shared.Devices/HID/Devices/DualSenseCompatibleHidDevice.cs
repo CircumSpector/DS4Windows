@@ -1,4 +1,5 @@
-﻿using System.Windows.Media;
+﻿using System.Runtime.InteropServices;
+using System.Windows.Media;
 
 using Microsoft.Extensions.Logging;
 
@@ -16,6 +17,7 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
 {
     private byte _inputReportId;
     private readonly DualSenseCompatibleInputReport _inputReport;
+    private byte[] _outputReport;
 
     public DualSenseCompatibleHidDevice(ILogger<DualSenseCompatibleHidDevice> logger, List<DeviceInfo> deviceInfos)
         : base(logger, deviceInfos)
@@ -53,6 +55,8 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
             _inputReportId = InConstants.BtReportId;
             _inputReport.ReportDataStartIndex = InConstants.BtReportDataOffset;
         }
+
+        _outputReport = new byte[SourceDevice.OutputReportByteLength];
     }
 
     public override void OnAfterStartListening()
@@ -104,22 +108,18 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
 
     private void SendReport(OutputReportData reportData)
     {
-        byte[] bytes = null;
         if (Connection == ConnectionType.Usb)
         {
             var report = new UsbOutputReport { ReportData = reportData };
-            bytes = report.StructToBytes();
+            MemoryMarshal.Write(_outputReport, ref report);
         }
         else if (Connection == ConnectionType.Bluetooth)
         {
             var report = new BtOutputReport { ReportData = reportData };
-            bytes = report.StructToBytes();
-            bytes.SetCrcData(OutConstants.BtCrcCalculateLength);
+            MemoryMarshal.Write(_outputReport, ref report);
+            _outputReport.SetCrcData(OutConstants.BtCrcCalculateLength);
         }
-
-        if (bytes != null)
-        {
-            SendOutputReport(bytes);
-        }
+        
+        SendOutputReport(_outputReport);
     }
 }
