@@ -47,7 +47,7 @@ public sealed class JoyConCompatibleHidDevice : CompatibleHidDevice
     {
         _report.IsLeft = IsLeft;
         Serial = ReadSerial(OutConstants.FeatureId_Serial);
-        _outputReport = new byte[OutConstants.SubCommandLength];
+        _outputReport = new byte[SourceDevice.OutputReportByteLength];
     }
 
     public override void OnAfterStartListening()
