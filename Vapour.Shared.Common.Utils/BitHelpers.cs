@@ -39,24 +39,4 @@ public static class BitHelpers
     {
         return (int)((value >> offset) & BitCountConversions[count]);
     }
-
-    public static byte[] StructToBytes<T>(this T value)
-    where T : struct
-    {
-        var span = MemoryMarshal.CreateReadOnlySpan(ref value, 1);
-        var bytesSpan = MemoryMarshal.AsBytes(span);
-        return bytesSpan.ToArray();
-    }
-
-    public static T ToStruct<T>(this ReadOnlySpan<byte> data)
-        where T : struct
-    {
-        return MemoryMarshal.AsRef<T>(data);
-    }
-
-    public static T ToStruct<T>(this byte[] data)
-        where T : struct
-    {
-        return ToStruct<T>((ReadOnlySpan<byte>)data);
-    }
 }
