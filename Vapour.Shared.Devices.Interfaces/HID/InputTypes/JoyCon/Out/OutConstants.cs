@@ -28,9 +28,7 @@ public static class OutConstants
 
     public static readonly byte[] GetRightStickUserCalibration = { 0x1D, 0x80, 0x00, 0x00, 0x09 };
     public static readonly byte[] GetRightStickFactoryCalibration = { 0x46, 0x60, 0x00, 0x00, 0x09 };
-
-    public const int SubCommandLength = 64;
-
+    
     public const byte SpiCalibrationDataLength = 9;
 
     public static readonly byte[] DefaultRumbleData = { 0x0, 0x1, 0x40, 0x40, 0x0, 0x1, 0x40, 0x40 };

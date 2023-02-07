@@ -16,6 +16,7 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
 {
     private byte _inputReportId;
     private readonly DualSenseCompatibleInputReport _inputReport;
+    private byte[] _outputReport;
 
     public DualSenseCompatibleHidDevice(ILogger<DualSenseCompatibleHidDevice> logger, List<DeviceInfo> deviceInfos)
         : base(logger, deviceInfos)
@@ -43,16 +44,7 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
 
         Logger.LogInformation("Got serial {Serial} for {Device}", Serial, this);
 
-        if (Connection is ConnectionType.Usb or ConnectionType.SonyWirelessAdapter)
-        {
-            _inputReportId = InConstants.UsbReportId;
-            _inputReport.ReportDataStartIndex = InConstants.UsbReportDataOffset;
-        }
-        else
-        {
-            _inputReportId = InConstants.BtReportId;
-            _inputReport.ReportDataStartIndex = InConstants.BtReportDataOffset;
-        }
+        _outputReport = new byte[SourceDevice.OutputReportByteLength];
     }
 
     public override void OnAfterStartListening()
@@ -96,30 +88,37 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
 
     public override void ProcessInputReport(ReadOnlySpan<byte> input)
     {
-        if (input[InConstants.ReportIdIndex] == _inputReportId)
+        InputReportData reportData;
+        var reportId = input[InConstants.ReportIdIndex];
+        if (reportId == InConstants.StandardReportId)
         {
-            _inputReport.Parse(input);
+            var report = input.ToStruct<StandardInputReport>();
+            reportData = report.InputReportData;
         }
+        else
+        {
+            var report = input.ToStruct<ExtendedInputReport>();
+            reportData = report.InputReportData;
+        }
+
+        _inputReport.ReportId = reportId;
+        _inputReport.Parse(ref reportData);
     }
 
     private void SendReport(OutputReportData reportData)
     {
-        byte[] bytes = null;
         if (Connection == ConnectionType.Usb)
         {
             var report = new UsbOutputReport { ReportData = reportData };
-            bytes = report.StructToBytes();
+            report.ToBytes(_outputReport);
         }
         else if (Connection == ConnectionType.Bluetooth)
         {
             var report = new BtOutputReport { ReportData = reportData };
-            bytes = report.StructToBytes();
-            bytes.SetCrcData(OutConstants.BtCrcCalculateLength);
+            report.ToBytes(_outputReport);
+            _outputReport.SetCrcData(OutConstants.BtCrcCalculateLength);
         }
-
-        if (bytes != null)
-        {
-            SendOutputReport(bytes);
-        }
+        
+        SendOutputReport(_outputReport);
     }
 }

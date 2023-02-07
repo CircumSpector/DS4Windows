@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-using Vapour.Shared.Common.Util;
 using Vapour.Shared.Devices.HID.InputTypes;
 using Vapour.Shared.Devices.HID.InputTypes.DualShock4.In;
 
@@ -58,7 +57,7 @@ public class DualShock4CompatibleInputReport : InputSourceReport, IStructInputSo
     public int ReportDataStartIndex { get; set; }
 
     /// <inheritdoc />
-    public void Parse(InputReportData reportData)
+    public void Parse(ref InputReportData reportData)
     {
         var sticks = reportData.Sticks;
         LeftThumbX = sticks.LeftStickX;

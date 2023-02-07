@@ -26,6 +26,8 @@ public sealed class JoyConCompatibleHidDevice : CompatibleHidDevice
     private readonly float _clampedLowFreq;
     private readonly float _clampedHighFreq;
 
+    private byte[] _outputReport;
+
     public JoyConCompatibleHidDevice(
         ILogger<JoyConCompatibleHidDevice> logger, 
         List<DeviceInfo> deviceInfos)
@@ -45,6 +47,7 @@ public sealed class JoyConCompatibleHidDevice : CompatibleHidDevice
     {
         _report.IsLeft = IsLeft;
         Serial = ReadSerial(OutConstants.FeatureId_Serial);
+        _outputReport = new byte[SourceDevice.OutputReportByteLength];
     }
 
     public override void OnAfterStartListening()
@@ -106,7 +109,8 @@ public sealed class JoyConCompatibleHidDevice : CompatibleHidDevice
 
         Logger.LogInformation("JoyCon Serial {Serial} sending subCommand {SubCommand}", SerialString, command.SubCommandId);
         _lastSubCommandCodeSent = command.SubCommandId;
-        SendOutputReport(command.StructToBytes());
+        command.ToBytes(_outputReport);
+        SendOutputReport(_outputReport);
 
         if (shouldWait)
         {

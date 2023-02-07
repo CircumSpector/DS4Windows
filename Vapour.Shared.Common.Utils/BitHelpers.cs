@@ -1,6 +1,4 @@
-﻿using System.Runtime.InteropServices;
-
-namespace Vapour.Shared.Common.Util;
+﻿namespace Vapour.Shared.Common.Util;
 
 public static class BitHelpers
 {

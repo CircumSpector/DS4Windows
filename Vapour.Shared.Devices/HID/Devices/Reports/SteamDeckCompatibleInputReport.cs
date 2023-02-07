@@ -1,16 +1,16 @@
-﻿using Vapour.Shared.Common.Util;
-using Vapour.Shared.Devices.HID.InputTypes;
+﻿using Vapour.Shared.Devices.HID.InputTypes;
 using Vapour.Shared.Devices.HID.InputTypes.SteamDeck.In;
 
 namespace Vapour.Shared.Devices.HID.Devices.Reports;
 
-public sealed class SteamDeckCompatibleInputReport : InputSourceReport, IRawInputSourceReport
+public sealed class SteamDeckCompatibleInputReport : InputSourceReport, IStructInputSourceReport<InputReport>
 {
     public override InputAxisType AxisScaleInputType => InputAxisType.Xbox;
 
-    public void Parse(ReadOnlySpan<byte> input)
+    public void Parse(ref InputReport inputReport)
     {
-        var reportData = input.Slice(InConstants.ReportDataOffset).ToStruct<InputReportData>();
+        ReportId = inputReport.ReportId;
+        var reportData = inputReport.InputReportData;
 
         var buttons0 = reportData.Buttons.Buttons0;
         Triangle = buttons0.HasFlag(SteamDeckButtons0.Y);

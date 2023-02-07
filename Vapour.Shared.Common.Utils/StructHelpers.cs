@@ -4,12 +4,10 @@ namespace Vapour.Shared.Common.Util;
 
 public static class StructHelpers
 {
-    public static byte[] StructToBytes<T>(this T value)
+    public static void ToBytes<T>(this ref T value, byte[] buffer)
         where T : struct
     {
-        var span = MemoryMarshal.CreateReadOnlySpan(ref value, 1);
-        var bytesSpan = MemoryMarshal.AsBytes(span);
-        return bytesSpan.ToArray();
+        MemoryMarshal.Write(buffer, ref value);
     }
 
     public static T ToStruct<T>(this ReadOnlySpan<byte> data)

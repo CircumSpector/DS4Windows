@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
+using Vapour.Shared.Common.Util;
 using Vapour.Shared.Devices.HID.DeviceInfos;
 using Vapour.Shared.Devices.HID.Devices.Reports;
 using Vapour.Shared.Devices.HID.InputTypes.SteamDeck.Feature;
@@ -41,9 +42,10 @@ public class SteamDeckCompatibleHidDevice : CompatibleHidDevice
 
     public override void ProcessInputReport(ReadOnlySpan<byte> input)
     {
-        if (input[InConstants.ReportIdIndex] == InConstants.ReportId)
+        var report = input.ToStruct<InputReport>();
+        if (report.ReportId == InConstants.ReportId)
         {
-            _inputReport.Parse(input);
+            _inputReport.Parse(ref report);
         }
     }
 }

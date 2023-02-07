@@ -1,10 +1,9 @@
-﻿using Vapour.Shared.Common.Util;
-using Vapour.Shared.Devices.HID.InputTypes;
+﻿using Vapour.Shared.Devices.HID.InputTypes;
 using Vapour.Shared.Devices.HID.InputTypes.DualSense.In;
 
 namespace Vapour.Shared.Devices.HID.Devices.Reports;
 
-public sealed class DualSenseCompatibleInputReport : InputSourceReport, IRawInputSourceReport
+public sealed class DualSenseCompatibleInputReport : InputSourceReport, IStructInputSourceReport<InputReportData>
 {
     public override InputAxisType AxisScaleInputType => InputAxisType.DualShock4;
 
@@ -35,16 +34,9 @@ public sealed class DualSenseCompatibleInputReport : InputSourceReport, IRawInpu
     public bool TouchIsOnRightSide { get; protected set; }
 
     public bool TouchClick { get; protected set; }
-
-    public int ReportDataStartIndex { get; set; }
-
-    public void Parse(ReadOnlySpan<byte> input)
+    
+    public void Parse(ref InputReportData reportData)
     {
-        ReportId = input[InConstants.ReportIdIndex];
-        input = input.Slice(ReportDataStartIndex);
-
-        var reportData = input.ToStruct<InputReportData>();
-
         var sticksAndTriggers = reportData.SticksAndTriggers;
         LeftThumbX = sticksAndTriggers.LeftStickX;
         LeftThumbY = sticksAndTriggers.LeftStickY;

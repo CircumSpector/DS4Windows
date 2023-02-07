@@ -4,7 +4,7 @@ using Vapour.Shared.Common.Util;
 
 namespace Vapour.Shared.Devices.HID.InputTypes.JoyCon.Out;
 
-[StructLayout(LayoutKind.Sequential, Pack = 1, Size = OutConstants.SubCommandLength)]
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
 public struct SubCommand
 {
     public SubCommand()

@@ -2,6 +2,17 @@
 
 namespace Vapour.Shared.Devices.HID.InputTypes.SteamDeck.In;
 
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public struct InputReport
+{
+    public byte UnusedPos0;
+    public byte ReportId;
+    public byte UnusedPos2;
+    public ushort UnusedPos3;
+    public int Sequence;
+    public InputReportData InputReportData;
+}
+
 [StructLayout(LayoutKind.Explicit, Pack = 1)]
 public struct InputReportData
 {
