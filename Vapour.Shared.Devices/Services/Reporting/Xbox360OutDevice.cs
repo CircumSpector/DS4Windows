@@ -1,23 +1,30 @@
 ﻿using System.Threading.Channels;
 
+using MessagePipe;
+
 using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.Xbox360;
 
 using Vapour.Shared.Common.Types;
 using Vapour.Shared.Devices.HID;
+using Vapour.Shared.Devices.Services.Configuration.Messages;
 
 namespace Vapour.Shared.Devices.Services.Reporting;
 
 internal sealed class Xbox360OutDevice : OutDevice
 {
+    private readonly IAsyncPublisher<string, OutputDeviceReport> _outputDeviceReportPublisher;
     private readonly IXbox360Controller _controller;
     private CancellationTokenSource _outDeviceCancellationToken;
     private Channel<byte[]> _outDeviceReportChannel;
     private Thread _outDeviceThread;
+    private IInputSource _inputSource;
+    private string _outputDeviceReportReceivedKey;
 
-    public Xbox360OutDevice(ViGEmClient client)
+    public Xbox360OutDevice(ViGEmClient client, IAsyncPublisher<string, OutputDeviceReport> outputDeviceReportPublisher)
     {
+        _outputDeviceReportPublisher = outputDeviceReportPublisher;
         _controller = client.CreateXbox360Controller();
         _controller.AutoSubmitReport = false;
     }
@@ -27,6 +34,13 @@ internal sealed class Xbox360OutDevice : OutDevice
         if (!IsConnected)
         {
             return;
+        }
+
+        if (_inputSource == null)
+        {
+            _inputSource = state.InputSource;
+            _outputDeviceReportReceivedKey =
+                $"{_inputSource.InputSourceKey}_{MessageKeys.OutputDeviceReportReceivedKey}";
         }
 
         _controller.SetButtonState(Xbox360Button.Back, state.Share);
@@ -132,11 +146,14 @@ internal sealed class Xbox360OutDevice : OutDevice
             while (!_outDeviceCancellationToken.IsCancellationRequested)
             {
                 byte[] buffer = await _outDeviceReportChannel.Reader.ReadAsync(_outDeviceCancellationToken.Token);
-                FireOutputDeviceReportReceived(new OutputDeviceReport
+                if (_inputSource != null)
                 {
-                    StrongMotor = buffer[0],
-                    WeakMotor = buffer[1]
-                });
+                    await _outputDeviceReportPublisher.PublishAsync(_outputDeviceReportReceivedKey, new OutputDeviceReport
+                    {
+                        StrongMotor = buffer[0], WeakMotor = buffer[1],
+                        InputSource = _inputSource,
+                    });
+                }
             }
         }
         catch

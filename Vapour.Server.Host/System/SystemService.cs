@@ -1,26 +1,28 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using MessagePipe;
+
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
 using Vapour.Server.System;
 using Vapour.Shared.Devices.HostedServices;
-using Vapour.Shared.Devices.Services;
+using Vapour.Shared.Devices.Services.Configuration.Messages;
 
 namespace Vapour.Server.Host.System;
 public class SystemService
 {
     private readonly SystemManagerHost _systemManagerHost;
-    private readonly IInputSourceService _inputSourceService;
+    private readonly IAsyncSubscriber<string, bool> _sourceListReadySubscriber;
     private readonly ISystemMessageForwarder _systemMessageForwarder;
 
     public SystemService(
         ISystemMessageForwarder systemMessageForwarder,
         SystemManagerHost systemManagerHost,
-        IInputSourceService inputSourceService)
+        IAsyncSubscriber<string, bool> sourceListReadySubscriber)
     {
         _systemMessageForwarder = systemMessageForwarder;
         _systemManagerHost = systemManagerHost;
-        _inputSourceService = inputSourceService;
-        inputSourceService.InputSourceListReady += InputSourceService_InputSourceListReady;
+        _sourceListReadySubscriber = sourceListReadySubscriber;
+        _sourceListReadySubscriber.Subscribe(MessageKeys.InputSourceReadyKey, OnSourceListReady);
         _systemManagerHost.RunningChanged += SystemManagerHostRunningChanged;
     }
 
@@ -38,8 +40,9 @@ public class SystemService
         await _systemMessageForwarder.SendIsHostRunning(e);
     }
 
-    private void InputSourceService_InputSourceListReady()
+    private ValueTask OnSourceListReady(bool isReady, CancellationToken cs)
     {
-        IsReady = true;
+        IsReady = isReady;
+        return ValueTask.CompletedTask;
     }
 }

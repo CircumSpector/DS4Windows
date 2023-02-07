@@ -5,6 +5,8 @@ using System.Threading.Channels;
 
 using Windows.Win32.Foundation;
 
+using MessagePipe;
+
 using Microsoft.Extensions.Logging;
 
 using Nefarius.Drivers.WinUSB;
@@ -12,7 +14,7 @@ using Nefarius.ViGEm.Client.Exceptions;
 
 using Vapour.Shared.Common.Telemetry;
 using Vapour.Shared.Devices.HID;
-using Vapour.Shared.Devices.Services.Reporting.CustomActions;
+using Vapour.Shared.Devices.Services.Configuration.Messages;
 
 namespace Vapour.Shared.Devices.Services.Reporting;
 
@@ -22,6 +24,7 @@ namespace Vapour.Shared.Devices.Services.Reporting;
 internal sealed class InputReportProcessor : IInputReportProcessor
 {
     private readonly ICustomActionProcessor _customActionProcessor;
+    private readonly IAsyncPublisher<string, InputSourceFinalReport> _reportPublisher;
     private static readonly Meter Meter = new(TracingSources.AssemblyName);
 
     private static readonly Counter<int> ReportsReadCounter =
@@ -41,22 +44,26 @@ internal sealed class InputReportProcessor : IInputReportProcessor
 
     private CancellationTokenSource _inputReportToken;
 
-    public InputReportProcessor(ILogger<InputReportProcessor> logger, ICustomActionProcessor customActionProcessor)
+    public InputReportProcessor(
+        ILogger<InputReportProcessor> logger, 
+        ICustomActionProcessor customActionProcessor,
+        IAsyncPublisher<string, InputSourceFinalReport> reportPublisher)
     {
         _customActionProcessor = customActionProcessor;
+        _reportPublisher = reportPublisher;
         Logger = logger;
     }
     
     private ILogger<InputReportProcessor> Logger { get; }
     public IInputSource InputSource { get; private set; }
+    private string _inputReportAvailableKey;
     public bool IsInputReportAvailableInvoked { get; set; } = true;
     public bool IsProcessing { get; private set; }
-    public event Action<IInputSource, InputSourceFinalReport> InputReportAvailable;
-    public event Action<ICustomAction> OnCustomActionDetected;
 
     public void SetInputSource(IInputSource inputSource)
     {
         InputSource = inputSource;
+        _inputReportAvailableKey = $"{InputSource.InputSourceKey}_{MessageKeys.InputReportAvailableKey}";
     }
     
     /// <inheritdoc />
@@ -66,8 +73,6 @@ internal sealed class InputReportProcessor : IInputReportProcessor
         {
             return;
         }
-
-        _customActionProcessor.OnCustomActionDetected += OnCustomAction;
 
         _inputReportChannel = Channel.CreateUnbounded<byte[]>(new UnboundedChannelOptions
         {
@@ -118,8 +123,6 @@ internal sealed class InputReportProcessor : IInputReportProcessor
             return;
         }
 
-        _customActionProcessor.OnCustomActionDetected -= OnCustomActionDetected;
-
         _inputReportToken.Cancel();
 
         _inputReportReader.Join();
@@ -160,7 +163,7 @@ internal sealed class InputReportProcessor : IInputReportProcessor
 
                 if (IsInputReportAvailableInvoked)
                 {
-                    InputReportAvailable?.Invoke(InputSource, report);
+                    await _reportPublisher.PublishAsync(_inputReportAvailableKey, report);
                 }
 
                 _customActionChannel.Writer.WriteAsync(report);
@@ -294,10 +297,5 @@ internal sealed class InputReportProcessor : IInputReportProcessor
         {
             Logger.LogError(ex, "Fatal failure in input report processing");
         }
-    }
-
-    private void OnCustomAction(ICustomAction customAction)
-    {
-        OnCustomActionDetected?.Invoke(customAction);
     }
 }

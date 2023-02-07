@@ -1,4 +1,4 @@
-﻿using System.Runtime.InteropServices;
+﻿ using System.Runtime.InteropServices;
 
 using Windows.Win32;
 using Windows.Win32.Foundation;
@@ -6,7 +6,8 @@ using Windows.Win32.Storage.FileSystem;
 
 using Microsoft.Extensions.Logging;
 
-using Vapour.Shared.Devices.HID.DeviceInfos;
+ using Vapour.Shared.Common.Util;
+ using Vapour.Shared.Devices.HID.DeviceInfos;
 using Vapour.Shared.Devices.HID.DeviceInfos.Meta;
 using Vapour.Shared.Devices.HID.Devices.Reports;
 using Vapour.Shared.Devices.HID.InputTypes.Xbox;
@@ -151,6 +152,7 @@ public sealed class XboxCompositeCompatibleHidDevice : CompatibleHidDevice
 
     public override void ProcessInputReport(ReadOnlySpan<byte> input)
     {
-        _inputReport.Parse(input);
+        var report = input.ToStruct<InputReport>();
+        _inputReport.Parse(ref report);
     }
 }

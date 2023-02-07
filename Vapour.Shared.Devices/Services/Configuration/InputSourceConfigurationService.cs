@@ -1,10 +1,13 @@
 ﻿using System.Text.Json;
 
+using MessagePipe;
+
 using Vapour.Shared.Common.Services;
 using Vapour.Shared.Common.Util;
 using Vapour.Shared.Configuration.Profiles;
 using Vapour.Shared.Configuration.Profiles.Schema;
 using Vapour.Shared.Configuration.Profiles.Services;
+using Vapour.Shared.Devices.Services.Configuration.Messages;
 
 namespace Vapour.Shared.Devices.Services.Configuration;
 
@@ -12,6 +15,7 @@ internal sealed class InputSourceConfigurationService : IInputSourceConfiguratio
 {
     public const string MultiControllerKeySeparator = "::::";
     private readonly IGameListProviderService _gameListProviderService;
+    private readonly IAsyncPublisher<string, string> _configurationUpdatedPublisher;
     private readonly IGlobalStateService _globalStateService;
     private readonly IProfilesService _profilesService;
     private Dictionary<string, InputSourceConfiguration> _inputSourceConfigurations;
@@ -20,17 +24,16 @@ internal sealed class InputSourceConfigurationService : IInputSourceConfiguratio
     public InputSourceConfigurationService(
         IGlobalStateService globalStateService,
         IProfilesService profilesService,
-        IGameListProviderService gameListProviderService)
+        IGameListProviderService gameListProviderService,
+        IAsyncPublisher<string, string> configurationUpdatedPublisher)
     {
         _globalStateService = globalStateService;
         _profilesService = profilesService;
         _gameListProviderService = gameListProviderService;
+        _configurationUpdatedPublisher = configurationUpdatedPublisher;
         _profilesService.OnProfileDeleted += _profilesService_OnProfileDeleted;
         _profilesService.OnProfileUpdated += _profilesService_OnProfileUpdated;
     }
-
-    public event Action OnRefreshConfigurations;
-    public event Action<string> OnDefaultConfigurationUpdated;
 
     //really dont like doing this
     public Func<string> GetCurrentGameRunning { get; set; }
@@ -80,7 +83,7 @@ internal sealed class InputSourceConfigurationService : IInputSourceConfiguratio
     {
         _inputSourceConfigurations[inputSourceKey] = configuration;
         SaveInputSourceConfigurations();
-        OnDefaultConfigurationUpdated?.Invoke(inputSourceKey);
+        _configurationUpdatedPublisher.Publish(MessageKeys.ConfigurationChangedKey, inputSourceKey);
     }
 
     public void AddOrUpdateInputSourceGameConfiguration(string inputSourceKey,
@@ -307,7 +310,7 @@ internal sealed class InputSourceConfigurationService : IInputSourceConfiguratio
 
         SaveInputSourceGameConfigurations();
 
-        OnRefreshConfigurations?.Invoke();
+        _configurationUpdatedPublisher.Publish(MessageKeys.ConfigurationChangedKey, null);
     }
 
     private List<InputSourceConfiguration> GetGameInputSourceConfigurations(string inputSourceKey)

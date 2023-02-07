@@ -43,6 +43,8 @@ public class DevicesRegistrar : IServiceRegistrar
         services.AddTransient<IOutputDeviceProcessor, OutputDeviceProcessor>();
         services.AddTransient<IOutputReportProcessor, OutputReportProcessor>();
         services.AddTransient<ICustomActionProcessor, CustomActionProcessor>();
+        services.AddTransient<Xbox360OutDevice>();
+        services.AddTransient<DS4OutDevice>();
 
         AddDevices(services);
 

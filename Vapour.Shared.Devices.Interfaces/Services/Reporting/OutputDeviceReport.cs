@@ -1,6 +1,8 @@
 ﻿namespace Vapour.Shared.Devices.Services.Reporting;
 public class OutputDeviceReport
 {
+    public IInputSource InputSource { get; set; }
+
     public byte[] FormattedData { get; } = new byte[3];
 
     public byte StrongMotor

@@ -15,11 +15,4 @@ internal abstract class OutDevice : IOutDevice
     public abstract void ResetState(bool submit = true);
 
     public abstract OutputDeviceType GetDeviceType();
-
-    public event Action<OutputDeviceReport> OnOutputDeviceReportReceived;
-
-    protected void FireOutputDeviceReportReceived(OutputDeviceReport report)
-    {
-        OnOutputDeviceReportReceived?.Invoke(report);
-    }
 }

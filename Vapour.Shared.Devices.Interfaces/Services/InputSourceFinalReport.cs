@@ -4,6 +4,13 @@ using Vapour.Shared.Devices.HID.InputTypes;
 namespace Vapour.Shared.Devices.Services;
 public class InputSourceFinalReport 
 {
+    public IInputSource InputSource { get; }
+
+    public InputSourceFinalReport(IInputSource inputSource)
+    {
+        InputSource = inputSource;
+    }
+
     public InputAxisType LThumbAxisScaleInputType { get; set; }
     public InputAxisType RThumbAxisScaleInputType { get; set; }
     

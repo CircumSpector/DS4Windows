@@ -1,16 +1,15 @@
-﻿using Vapour.Shared.Common.Util;
-using Vapour.Shared.Devices.HID.InputTypes;
+﻿using Vapour.Shared.Devices.HID.InputTypes;
 using Vapour.Shared.Devices.HID.InputTypes.Xbox.In;
 
 namespace Vapour.Shared.Devices.HID.Devices.Reports;
 
-public class XboxCompatibleInputReport : InputSourceReport, IRawInputSourceReport
+public class XboxCompatibleInputReport : InputSourceReport, IStructInputSourceReport<InputReport>
 {
     public override InputAxisType AxisScaleInputType => InputAxisType.Xbox;
 
-    public void Parse(ReadOnlySpan<byte> input)
+    public void Parse(ref InputReport inputReport)
     {
-        var inputReportData =input.Slice(InConstants.InputReportDataOffset).ToStruct<InputReportData>();
+        var inputReportData = inputReport.InputReportData;
 
         var buttons = inputReportData.Buttons;
         Triangle = buttons.HasFlag(XboxButtons.Y);

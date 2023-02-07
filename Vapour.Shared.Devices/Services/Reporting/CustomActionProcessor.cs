@@ -1,18 +1,26 @@
-﻿using Vapour.Shared.Devices.HID;
+﻿using MessagePipe;
+
+using Vapour.Shared.Devices.HID;
 using Vapour.Shared.Devices.Services.Reporting.CustomActions;
 
 namespace Vapour.Shared.Devices.Services.Reporting;
 
 public class CustomActionProcessor : ICustomActionProcessor
 {
+    private readonly IAsyncPublisher<GracefulShutdownAction> _gracefulShutdownPublisher;
+    private readonly IAsyncPublisher<SetPlayerLedAndColorAction> _setPlayerLedAndColorPublisher;
+    public CustomActionReport CustomActionReport { get; } = new();
+    private bool _wasLedExecuted;
     private bool _wasGracefulShutdownExecuted;
 
-    private bool _wasLedExecuted;
-
-    public CustomActionReport CustomActionReport { get; } = new();
-
-    public event Action<ICustomAction> OnCustomActionDetected;
-
+    public CustomActionProcessor(
+        IAsyncPublisher<GracefulShutdownAction> gracefulShutdownPublisher,
+        IAsyncPublisher<SetPlayerLedAndColorAction> setPlayerLedAndColorPublisher)
+    {
+        _gracefulShutdownPublisher = gracefulShutdownPublisher;
+        _setPlayerLedAndColorPublisher = setPlayerLedAndColorPublisher;
+    }
+    
     public Task ProcessReport(IInputSource inputSource, InputSourceFinalReport inputReport)
     {
         long currentTicks = DateTime.Now.Ticks;
@@ -78,10 +86,10 @@ public class CustomActionProcessor : ICustomActionProcessor
         {
             byte playerNumber = inputReport.DPad switch
             {
-                DPadDirection.North when currentTicks - r2Start > 1000 && currentTicks - r1Start > 1000 => 1,
-                DPadDirection.East when currentTicks - r2Start > 1000 && currentTicks - r1Start > 1000 => 2,
-                DPadDirection.South when currentTicks - r2Start > 1000 && currentTicks - r1Start > 1000 => 3,
-                DPadDirection.West when currentTicks - r2Start > 1000 && currentTicks - r1Start > 1000 => 4,
+                DPadDirection.North when currentTicks - r2Start > 1000000 && currentTicks - r1Start > 1000 => 1,
+                DPadDirection.East when currentTicks - r2Start > 1000000 && currentTicks - r1Start > 1000 => 2,
+                DPadDirection.South when currentTicks - r2Start > 1000000 && currentTicks - r1Start > 1000 => 3,
+                DPadDirection.West when currentTicks - r2Start > 1000000 && currentTicks - r1Start > 1000 => 4,
                 _ => 0
             };
 
@@ -90,15 +98,11 @@ public class CustomActionProcessor : ICustomActionProcessor
                 if (!_wasLedExecuted)
                 {
                     _wasLedExecuted = true;
-                    Task.Run(() =>
+
+                    _setPlayerLedAndColorPublisher.Publish(new SetPlayerLedAndColorAction
                     {
-                        //i dont know why but without this delay paired
-                        //joycons crash when setting player led
-                        Thread.Sleep(250);
-                        OnCustomActionDetected?.Invoke(new SetPlayerLedAndColorAction
-                        {
-                            InputSource = inputSource, PlayerNumber = playerNumber
-                        });
+                        InputSource = inputSource,
+                        PlayerNumber = playerNumber
                     });
                 }
             }
@@ -118,8 +122,11 @@ public class CustomActionProcessor : ICustomActionProcessor
             if (!_wasGracefulShutdownExecuted)
             {
                 _wasGracefulShutdownExecuted = true;
+
                 Task.Run(() =>
-                    OnCustomActionDetected?.Invoke(new GracefulShutdownAction { InputSource = inputSource }));
+                {
+                    _gracefulShutdownPublisher.Publish(new GracefulShutdownAction { InputSource = inputSource });
+                });
             }
         }
     }
