@@ -1,7 +1,7 @@
-﻿namespace Vapour.Shared.Devices.HID.InputTypes.SteamDeck;
+﻿namespace Vapour.Shared.Devices.HID.InputTypes.SteamDeck.In;
 
 [Flags]
-public enum SteamDeckButtons0 : UInt16
+public enum SteamDeckButtons0 : ushort
 {
     L5 = 0b1000000000000000,
     Options = 0b0100000000000000,
@@ -19,10 +19,4 @@ public enum SteamDeckButtons0 : UInt16
     R1 = 0b0000000000000100,
     L2 = 0b0000000000000010,
     R2 = 0b0000000000000001,
-}
-
-internal enum SteamDeckButtonsStick : byte
-{
-    LeftStick = 0b01000000,
-    RightStick = 0b00000100
 }

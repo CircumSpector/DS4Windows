@@ -1,18 +1,18 @@
-﻿using System.Runtime.InteropServices;
-
-using Vapour.Shared.Devices.HID.InputTypes;
-using Vapour.Shared.Devices.HID.InputTypes.SteamDeck;
+﻿using Vapour.Shared.Devices.HID.InputTypes;
+using Vapour.Shared.Devices.HID.InputTypes.SteamDeck.In;
 
 namespace Vapour.Shared.Devices.HID.Devices.Reports;
 
-public sealed class SteamDeckCompatibleInputReport : InputSourceReport
+public sealed class SteamDeckCompatibleInputReport : InputSourceReport, IStructInputSourceReport<InputReport>
 {
     public override InputAxisType AxisScaleInputType => InputAxisType.Xbox;
 
-    public override void Parse(ReadOnlySpan<byte> input)
+    public void Parse(ref InputReport inputReport)
     {
-        SteamDeckButtons0 buttons0 = (SteamDeckButtons0)MemoryMarshal.Read<ushort>(input.Slice(9, 2));
+        ReportId = inputReport.ReportId;
+        var reportData = inputReport.InputReportData;
 
+        var buttons0 = reportData.Buttons.Buttons0;
         Triangle = buttons0.HasFlag(SteamDeckButtons0.Y);
         Circle = buttons0.HasFlag(SteamDeckButtons0.B);
         Cross = buttons0.HasFlag(SteamDeckButtons0.A);
@@ -27,16 +27,18 @@ public sealed class SteamDeckCompatibleInputReport : InputSourceReport
 
         SetDPad(buttons0);
 
-        LeftTrigger = (byte)(MemoryMarshal.Read<short>(input.Slice(45, 2)) / (double)Int16.MaxValue * byte.MaxValue);
-        RightTrigger = (byte)(MemoryMarshal.Read<short>(input.Slice(47, 2)) / (double)Int16.MaxValue * byte.MaxValue);
+        var buttons = reportData.Buttons;
+        LeftThumb = buttons.LeftThumb;
+        RightThumb = buttons.RightThumb;
 
-        LeftThumb = input[11] == (byte)SteamDeckButtonsStick.LeftStick;
-        RightThumb = input[12] == (byte)SteamDeckButtonsStick.RightStick;
+        var sticksAndTriggers = reportData.SticksAndTriggers;
+        LeftTrigger = sticksAndTriggers.LeftTrigger;
+        RightTrigger = sticksAndTriggers.RightTrigger;
 
-        LeftThumbX = MemoryMarshal.Read<short>(input.Slice(49, 2));
-        LeftThumbY = MemoryMarshal.Read<short>(input.Slice(51, 2));
-        RightThumbX = MemoryMarshal.Read<short>(input.Slice(53, 2));
-        RightThumbY = MemoryMarshal.Read<short>(input.Slice(55, 2));
+        LeftThumbX = sticksAndTriggers.LeftThumbX;
+        LeftThumbY = sticksAndTriggers.LeftThumbY;
+        RightThumbX = sticksAndTriggers.RightThumbX;
+        RightThumbY = sticksAndTriggers.RightThumbY;
     }
 
     private void SetDPad(SteamDeckButtons0 buttons0)

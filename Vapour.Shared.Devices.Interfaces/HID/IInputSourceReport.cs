@@ -142,10 +142,4 @@ public interface IInputSourceReport
     ///     Gets idle state.
     /// </summary>
     bool IsIdle { get; }
-
-    /// <summary>
-    ///     Parse a raw byte buffer into <see cref="InputSourceReport" />.
-    /// </summary>
-    /// <param name="input">The raw input report buffer.</param>
-    void Parse(ReadOnlySpan<byte> input);
 }

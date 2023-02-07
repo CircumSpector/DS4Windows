@@ -1,26 +1,36 @@
 ﻿using Microsoft.Extensions.Logging;
 
+using Vapour.Shared.Common.Util;
 using Vapour.Shared.Devices.HID.DeviceInfos;
 using Vapour.Shared.Devices.HID.Devices.Reports;
+using Vapour.Shared.Devices.HID.InputTypes.SteamDeck.Feature;
+using Vapour.Shared.Devices.HID.InputTypes.SteamDeck.In;
 
 namespace Vapour.Shared.Devices.HID.Devices;
 
 public class SteamDeckCompatibleHidDevice : CompatibleHidDevice
 {
-    private const byte SerialFeatureId = 0x15;
+    private readonly SteamDeckCompatibleInputReport _inputReport;
 
     public SteamDeckCompatibleHidDevice(ILogger<SteamDeckCompatibleHidDevice> logger, List<DeviceInfo> deviceInfos)
         : base(logger, deviceInfos)
     {
+        _inputReport = new SteamDeckCompatibleInputReport();
     }
 
-    public override InputSourceReport InputSourceReport { get; } = new SteamDeckCompatibleInputReport();
+    public override InputSourceReport InputSourceReport
+    {
+        get
+        {
+            return _inputReport;
+        }
+    }
 
     protected override Type InputDeviceType => typeof(SteamDeckDeviceInfo);
 
     protected override void OnInitialize()
     {
-        Serial = ReadSerial(SerialFeatureId);
+        Serial = ReadSerial(FeatureConstants.SerialFeatureId);
 
         if (Serial is null)
         {
@@ -32,9 +42,10 @@ public class SteamDeckCompatibleHidDevice : CompatibleHidDevice
 
     public override void ProcessInputReport(ReadOnlySpan<byte> input)
     {
-        if (input[1] == 1)
+        var report = input.ToStruct<InputReport>();
+        if (report.ReportId == InConstants.ReportId)
         {
-            InputSourceReport.Parse(input);
+            _inputReport.Parse(ref report);
         }
     }
 }

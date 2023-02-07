@@ -4,14 +4,14 @@ using Vapour.Shared.Devices.HID;
 using Vapour.Shared.Devices.Services.Reporting.CustomActions;
 
 namespace Vapour.Shared.Devices.Services.Reporting;
+
 public class CustomActionProcessor : ICustomActionProcessor
 {
     private readonly IAsyncPublisher<GracefulShutdownAction> _gracefulShutdownPublisher;
     private readonly IAsyncPublisher<SetPlayerLedAndColorAction> _setPlayerLedAndColorPublisher;
     public CustomActionReport CustomActionReport { get; } = new();
+
     public event Action<ICustomAction> OnCustomActionDetected;
-    private bool _wasLedExecuted;
-    private bool _wasGracefulShutdownExecuted;
 
     public CustomActionProcessor(
         IAsyncPublisher<GracefulShutdownAction> gracefulShutdownPublisher,
@@ -24,7 +24,7 @@ public class CustomActionProcessor : ICustomActionProcessor
 
     public async Task ProcessReport(IInputSource inputSource, InputSourceFinalReport inputReport)
     {
-        var currentTicks = DateTime.Now.Ticks;
+        long currentTicks = DateTime.Now.Ticks;
         CalculateBoolValue(currentTicks, inputReport.Cross, CustomActionReport.CrossStart);
         CalculateBoolValue(currentTicks, inputReport.Circle, CustomActionReport.CircleStart);
         CalculateBoolValue(currentTicks, inputReport.Triangle, CustomActionReport.TriangleStart);
@@ -45,6 +45,8 @@ public class CustomActionProcessor : ICustomActionProcessor
 
         CheckSetPlayerNumber(inputSource, inputReport, currentTicks);
         CheckPerformDisconnect(inputSource, currentTicks);
+
+        return Task.CompletedTask;
     }
 
     private void CalculateBoolValue(long ticks, bool value, byte buttonIndex)
@@ -73,8 +75,8 @@ public class CustomActionProcessor : ICustomActionProcessor
 
     private void CheckSetPlayerNumber(IInputSource inputSource, InputSourceFinalReport inputReport, long currentTicks)
     {
-        var r1Start = CustomActionReport.GetValue(CustomActionReport.R1Start);
-        var r2Start = CustomActionReport.GetValue(CustomActionReport.R2Start);
+        long r1Start = CustomActionReport.GetValue(CustomActionReport.R1Start);
+        long r2Start = CustomActionReport.GetValue(CustomActionReport.R2Start);
 
         if (r1Start == 0 || r2Start == 0 || inputReport.DPad == DPadDirection.Default)
         {
@@ -128,7 +130,7 @@ public class CustomActionProcessor : ICustomActionProcessor
 
     private void CheckPerformDisconnect(IInputSource inputSource, long currentTicks)
     {
-        var psStart = CustomActionReport.GetValue(CustomActionReport.PSStart);
+        long psStart = CustomActionReport.GetValue(CustomActionReport.PSStart);
 
         if (psStart == 0)
         {

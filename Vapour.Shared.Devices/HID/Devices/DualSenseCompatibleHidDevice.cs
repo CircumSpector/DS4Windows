@@ -1,35 +1,41 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Windows.Media;
+﻿using System.Windows.Media;
 
 using Microsoft.Extensions.Logging;
 
 using Vapour.Shared.Common.Util;
 using Vapour.Shared.Devices.HID.DeviceInfos;
 using Vapour.Shared.Devices.HID.Devices.Reports;
+using Vapour.Shared.Devices.HID.InputTypes.DualSense.Feature;
+using Vapour.Shared.Devices.HID.InputTypes.DualSense.In;
+using Vapour.Shared.Devices.HID.InputTypes.DualSense.Out;
 using Vapour.Shared.Devices.Services.Reporting;
 
 namespace Vapour.Shared.Devices.HID.Devices;
 
 public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
 {
-    private const byte SerialFeatureId = 9;
-    private const int UsbInputReportSize = 64;
-    private const int BthInputReportSize = 547;
-
-    private int _reportStartOffset;
+    private byte _inputReportId;
+    private readonly DualSenseCompatibleInputReport _inputReport;
+    private byte[] _outputReport;
 
     public DualSenseCompatibleHidDevice(ILogger<DualSenseCompatibleHidDevice> logger, List<DeviceInfo> deviceInfos)
         : base(logger, deviceInfos)
     {
+        _inputReport = new DualSenseCompatibleInputReport();
     }
 
     protected override Type InputDeviceType => typeof(DualSenseDeviceInfo);
 
-    public override InputSourceReport InputSourceReport { get; } = new DualSenseCompatibleInputReport();
+    public override InputSourceReport InputSourceReport {
+        get
+        {
+            return _inputReport;
+        }
+    }
 
     protected override void OnInitialize()
     {
-        Serial = ReadSerial(SerialFeatureId);
+        Serial = ReadSerial(FeatureConstants.SerialId);
 
         if (Serial is null)
         {
@@ -38,128 +44,81 @@ public sealed class DualSenseCompatibleHidDevice : CompatibleHidDevice
 
         Logger.LogInformation("Got serial {Serial} for {Device}", Serial, this);
 
-        if (Connection is ConnectionType.Usb or ConnectionType.SonyWirelessAdapter)
-        {
-            _reportStartOffset = 0;
-        }
-        //InputReportArray = new byte[UsbInputReportSize];
-        //InputReportBuffer = Marshal.AllocHGlobal(InputReportArray.Length);
-        //
-        // TODO: finish me
-        // 
-        else
-        {
-            _reportStartOffset = 1;
-        }
-        //InputReportArray = new byte[BthInputReportSize];
-        //InputReportBuffer = Marshal.AllocHGlobal(InputReportArray.Length);
+        _outputReport = new byte[SourceDevice.OutputReportByteLength];
     }
 
     public override void OnAfterStartListening()
     {
-        byte[] reportData = BuildConfigurationReportData();
-        SendOutputReport(BuildOutputReport(reportData));
+        var report = new OutputReportData
+        {
+            Config1 = Config1.All, 
+            Config2 = Config2.All
+        };
+        SendReport(report);
     }
 
     public override void OutputDeviceReportReceived(OutputDeviceReport outputDeviceReport)
     {
-        byte[] reportData = BuildRumbleReportData(outputDeviceReport.StrongMotor, outputDeviceReport.WeakMotor);
-        SendOutputReport(BuildOutputReport(reportData));
+        var reportData = new OutputReportData
+        {
+            Config1 = Config1.EnableRumbleEmulation | Config1.UseRumbleNotHaptics
+        };
+        reportData.RumbleData.LeftMotor = outputDeviceReport.StrongMotor;
+        reportData.RumbleData.RightMotor = outputDeviceReport.WeakMotor;
+
+        SendReport(reportData);
     }
 
     public override void SetPlayerLedAndColor()
     {
-        byte[] reportData = BuildLedData();
-        SendOutputReport(BuildOutputReport(reportData));
-    }
-
-    public override void ProcessInputReport(ReadOnlySpan<byte> input)
-    {
-        InputSourceReport.Parse(input.Slice(_reportStartOffset));
-    }
-
-    private byte[] BuildOutputReport(byte[] reportData)
-    {
-        byte[] outputReportPacket = new byte[SourceDevice.OutputReportByteLength];
-        if (Connection == ConnectionType.Usb)
+        var reportData = new OutputReportData
         {
-            outputReportPacket[0] = 0x02;
-            Array.Copy(reportData, 0, outputReportPacket, 1, 47);
-        }
-        else if (Connection == ConnectionType.Bluetooth)
-        {
-            outputReportPacket[0] = 0x31;
-            outputReportPacket[1] = 0x02;
-            Array.Copy(reportData, 0, outputReportPacket, 2, 47);
-            uint crc = CRC32Utils.ComputeCRC32(outputReportPacket, 74);
-            byte[] checksumBytes = BitConverter.GetBytes(crc);
-            Array.Copy(checksumBytes, 0, outputReportPacket, 74, 4);
-        }
-
-        return outputReportPacket;
-    }
-
-    private byte[] BuildConfigurationReportData()
-    {
-        byte[] reportData = new byte[47];
-
-        reportData[0] = 0xFF;
-        reportData[1] = 0xF7;
-
-        return reportData;
-    }
-
-    private byte[] BuildRumbleReportData(byte strongMotor, byte weakMotor)
-    {
-        byte[] reportData = new byte[47];
-        reportData[0] = 0x03;
-        reportData[2] = weakMotor;
-        reportData[3] = strongMotor;
-
-        return reportData;
-    }
-
-    private byte[] BuildLedData()
-    {
-        byte[] reportData = new byte[47];
-        reportData[1] = 0x16;
-        reportData[42] = 0x02; //player led brightness
-
-        byte playerLed = CurrentConfiguration.PlayerNumber switch
-        {
-            1 => (byte)PlayerLedLights.Player1,
-            2 => (byte)PlayerLedLights.Player2,
-            3 => (byte)PlayerLedLights.Player3,
-            4 => (byte)PlayerLedLights.Player4,
-            _ => (byte)PlayerLedLights.None
+            Config2 = Config2.AllowLedColor | Config2.AllowPlayerIndicators
         };
-
-        reportData[43] = (byte)(0x20 | playerLed); //player led number
+        reportData.LedData.SetPlayerNumber(CurrentConfiguration.PlayerNumber);
+        reportData.LedData.PlayerLedBrightness = PlayerLedBrightness.Medium;
 
         if (CurrentConfiguration.LoadedLightbar != null)
         {
             Color rgb = (Color)ColorConverter.ConvertFromString(CurrentConfiguration.LoadedLightbar);
-            reportData[44] = rgb.R;
-            reportData[45] = rgb.G;
-            reportData[46] = rgb.B;
+            reportData.LedData.SetLightbarColor(rgb);
         }
-
-        return reportData;
+        SendReport(reportData);
     }
 
-    [SuppressMessage("ReSharper", "UnusedMember.Local")]
-    private enum PlayerLedLights : byte
+    public override void ProcessInputReport(ReadOnlySpan<byte> input)
     {
-        None = 0x00,
-        Left = 0x01,
-        MiddleLeft = 0x02,
-        Middle = 0x04,
-        MiddleRight = 0x08,
-        Right = 0x10,
-        Player1 = Middle,
-        Player2 = MiddleLeft | MiddleRight,
-        Player3 = Left | Middle | Right,
-        Player4 = Left | MiddleLeft | MiddleRight | Right,
-        All = Left | MiddleLeft | Middle | MiddleRight | Right
+        InputReportData reportData;
+        var reportId = input[InConstants.ReportIdIndex];
+        if (reportId == InConstants.StandardReportId)
+        {
+            var report = input.ToStruct<StandardInputReport>();
+            reportData = report.InputReportData;
+        }
+        else
+        {
+            var report = input.ToStruct<ExtendedInputReport>();
+            reportData = report.InputReportData;
+        }
+
+        _inputReport.ReportId = reportId;
+        _inputReport.Parse(ref reportData);
+    }
+
+    private void SendReport(OutputReportData reportData)
+    {
+        if (Connection == ConnectionType.Usb)
+        {
+            var report = new UsbOutputReport { ReportData = reportData };
+            report.ToBytes(_outputReport);
+        }
+        else if (Connection == ConnectionType.Bluetooth)
+        {
+            var report = new BtOutputReport { ReportData = reportData };
+            report.ToBytes(_outputReport);
+            _outputReport.SetCrcData(OutConstants.BtCrcCalculateLength);
+        }
+        
+        SendOutputReport(_outputReport);
     }
 }

@@ -1,18 +1,18 @@
-﻿using System.Runtime.InteropServices;
-
+﻿using Vapour.Shared.Common.Util;
 using Vapour.Shared.Devices.HID.InputTypes;
-using Vapour.Shared.Devices.HID.InputTypes.Xbox;
+using Vapour.Shared.Devices.HID.InputTypes.Xbox.In;
 
 namespace Vapour.Shared.Devices.HID.Devices.Reports;
 
-public class XboxCompatibleInputReport : InputSourceReport
+public class XboxCompatibleInputReport : InputSourceReport, IStructInputSourceReport<InputReport>
 {
     public override InputAxisType AxisScaleInputType => InputAxisType.Xbox;
 
-    public override void Parse(ReadOnlySpan<byte> input)
+    public void Parse(ref InputReport inputReport)
     {
-        XboxButtons buttons = (XboxButtons)MemoryMarshal.Read<ushort>(input.Slice(11, 2));
+        var inputReportData = inputReport.InputReportData;
 
+        var buttons = inputReportData.Buttons;
         Triangle = buttons.HasFlag(XboxButtons.Y);
         Circle = buttons.HasFlag(XboxButtons.B);
         Cross = buttons.HasFlag(XboxButtons.A);
@@ -25,18 +25,18 @@ public class XboxCompatibleInputReport : InputSourceReport
         Share = buttons.HasFlag(XboxButtons.Back);
         PS = buttons.HasFlag(XboxButtons.Xbox);
 
-        SetDPad(buttons);
+        SetDPad(inputReportData.Buttons);
 
         LeftThumb = buttons.HasFlag(XboxButtons.L3);
         RightThumb = buttons.HasFlag(XboxButtons.R3);
 
-        LeftTrigger = input[13];
-        RightTrigger = input[14];
+        LeftTrigger = inputReportData.LeftTrigger;
+        RightTrigger = inputReportData.RightTrigger;
 
-        LeftThumbX = MemoryMarshal.Read<short>(input.Slice(15, 2));
-        LeftThumbY = MemoryMarshal.Read<short>(input.Slice(17, 2));
-        RightThumbX = MemoryMarshal.Read<short>(input.Slice(19, 2));
-        RightThumbY = MemoryMarshal.Read<short>(input.Slice(21, 2));
+        LeftThumbX = inputReportData.LeftThumbX;
+        LeftThumbY = inputReportData.LeftThumbY;
+        RightThumbX = inputReportData.RightThumbX;
+        RightThumbY = inputReportData.RightThumbY;
     }
 
     private void SetDPad(XboxButtons buttons0)

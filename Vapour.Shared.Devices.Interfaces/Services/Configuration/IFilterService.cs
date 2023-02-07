@@ -1,4 +1,6 @@
-﻿namespace Vapour.Shared.Devices.Services.Configuration;
+﻿using Vapour.Shared.Devices.HID;
+
+namespace Vapour.Shared.Devices.Services.Configuration;
 
 public interface IFilterService
 {
@@ -24,15 +26,26 @@ public interface IFilterService
     ///     Installs the class filter driver.
     /// </summary>
     Task<Version> InstallFilterDriver();
-    
+
     /// <summary>
     ///     Uninstalls the class filter driver.
     /// </summary>
     Task UninstallFilterDriver();
 
-    void FilterController(string instanceId);
+    /// <summary>
+    ///     Filters a particular device instance.
+    /// </summary>
+    void FilterController(ICompatibleHidDevice deviceToFilter, CancellationToken ct = default);
 
-    void UnfilterController(string instanceId);
+    /// <summary>
+    ///     Reverts filtering a particular device instance.
+    /// </summary>
+    void UnfilterController(ICompatibleHidDevice deviceToUnfilter, CancellationToken ct = default);
 
+    /// <summary>
+    ///     Gets invoked when the filter enabled state has changed.
+    /// </summary>
     event Action<bool> FilterDriverEnabledChanged;
+
+    bool IsBtFiltered(string instanceId);
 }
