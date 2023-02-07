@@ -218,3 +218,22 @@ public struct StructArray10<T> : IStructArray<T> where T : unmanaged
     public ref T this[int index] => ref AsSpan()[index];
     public Span<T> AsSpan() => MemoryMarshal.CreateSpan(ref _first, 10);
 }
+
+public struct StructArray11<T> : IStructArray<T> where T : unmanaged
+{
+    public StructArray11()
+    {
+
+    }
+
+    public StructArray11(T[] data)
+    {
+        data.CopyTo(AsSpan());
+    }
+
+    private T _first;
+    private StructArray10<T> _remainder;
+    public int Length => 11;
+    public ref T this[int index] => ref AsSpan()[index];
+    public Span<T> AsSpan() => MemoryMarshal.CreateSpan(ref _first, 11);
+}
