@@ -10,8 +10,8 @@ public class CustomActionProcessor : ICustomActionProcessor
     private readonly IAsyncPublisher<GracefulShutdownAction> _gracefulShutdownPublisher;
     private readonly IAsyncPublisher<SetPlayerLedAndColorAction> _setPlayerLedAndColorPublisher;
     public CustomActionReport CustomActionReport { get; } = new();
-
-    public event Action<ICustomAction> OnCustomActionDetected;
+    private bool _wasLedExecuted;
+    private bool _wasGracefulShutdownExecuted;
 
     public CustomActionProcessor(
         IAsyncPublisher<GracefulShutdownAction> gracefulShutdownPublisher,
@@ -20,9 +20,8 @@ public class CustomActionProcessor : ICustomActionProcessor
         _gracefulShutdownPublisher = gracefulShutdownPublisher;
         _setPlayerLedAndColorPublisher = setPlayerLedAndColorPublisher;
     }
-
-
-    public async Task ProcessReport(IInputSource inputSource, InputSourceFinalReport inputReport)
+    
+    public Task ProcessReport(IInputSource inputSource, InputSourceFinalReport inputReport)
     {
         long currentTicks = DateTime.Now.Ticks;
         CalculateBoolValue(currentTicks, inputReport.Cross, CustomActionReport.CrossStart);
@@ -87,10 +86,10 @@ public class CustomActionProcessor : ICustomActionProcessor
         {
             byte playerNumber = inputReport.DPad switch
             {
-                DPadDirection.North when currentTicks - r2Start > 1000 && currentTicks - r1Start > 1000 => 1,
-                DPadDirection.East when currentTicks - r2Start > 1000 && currentTicks - r1Start > 1000 => 2,
-                DPadDirection.South when currentTicks - r2Start > 1000 && currentTicks - r1Start > 1000 => 3,
-                DPadDirection.West when currentTicks - r2Start > 1000 && currentTicks - r1Start > 1000 => 4,
+                DPadDirection.North when currentTicks - r2Start > 1000000 && currentTicks - r1Start > 1000 => 1,
+                DPadDirection.East when currentTicks - r2Start > 1000000 && currentTicks - r1Start > 1000 => 2,
+                DPadDirection.South when currentTicks - r2Start > 1000000 && currentTicks - r1Start > 1000 => 3,
+                DPadDirection.West when currentTicks - r2Start > 1000000 && currentTicks - r1Start > 1000 => 4,
                 _ => 0
             };
 
@@ -105,24 +104,6 @@ public class CustomActionProcessor : ICustomActionProcessor
                         InputSource = inputSource,
                         PlayerNumber = playerNumber
                     });
-
-                    //Task.Run(() =>
-                    //{
-                    //    //i dont know why but without this delay paired
-                    //    //joycons crash when setting player led
-                    //    Thread.Sleep(250);
-
-                    //    _setPlayerLedAndColorPublisher.Publish(new SetPlayerLedAndColorAction
-                    //    {
-                    //        InputSource = inputSource,
-                    //        PlayerNumber = playerNumber
-                    //    });
-
-                    //    OnCustomActionDetected?.Invoke(new SetPlayerLedAndColorAction
-                    //    {
-                    //        InputSource = inputSource, PlayerNumber = playerNumber
-                    //    });
-                    //});
                 }
             }
         }
@@ -145,8 +126,6 @@ public class CustomActionProcessor : ICustomActionProcessor
                 Task.Run(() =>
                 {
                     _gracefulShutdownPublisher.Publish(new GracefulShutdownAction { InputSource = inputSource });
-
-                    //OnCustomActionDetected?.Invoke(new GracefulShutdownAction { InputSource = inputSource });
                 });
             }
         }

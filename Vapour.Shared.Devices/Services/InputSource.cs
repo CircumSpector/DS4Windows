@@ -1,11 +1,13 @@
 ﻿using System.Windows.Media;
 
+using MessagePipe;
+
 using Microsoft.Extensions.DependencyInjection;
 
 using Vapour.Shared.Devices.HID;
 using Vapour.Shared.Devices.Services.Configuration;
+using Vapour.Shared.Devices.Services.Configuration.Messages;
 using Vapour.Shared.Devices.Services.Reporting;
-using Vapour.Shared.Devices.Services.Reporting.CustomActions;
 
 namespace Vapour.Shared.Devices.Services;
 
@@ -16,16 +18,20 @@ internal class InputSource : IInputSource
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly IInputSourceConfigurationService _inputSourceConfigurationService;
+    private readonly IAsyncSubscriber<string, OutputDeviceReport> _outputDeviceReportSubscriber;
+    private IDisposable _outputDeviceReportSubscription;
     private byte[] _allReportBytes;
     private readonly Dictionary<ICompatibleHidDevice, byte[]> _controllerInputReportData = new();
-    private InputSourceFinalReport _finalReport = new();
+    private InputSourceFinalReport _finalReport;
     private IInputSourceProcessor _inputSourceProcessor;
 
     public InputSource(IServiceProvider serviceProvider,
-        IInputSourceConfigurationService inputSourceConfigurationService)
+        IInputSourceConfigurationService inputSourceConfigurationService,
+        IAsyncSubscriber<string, OutputDeviceReport> outputDeviceReportSubscriber)
     {
         _serviceProvider = serviceProvider;
         _inputSourceConfigurationService = inputSourceConfigurationService;
+        _outputDeviceReportSubscriber = outputDeviceReportSubscriber;
     }
 
     public event EventHandler<InputSourceConfiguration> ConfigurationChanged;
@@ -33,8 +39,6 @@ internal class InputSource : IInputSource
 
     public string InputSourceKey { get; private set; }
     public List<ICompatibleHidDevice> Controllers { get; private set; } = new();
-
-    public event Action<ICustomAction> OnCustomActionDetected;
 
     public void Start()
     {
@@ -48,9 +52,11 @@ internal class InputSource : IInputSource
             device.SourceDevice.OpenDevice();
         }
 
+        _outputDeviceReportSubscription = _outputDeviceReportSubscriber.Subscribe(
+            $"{InputSourceKey}_{MessageKeys.OutputDeviceReportReceivedKey}", OnOutputDeviceReportReceived,
+            report => report.InputSource == this);
+
         _inputSourceProcessor = _serviceProvider.GetService<IInputSourceProcessor>();
-        _inputSourceProcessor.OnOutputDeviceReportReceived += OnOutputDeviceReportReceived;
-        _inputSourceProcessor.OnCustomActionDetected += OnCustomAction;
         _inputSourceProcessor.Start(this);
         OnAfterStartListening();
     }
@@ -61,9 +67,8 @@ internal class InputSource : IInputSource
         {
             return;
         }
-
-        _inputSourceProcessor.OnCustomActionDetected -= OnCustomAction;
-        _inputSourceProcessor.OnOutputDeviceReportReceived -= OnOutputDeviceReportReceived;
+        
+        _outputDeviceReportSubscription.Dispose();
         _inputSourceProcessor.Dispose();
         _inputSourceProcessor = null;
     }
@@ -271,7 +276,7 @@ internal class InputSource : IInputSource
 
     private void SetFinalReport()
     {
-        InputSourceFinalReport finalReport = new();
+        InputSourceFinalReport finalReport = new(this);
         if (Controllers.Count == 1)
         {
             ICompatibleHidDevice controller = Controllers.Single();
@@ -291,17 +296,14 @@ internal class InputSource : IInputSource
         _finalReport = finalReport;
     }
 
-    private void OnOutputDeviceReportReceived(OutputDeviceReport outputDeviceReport)
+    private ValueTask OnOutputDeviceReportReceived(OutputDeviceReport outputDeviceReport, CancellationToken cs)
     {
         foreach (var device in Controllers)
         {
             device.OutputDeviceReportReceived(outputDeviceReport);
         }
-    }
 
-    private void OnCustomAction(ICustomAction obj)
-    {
-        OnCustomActionDetected?.Invoke(obj);
+        return ValueTask.CompletedTask;
     }
 
     public static class DefaultPlayerNumberColors

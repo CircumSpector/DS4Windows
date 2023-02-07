@@ -18,7 +18,6 @@ internal sealed class InputSourceService : IInputSourceService
     private readonly IFilterService _filterService;
     private readonly IHidDeviceEnumeratorService<HidDevice> _hidEnumeratorService;
     private readonly IInputSourceBuilderService _inputSourceBuilderService;
-    private readonly IInputSourceConfigurationService _inputSourceConfigurationService;
     private readonly IInputSourceDataSource _inputSourceDataSource;
     private readonly IHidDeviceEnumeratorService<HidDeviceOverWinUsb> _winUsbDeviceEnumeratorService;
 
@@ -29,6 +28,9 @@ internal sealed class InputSourceService : IInputSourceService
     private readonly IAsyncSubscriber<GameWatchMessage> _gameWatchSubscriber;
     private readonly IAsyncSubscriber<SetPlayerLedAndColorAction> _setPlayerLedAndColorSubscriber;
     private readonly IAsyncSubscriber<GracefulShutdownAction> _gracefulShutdownSubscriber;
+    private readonly IAsyncSubscriber<string, bool> _filterDriverEnabledChangedSubscriber;
+    private readonly IAsyncSubscriber<string, string> _configurationUpdatedSubscriber;
+    private readonly IAsyncPublisher<string, bool> _sourceListReadyPublisher;
     private readonly List<IDisposable> _subscriptions = new();
 
     public InputSourceService(
@@ -38,10 +40,12 @@ internal sealed class InputSourceService : IInputSourceService
         IHidDeviceEnumeratorService<HidDevice> hidEnumeratorService,
         IHidDeviceEnumeratorService<HidDeviceOverWinUsb> winUsbDeviceEnumeratorService,
         IDeviceFactory deviceFactory,
-        IInputSourceConfigurationService inputSourceConfigurationService,
         IAsyncSubscriber<GameWatchMessage> gameWatchSubscriber,
         IAsyncSubscriber<SetPlayerLedAndColorAction> setPlayerLedAndColorSubscriber,
-        IAsyncSubscriber<GracefulShutdownAction> gracefulShutdownSubscriber)
+        IAsyncSubscriber<GracefulShutdownAction> gracefulShutdownSubscriber,
+        IAsyncSubscriber<string, bool> filterDriverEnabledChangedSubscriber,
+        IAsyncSubscriber<string, string> configurationUpdatedSubscriber,
+        IAsyncPublisher<string, bool> sourceListReadyPublisher)
     {
         _inputSourceBuilderService = inputSourceBuilderService;
         _inputSourceDataSource = inputSourceDataSource;
@@ -49,23 +53,25 @@ internal sealed class InputSourceService : IInputSourceService
         _hidEnumeratorService = hidEnumeratorService;
         _winUsbDeviceEnumeratorService = winUsbDeviceEnumeratorService;
         _deviceFactory = deviceFactory;
-        _inputSourceConfigurationService = inputSourceConfigurationService;
         _gameWatchSubscriber = gameWatchSubscriber;
         _setPlayerLedAndColorSubscriber = setPlayerLedAndColorSubscriber;
         _gracefulShutdownSubscriber = gracefulShutdownSubscriber;
+        _filterDriverEnabledChangedSubscriber = filterDriverEnabledChangedSubscriber;
+        _configurationUpdatedSubscriber = configurationUpdatedSubscriber;
+        _sourceListReadyPublisher = sourceListReadyPublisher;
     }
 
     public bool ShouldAutoRebuild { get; set; } = true;
 
     public bool IsStopping { get; set; }
 
-    public event Action InputSourceListReady;
-
     public async Task Start(CancellationToken ct = default)
     {
         _subscriptions.Add(_gameWatchSubscriber.Subscribe(OnGameWatchMessage));
         _subscriptions.Add(_setPlayerLedAndColorSubscriber.Subscribe(OnSetPlayerLedNumberAndColor));
         _subscriptions.Add(_gracefulShutdownSubscriber.Subscribe(OnGracefulShutdown));
+        _subscriptions.Add(_filterDriverEnabledChangedSubscriber.Subscribe(MessageKeys.FilterDriverEnabledChangedKey, FilterDriverEnabledChanged));
+        _subscriptions.Add(_configurationUpdatedSubscriber.Subscribe(MessageKeys.ConfigurationChangedKey, RefreshConfigurations));
 
         _hidEnumeratorService.DeviceArrived += SetupDevice;
         _hidEnumeratorService.DeviceRemoved += RemoveDevice;
@@ -82,12 +88,7 @@ internal sealed class InputSourceService : IInputSourceService
 
         ShouldAutoRebuild = true;
 
-        _inputSourceConfigurationService.OnDefaultConfigurationUpdated += DefaultConfigurationUpdated;
-        _inputSourceConfigurationService.OnRefreshConfigurations += RefreshConfigurations;
-
-        _filterService.FilterDriverEnabledChanged += FilterDriverEnabledChanged;
-
-        InputSourceListReady?.Invoke();
+        await _sourceListReadyPublisher.PublishAsync(MessageKeys.InputSourceReadyKey, true, ct);
     }
 
     public void Stop()
@@ -97,11 +98,6 @@ internal sealed class InputSourceService : IInputSourceService
             subscription.Dispose();
         }
         _subscriptions.Clear();
-
-        _filterService.FilterDriverEnabledChanged -= FilterDriverEnabledChanged;
-
-        _inputSourceConfigurationService.OnDefaultConfigurationUpdated -= DefaultConfigurationUpdated;
-        _inputSourceConfigurationService.OnRefreshConfigurations -= RefreshConfigurations;
 
         _hidEnumeratorService.DeviceArrived -= SetupDevice;
         _hidEnumeratorService.DeviceRemoved -= RemoveDevice;
@@ -119,7 +115,6 @@ internal sealed class InputSourceService : IInputSourceService
         foreach (IInputSource inputSource in _inputSourceDataSource.InputSources.ToList())
         {
             inputSource.Stop();
-            //inputSource.OnCustomActionDetected -= OnCustomAction;
             _inputSourceDataSource.InputSources.Remove(inputSource);
             _inputSourceDataSource.FireRemoved(inputSource);
         }
@@ -356,25 +351,27 @@ internal sealed class InputSourceService : IInputSourceService
         }
     }
 
-    private async void RefreshConfigurations()
+    private async ValueTask RefreshConfigurations(string inputSourceKey, CancellationToken cs)
     {
-        await QuickRebuild();
-    }
-
-    private async void DefaultConfigurationUpdated(string inputSourceKey)
-    {
-        //optimize rebuild logic to only rebuild the one
-        await QuickRebuild();
+        if (string.IsNullOrWhiteSpace(inputSourceKey))
+        {
+            await QuickRebuild(cs);
+        }
+        else
+        {
+            // optimize rebuild logic to only rebuild the one
+            await QuickRebuild(cs);
+        }
     }
 
     private async ValueTask OnGameWatchMessage(GameWatchMessage message, CancellationToken cs)
     {
-        await QuickRebuild();
+        await QuickRebuild(cs);
     }
 
-    private async void FilterDriverEnabledChanged(bool obj)
+    private async ValueTask FilterDriverEnabledChanged(bool isEnabled, CancellationToken cs)
     {
-        await QuickRebuild();
+        await QuickRebuild(cs);
     }
 
     private async Task QuickRebuild(CancellationToken ct = default)
@@ -384,42 +381,23 @@ internal sealed class InputSourceService : IInputSourceService
         ShouldAutoRebuild = true;
     }
 
-    private async ValueTask OnSetPlayerLedNumberAndColor(SetPlayerLedAndColorAction message, CancellationToken cs)
+    private ValueTask OnSetPlayerLedNumberAndColor(SetPlayerLedAndColorAction message, CancellationToken cs)
     {
         message.InputSource.SetPlayerNumberAndColor(message.PlayerNumber);
+        return  ValueTask.CompletedTask;
     }
 
     private async ValueTask OnGracefulShutdown(GracefulShutdownAction message, CancellationToken cs)
     {
         ShouldAutoRebuild = false;
         await message.InputSource.DisconnectControllers();
+        
         foreach (ICompatibleHidDevice device in message.InputSource.Controllers)
         {
             _controllers.Remove(device);
         }
 
-        await RebuildInputSourceList();
+        await RebuildInputSourceList(cs);
         ShouldAutoRebuild = true;
-    }
-
-    private async void OnCustomAction(ICustomAction customAction)
-    {
-        switch (customAction)
-        {
-            case SetPlayerLedAndColorAction playerLedAction:
-                playerLedAction.InputSource.SetPlayerNumberAndColor(playerLedAction.PlayerNumber);
-                break;
-            case GracefulShutdownAction gracefulShutdownAction:
-                ShouldAutoRebuild = false;
-                await gracefulShutdownAction.InputSource.DisconnectControllers();
-                foreach (ICompatibleHidDevice device in gracefulShutdownAction.InputSource.Controllers)
-                {
-                    _controllers.Remove(device);
-                }
-
-                await RebuildInputSourceList();
-                ShouldAutoRebuild = true;
-                break;
-        }
     }
 }

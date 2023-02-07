@@ -1,6 +1,5 @@
 ﻿using Vapour.Shared.Devices.HID;
 using Vapour.Shared.Devices.Services.Configuration;
-using Vapour.Shared.Devices.Services.Reporting.CustomActions;
 
 namespace Vapour.Shared.Devices.Services;
 
@@ -25,5 +24,4 @@ public interface IInputSource
     ICompatibleHidDevice GetControllerByInstanceId(string instanceId);
     ICompatibleHidDevice GetControllerByParentInstanceId(string instanceId);
     void LoadInputSourceConfiguration();
-    event Action<ICustomAction> OnCustomActionDetected;
 }

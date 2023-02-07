@@ -1,5 +1,4 @@
-﻿using Vapour.Shared.Common.Util;
-using Vapour.Shared.Devices.HID.InputTypes;
+﻿using Vapour.Shared.Devices.HID.InputTypes;
 using Vapour.Shared.Devices.HID.InputTypes.Xbox.In;
 
 namespace Vapour.Shared.Devices.HID.Devices.Reports;

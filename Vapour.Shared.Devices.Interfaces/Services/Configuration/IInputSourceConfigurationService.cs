@@ -12,7 +12,5 @@ public interface IInputSourceConfigurationService
     Func<string> GetCurrentGameRunning { get; set; }
     InputSourceConfiguration GetMultiControllerConfiguration(string deviceKey);
     List<InputSourceConfiguration> GetInputSourceConfigurations(string inputSourceKey);
-    event Action OnRefreshConfigurations;
-    event Action<string> OnDefaultConfigurationUpdated;
     void UpdateInputSourceConfiguration(string inputSourceKey, InputSourceConfiguration configuration);
 }

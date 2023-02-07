@@ -1,26 +1,30 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
+using MessagePipe;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-
-using Nefarius.ViGEm.Client;
 
 using Vapour.Shared.Common.Types;
 using Vapour.Shared.Devices.HID.InputTypes;
 using Vapour.Shared.Devices.Services.Configuration;
+using Vapour.Shared.Devices.Services.Configuration.Messages;
 
 namespace Vapour.Shared.Devices.Services.Reporting;
 
 internal sealed class OutputDeviceProcessor : IOutputDeviceProcessor
 {
+    private readonly IAsyncSubscriber<string, InputSourceFinalReport> _inputReportSubscriber;
+    private IDisposable _inputReportSubscription;
     private const float RecipInputPosResolution = 1 / 127f;
     private const float RecipInputNegResolution = 1 / 128f;
     private const int OutputResolution = 32767 - -32768;
     private IOutDevice _controllerDevice;
-    private IInputReportProcessor _inputReportProcessor;
 
-    public OutputDeviceProcessor(IServiceProvider serviceProvider)
+    public OutputDeviceProcessor(IServiceProvider serviceProvider,
+        IAsyncSubscriber<string, InputSourceFinalReport> inputReportSubscriber)
     {
+        _inputReportSubscriber = inputReportSubscriber;
         Services = serviceProvider;
         Logger = Services.GetRequiredService<ILogger<OutputDeviceProcessor>>();
     }
@@ -28,17 +32,17 @@ internal sealed class OutputDeviceProcessor : IOutputDeviceProcessor
     private IServiceProvider Services { get; }
     private ILogger<OutputDeviceProcessor> Logger { get; }
     public IInputSource InputSource { get; private set; }
-    public event Action<OutputDeviceReport> OnOutputDeviceReportReceived;
+    private string _inputReportAvailableKey;
 
-    public void StartOutputProcessing(IInputReportProcessor inputReportProcessor)
+    public void StartOutputProcessing()
     {
         if (InputSource.Configuration.OutputDeviceType == OutputDeviceType.None)
         {
             return;
         }
-
-        _inputReportProcessor = inputReportProcessor;
-        _inputReportProcessor.InputReportAvailable += InputReportAvailable;
+        
+        _inputReportSubscription = _inputReportSubscriber.Subscribe(_inputReportAvailableKey, InputReportAvailable);
+            
         _controllerDevice = CreateControllerOutDevice();
         _controllerDevice.Connect();
     }
@@ -49,9 +53,8 @@ internal sealed class OutputDeviceProcessor : IOutputDeviceProcessor
         {
             return;
         }
-
-        _controllerDevice.OnOutputDeviceReportReceived -= OutDevice_OnOutputDeviceReportReceived;
-        _inputReportProcessor.InputReportAvailable -= InputReportAvailable;
+        
+        _inputReportSubscription.Dispose();
         _controllerDevice.Disconnect();
         _controllerDevice = null;
     }
@@ -59,18 +62,20 @@ internal sealed class OutputDeviceProcessor : IOutputDeviceProcessor
     public void SetInputSource(IInputSource inputSource)
     {
         InputSource = inputSource;
+        _inputReportAvailableKey = $"{InputSource.InputSourceKey}_{MessageKeys.InputReportAvailableKey}";
     }
 
-    private void InputReportAvailable(IInputSource arg1,
-        InputSourceFinalReport report)
+    private ValueTask InputReportAvailable(InputSourceFinalReport report, CancellationToken cs)
     {
         if (InputSource.Configuration.OutputDeviceType == OutputDeviceType.None || _controllerDevice == null)
         {
-            return;
+            return ValueTask.CompletedTask;
         }
 
         report = UpdateBasedOnConfiguration(InputSource.Configuration, report);
         _controllerDevice.ConvertAndSendReport(report);
+
+        return ValueTask.CompletedTask;
     }
 
     private InputSourceFinalReport UpdateBasedOnConfiguration(InputSourceConfiguration configuration,
@@ -90,24 +95,16 @@ internal sealed class OutputDeviceProcessor : IOutputDeviceProcessor
     private IOutDevice CreateControllerOutDevice()
     {
         IOutDevice outDevice;
-        ViGEmClient client = Services.GetRequiredService<ViGEmClient>();
         if (InputSource.Configuration.OutputDeviceType == OutputDeviceType.Xbox360Controller)
         {
-            outDevice = new Xbox360OutDevice(client);
+            outDevice = Services.GetRequiredService<Xbox360OutDevice>();
         }
         else
         {
-            outDevice = new DS4OutDevice(client);
+            outDevice = Services.GetRequiredService<DS4OutDevice>();
         }
 
-        outDevice.OnOutputDeviceReportReceived += OutDevice_OnOutputDeviceReportReceived;
-
         return outDevice;
-    }
-
-    private void OutDevice_OnOutputDeviceReportReceived(OutputDeviceReport outputReport)
-    {
-        OnOutputDeviceReportReceived?.Invoke(outputReport);
     }
 
     [SuppressMessage("ReSharper", "SwitchStatementHandlesSomeKnownEnumValuesWithDefault")]

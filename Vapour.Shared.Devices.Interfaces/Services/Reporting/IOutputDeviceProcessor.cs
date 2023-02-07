@@ -3,8 +3,7 @@
 public interface IOutputDeviceProcessor
 {
     IInputSource InputSource { get; }
-    void StartOutputProcessing(IInputReportProcessor inputReportProcessor);
+    void StartOutputProcessing();
     void StopOutputProcessing();
     void SetInputSource(IInputSource inputSource);
-    event Action<OutputDeviceReport> OnOutputDeviceReportReceived;
 }

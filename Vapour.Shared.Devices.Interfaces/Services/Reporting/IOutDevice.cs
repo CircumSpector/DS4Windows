@@ -9,5 +9,4 @@ public interface IOutDevice
     void Disconnect();
     void ResetState(bool submit = true);
     OutputDeviceType GetDeviceType();
-    event Action<OutputDeviceReport> OnOutputDeviceReportReceived;
 }

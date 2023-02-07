@@ -1,23 +1,30 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
+using MessagePipe;
+
 using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.DualShock4;
 
 using Vapour.Shared.Common.Types;
 using Vapour.Shared.Devices.HID;
+using Vapour.Shared.Devices.Services.Configuration.Messages;
 
 namespace Vapour.Shared.Devices.Services.Reporting;
 
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 internal sealed class DS4OutDevice : OutDevice
 {
+    private readonly IAsyncPublisher<string, OutputDeviceReport> _outputDeviceReportPublisher;
     private readonly IDualShock4Controller _controller;
     private CancellationTokenSource _outDeviceCancellationToken;
     private Thread _outDeviceThread;
+    private IInputSource _inputSource;
+    private string _outputDeviceReportReceivedKey;
 
-    public DS4OutDevice(ViGEmClient client)
+    public DS4OutDevice(ViGEmClient client, IAsyncPublisher<string, OutputDeviceReport> outputDeviceReportPublisher)
     {
+        _outputDeviceReportPublisher = outputDeviceReportPublisher;
         _controller = client.CreateDualShock4Controller();
         _controller.AutoSubmitReport = false;
     }
@@ -84,6 +91,13 @@ internal sealed class DS4OutDevice : OutDevice
             return;
         }
 
+        if (_inputSource == null)
+        {
+            _inputSource = state.InputSource;
+            _outputDeviceReportReceivedKey =
+                $"{_inputSource.InputSourceKey}_{MessageKeys.OutputDeviceReportReceivedKey}";
+        }
+
         _controller.SetButtonState(DualShock4Button.Share, state.Share);
         _controller.SetButtonState(DualShock4Button.ThumbLeft, state.LeftThumb);
         _controller.SetButtonState(DualShock4Button.ThumbRight, state.RightThumb);
@@ -138,7 +152,7 @@ internal sealed class DS4OutDevice : OutDevice
         _controller.SubmitReport();
     }
 
-    private void ReceiveOutputDeviceReport()
+    private async void ReceiveOutputDeviceReport()
     {
         try
         {
@@ -153,10 +167,14 @@ internal sealed class DS4OutDevice : OutDevice
 
                 byte[] content = buffer.ToArray();
 
-                FireOutputDeviceReportReceived(new OutputDeviceReport
+                if (_inputSource != null)
                 {
-                    StrongMotor = content[5], WeakMotor = content[4]
-                });
+                    await _outputDeviceReportPublisher.PublishAsync(_outputDeviceReportReceivedKey,
+                        new OutputDeviceReport
+                        {
+                            StrongMotor = content[5], WeakMotor = content[4], InputSource = _inputSource
+                        });
+                }
             }
         }
         catch (OperationCanceledException)

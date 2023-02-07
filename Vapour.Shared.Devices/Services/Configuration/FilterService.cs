@@ -1,9 +1,12 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using MessagePipe;
+
+using Microsoft.Extensions.Logging;
 
 using Nefarius.Drivers.Nssidswap;
 using Nefarius.Utilities.DeviceManagement.PnP;
 
 using Vapour.Shared.Devices.HID;
+using Vapour.Shared.Devices.Services.Configuration.Messages;
 
 namespace Vapour.Shared.Devices.Services.Configuration;
 
@@ -18,6 +21,7 @@ public sealed class FilterServiceException : Exception
 public partial class FilterService : IFilterService
 {
     private readonly IDeviceSettingsService _deviceSettingsService;
+    private readonly IAsyncPublisher<string, bool> _filterDriverEnabledChangedPublisher;
 
     private readonly FilterDriver _filterDriver;
 
@@ -25,10 +29,12 @@ public partial class FilterService : IFilterService
     private readonly ILogger<FilterService> _logger;
 
     public FilterService(ILogger<FilterService> logger,
-        IDeviceSettingsService deviceSettingsService)
+        IDeviceSettingsService deviceSettingsService,
+        IAsyncPublisher<string, bool> filterDriverEnabledChangedPublisher)
     {
         _logger = logger;
         _deviceSettingsService = deviceSettingsService;
+        _filterDriverEnabledChangedPublisher = filterDriverEnabledChangedPublisher;
 
         _deviceSettingsService.LoadSettings();
 
@@ -45,9 +51,6 @@ public partial class FilterService : IFilterService
     }
 
     /// <inheritdoc />
-    public event Action<bool> FilterDriverEnabledChanged;
-
-    /// <inheritdoc />
     public bool IsFilterDriverInstalled => FilterDriver.IsDriverInstalled;
 
     /// <inheritdoc />
@@ -60,7 +63,7 @@ public partial class FilterService : IFilterService
         _deviceSettingsService.Settings.IsFilteringEnabled = isEnabled;
         _deviceSettingsService.SaveSettings();
 
-        FilterDriverEnabledChanged?.Invoke(isEnabled);
+        _filterDriverEnabledChangedPublisher.Publish(MessageKeys.FilterDriverEnabledChangedKey, isEnabled);
     }
 
     /// <inheritdoc />

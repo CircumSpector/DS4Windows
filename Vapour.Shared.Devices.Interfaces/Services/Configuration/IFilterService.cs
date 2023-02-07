@@ -42,10 +42,5 @@ public interface IFilterService
     /// </summary>
     void UnfilterController(ICompatibleHidDevice deviceToUnfilter, CancellationToken ct = default);
 
-    /// <summary>
-    ///     Gets invoked when the filter enabled state has changed.
-    /// </summary>
-    event Action<bool> FilterDriverEnabledChanged;
-
     bool IsBtFiltered(string instanceId);
 }

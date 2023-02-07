@@ -1,6 +1,4 @@
-﻿using Vapour.Shared.Devices.Services.Reporting.CustomActions;
-
-namespace Vapour.Shared.Devices.Services.Reporting;
+﻿namespace Vapour.Shared.Devices.Services.Reporting;
 
 /// <summary>
 ///     Handles reading input reports from a compatible input device and dispatches them.
@@ -13,8 +11,6 @@ public interface IInputReportProcessor
 
     bool IsProcessing { get; }
 
-    event Action<IInputSource, InputSourceFinalReport> InputReportAvailable;
-
     /// <summary>
     ///     Start the input report reader.
     /// </summary>
@@ -26,5 +22,4 @@ public interface IInputReportProcessor
     void StopInputReportReader();
 
     void SetInputSource(IInputSource inputSource);
-    event Action<ICustomAction> OnCustomActionDetected;
 }
