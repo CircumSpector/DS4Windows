@@ -39,12 +39,12 @@ public partial class OpenTelemetryRegistrar : IServiceRegistrar
             isTracingEnabled)
         {
             // Add OpenTelemetry tracing
-            services.AddOpenTelemetryTracing(tt => tt
-                .SetSampler(new AlwaysOnSampler())
-                .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(AssemblyPrefix))
-                .AddSource(assemblyNames)
-                .AddJaegerExporter(options => { options.ExportProcessorType = ExportProcessorType.Simple; })
-            );
+            services.AddOpenTelemetry()
+                .ConfigureResource(rb => rb
+                    .AddService(serviceName: AssemblyPrefix))
+                .WithTracing(tb => tb
+                    .AddSource(assemblyNames)
+                    .AddJaegerExporter(options => { options.ExportProcessorType = ExportProcessorType.Simple; }));
         }
 
         if (bool.TryParse(context.Configuration.GetSection("OpenTelemetry:IsMetricsEnabled").Value,
@@ -52,7 +52,8 @@ public partial class OpenTelemetryRegistrar : IServiceRegistrar
             isMetricsEnabled)
         {
             // Add OpenTelemetry metrics
-            services.AddOpenTelemetryMetrics(tm => tm.AddMeter(assemblyNames));
+            // TODO: migrate to new version
+            //services.AddOpenTelemetryMetrics(tm => tm.AddMeter(assemblyNames));
         }
     }
 
