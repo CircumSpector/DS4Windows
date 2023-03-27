@@ -8,7 +8,7 @@
   <Import Project="..\CommonProjectProperties.targets" />
 
   <ItemGroup>
-    <PackageReference Include="FastEndpoints" Version="5.8.0" />
+    <PackageReference Include="FastEndpoints" Version="5.8.1" />
     <PackageReference Include="FastEndpoints.Generator" Version="5.8.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
