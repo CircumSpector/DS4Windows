@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 	</PropertyGroup>
@@ -17,7 +17,7 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="3.8.228" />
+		<PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="3.9.255" />
 		<PackageReference Include="Nefarius.ViGEm.Client" Version="1.21.256" />
 		<PackageReference Include="PropertyChanged.Fody" Version="4.1.0" />
 		<PackageReference Include="ConfigureAwait.Fody" Version="3.3.2">
