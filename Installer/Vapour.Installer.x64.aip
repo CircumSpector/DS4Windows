@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<DOCUMENT Type="Advanced Installer" CreateVersion="19.4" version="20.2.1" Modules="enterprise" RootPath="." Language="en" Id="{C8651499-D78A-4076-9E59-5B7C552BDE52}">
+<DOCUMENT Type="Advanced Installer" CreateVersion="19.4" version="20.6" Modules="enterprise" RootPath="." Language="en" Id="{C8651499-D78A-4076-9E59-5B7C552BDE52}">
   <COMPONENT cid="caphyon.advinst.msicomp.ProjectOptionsComponent">
     <ROW Name="HiddenItems" Value="ActSyncAppComponent;CPLAppletComponent;AppXAppDetailsComponent;FixupComponent;AppXCapabilitiesComponent;AppXDependenciesComponent;AppXProductDetailsComponent;AppXVisualAssetsComponent;AppXAppDeclarationsComponent;AppXUriRulesComponent;MsiXDiffComponent;MsixManifestEditorComponent"/>
   </COMPONENT>
@@ -9,9 +9,7 @@
     <ROW Property="AI_CLEAN_RESOURCES_UNINSTALL" Value="1"/>
     <ROW Property="AI_CLEAN_RESOURCES_USER_PROMPT_BASIC_UI" Value="0"/>
     <ROW Property="AI_CLEAN_RESOURCES_USER_PROMPT_FULL_UI" Value="0"/>
-    <ROW Property="AI_CURRENT_YEAR" Value="2023" ValueLocId="-"/>
     <ROW Property="AI_FINDEXE_TITLE" Value="Select the installation package for [|ProductName]" ValueLocId="AI.Property.FindExeTitle"/>
-    <ROW Property="AI_PACKAGING_TOOL" Value="Advanced Installer 20.2.1 build b066527d" ValueLocId="-"/>
     <ROW Property="AI_PREDEF_LCONDS_PROPS" Value="AI_DETECTED_INTERNET_CONNECTION"/>
     <ROW Property="AI_ThemeStyle" Value="aero" MultiBuildValue="DefaultBuild:classic" MsiKey="AI_ThemeStyle"/>
     <ROW Property="ALLUSERS" Value="1"/>
@@ -44,6 +42,7 @@
   <COMPONENT cid="caphyon.advinst.msicomp.MsiDirsComponent">
     <ROW Directory="APPDIR" Directory_Parent="TARGETDIR" DefaultDir="APPDIR:." IsPseudoRoot="1"/>
     <ROW Directory="BezierCurveEditor_Dir" Directory_Parent="x64_Dir" DefaultDir="BEZIER~1|BezierCurveEditor"/>
+    <ROW Directory="Logs_Dir" Directory_Parent="x64_Dir" DefaultDir="Logs"/>
     <ROW Directory="ProgramMenuFolder" Directory_Parent="TARGETDIR" DefaultDir="PROGRA~1|ProgramMenuFolder" IsPseudoRoot="1"/>
     <ROW Directory="Ru_Dir" Directory_Parent="x64_Dir" DefaultDir="Ru"/>
     <ROW Directory="StartupFolder" Directory_Parent="TARGETDIR" DefaultDir="STARTU~1|StartupFolder" IsPseudoRoot="1"/>
@@ -64,18 +63,21 @@
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCompsComponent">
     <ROW Component="AI_ExePath" ComponentId="{985FD1A7-FCCE-4091-A9E1-F23D26AF8693}" Directory_="APPDIR" Attributes="260" KeyPath="AI_ExePath"/>
     <ROW Component="APPDIR" ComponentId="{5B5228CC-2E57-467D-9815-7DAFF8EC20FF}" Directory_="APPDIR" Attributes="0"/>
-    <ROW Component="AsyncErrorHandler.dll" ComponentId="{AA46B7F1-428C-4038-82B8-2CD2E99AAE47}" Directory_="x64_Dir" Attributes="0" KeyPath="AsyncErrorHandler.dll"/>
     <ROW Component="AutoMapper.Extensions.Microsoft.DependencyInjection.dll" ComponentId="{53EDDCA5-7A9A-44DD-BA00-2D808C40BA08}" Directory_="x64_Dir" Attributes="256" KeyPath="AutoMapper.Extensions.Microsoft.DependencyInjection.dll"/>
     <ROW Component="AutoMapper.dll" ComponentId="{ECF68FEB-CAB8-40A9-9DB7-AD24214F65E7}" Directory_="x64_Dir" Attributes="256" KeyPath="AutoMapper.dll"/>
     <ROW Component="C63A5E8718343189D035A252D1450C5" ComponentId="{FE63C07A-8644-4348-AEF9-9B3548E2CCE6}" Directory_="APPDIR" Attributes="260" KeyPath="C63A5E8718343189D035A252D1450C5" Options="2"/>
+    <ROW Component="CliWrap.dll" ComponentId="{21734319-CD97-4DE3-BC95-B14C6B99814A}" Directory_="x64_Dir" Attributes="256" KeyPath="CliWrap.dll"/>
+    <ROW Component="CommunityToolkit.Mvvm.dll" ComponentId="{F50BDA80-DAC6-4D10-AAD5-F1A6AB58E232}" Directory_="x64_Dir" Attributes="256" KeyPath="CommunityToolkit.Mvvm.dll"/>
     <ROW Component="ConfigureAwait.dll" ComponentId="{34FF7C0D-EBCC-43DF-A31C-D49A595BF1C6}" Directory_="x64_Dir" Attributes="256" KeyPath="ConfigureAwait.dll"/>
     <ROW Component="D527574497494DA8C80F142814E315" ComponentId="{BBD64E1B-FFE0-400E-A874-4B85A15F18DB}" Directory_="APPDIR" Attributes="260" KeyPath="D527574497494DA8C80F142814E315" Options="2"/>
     <ROW Component="FastDeepCloner.dll" ComponentId="{214525EB-8305-4CF2-8FAB-47606B950D7B}" Directory_="x64_Dir" Attributes="256" KeyPath="FastDeepCloner.dll"/>
+    <ROW Component="FastEndpoints.Attributes.dll" ComponentId="{DEB5D77B-9132-4ADA-A3C6-887B8566513D}" Directory_="x64_Dir" Attributes="256" KeyPath="FastEndpoints.Attributes.dll"/>
     <ROW Component="FastEndpoints.Swagger.dll" ComponentId="{5FBB9E88-86D1-4015-ADC4-0B5944316C22}" Directory_="x64_Dir" Attributes="256" KeyPath="FastEndpoints.Swagger.dll"/>
     <ROW Component="FastEndpoints.dll" ComponentId="{2548D4FA-6240-425A-BECD-6ADC3CC9EF26}" Directory_="x64_Dir" Attributes="256" KeyPath="FastEndpoints.dll"/>
     <ROW Component="FluentValidation.dll" ComponentId="{150BE7D1-071A-425F-B06F-6DCA6D541F69}" Directory_="x64_Dir" Attributes="256" KeyPath="FluentValidation.dll"/>
+    <ROW Component="Gameloop.Vdf.JsonConverter.dll" ComponentId="{A8034F7B-E9C0-4FFD-99AD-0B40688E00B9}" Directory_="x64_Dir" Attributes="256" KeyPath="Gameloop.Vdf.JsonConverter.dll"/>
+    <ROW Component="Gameloop.Vdf.dll" ComponentId="{838434BB-D8F4-4DEC-AFC3-F7057E42420E}" Directory_="x64_Dir" Attributes="256" KeyPath="Gameloop.Vdf.dll"/>
     <ROW Component="Hardcodet.NotifyIcon.Wpf.dll" ComponentId="{AC7FBAE4-E53E-48CC-8922-913AA65D7497}" Directory_="x64_Dir" Attributes="256" KeyPath="Hardcodet.NotifyIcon.Wpf.dll"/>
-    <ROW Component="JetBrains.Annotations.dll" ComponentId="{9DED28AF-0723-4A94-AC2A-BCF0B4DAF439}" Directory_="x64_Dir" Attributes="256" KeyPath="JetBrains.Annotations.dll"/>
     <ROW Component="MaterialDesignColors.dll" ComponentId="{F35E33AD-62EB-41C5-9BA4-0FD1AB9BDA5B}" Directory_="x64_Dir" Attributes="256" KeyPath="MaterialDesignColors.dll"/>
     <ROW Component="MaterialDesignExtensions.dll" ComponentId="{10F89D4B-441E-4B06-813C-431F3F7744A6}" Directory_="x64_Dir" Attributes="256" KeyPath="MaterialDesignExtensions.dll"/>
     <ROW Component="MaterialDesignExtensions.resources.dll" ComponentId="{3767DB26-BCD3-4D68-8654-9BA3D31B6116}" Directory_="arDZ_Dir" Attributes="0" KeyPath="MaterialDesignExtensions.resources.dll"/>
@@ -90,6 +92,13 @@
     <ROW Component="MaterialDesignExtensions.resources.dll_19" ComponentId="{59310CBD-AEFA-4F4D-8BC3-7343F794F3B3}" Directory_="ruru_Dir" Attributes="0" KeyPath="MaterialDesignExtensions.resources.dll_19"/>
     <ROW Component="MaterialDesignExtensions.resources.dll_20" ComponentId="{13EE47EA-7214-492A-A17A-0527C9009516}" Directory_="uzLatnUZ_Dir" Attributes="0" KeyPath="MaterialDesignExtensions.resources.dll_20"/>
     <ROW Component="MaterialDesignThemes.Wpf.dll" ComponentId="{E59B62DA-4172-4954-8921-21DE77DF854F}" Directory_="x64_Dir" Attributes="256" KeyPath="MaterialDesignThemes.Wpf.dll"/>
+    <ROW Component="Microsoft.AspNetCore.Connections.Abstractions.dll" ComponentId="{3C8DADE4-E585-4E5E-83A8-32F59A3A43FF}" Directory_="x64_Dir" Attributes="256" KeyPath="Microsoft.AspNetCore.Connections.Abstractions.dll"/>
+    <ROW Component="Microsoft.AspNetCore.Http.Connections.Client.dll" ComponentId="{EF7C855C-CFF7-480F-8BCE-6B21FED02B91}" Directory_="x64_Dir" Attributes="256" KeyPath="Microsoft.AspNetCore.Http.Connections.Client.dll"/>
+    <ROW Component="Microsoft.AspNetCore.Http.Connections.Common.dll" ComponentId="{F180A56D-3BEE-4B91-9308-C668771C8511}" Directory_="x64_Dir" Attributes="256" KeyPath="Microsoft.AspNetCore.Http.Connections.Common.dll"/>
+    <ROW Component="Microsoft.AspNetCore.SignalR.Client.Core.dll" ComponentId="{94CD4AF9-1798-41A5-B1CA-EFDAEF3445DE}" Directory_="x64_Dir" Attributes="256" KeyPath="Microsoft.AspNetCore.SignalR.Client.Core.dll"/>
+    <ROW Component="Microsoft.AspNetCore.SignalR.Client.dll" ComponentId="{27792D78-74C1-405D-A098-95386F8E684F}" Directory_="x64_Dir" Attributes="256" KeyPath="Microsoft.AspNetCore.SignalR.Client.dll"/>
+    <ROW Component="Microsoft.AspNetCore.SignalR.Common.dll" ComponentId="{A30E53EB-1352-485C-9AF3-DBE7CC132200}" Directory_="x64_Dir" Attributes="256" KeyPath="Microsoft.AspNetCore.SignalR.Common.dll"/>
+    <ROW Component="Microsoft.AspNetCore.SignalR.Protocols.Json.dll" ComponentId="{096DCDF0-F230-4BA9-875D-9A884614BE9C}" Directory_="x64_Dir" Attributes="256" KeyPath="Microsoft.AspNetCore.SignalR.Protocols.Json.dll"/>
     <ROW Component="Microsoft.Extensions.Configuration.Abstractions.dll" ComponentId="{503A0ECE-2477-4072-9338-B29E21601A3D}" Directory_="x64_Dir" Attributes="256" KeyPath="Microsoft.Extensions.Configuration.Abstractions.dll"/>
     <ROW Component="Microsoft.Extensions.Configuration.Binder.dll" ComponentId="{7499C193-CA9D-42EE-980F-62A1C9CCA8CC}" Directory_="x64_Dir" Attributes="256" KeyPath="Microsoft.Extensions.Configuration.Binder.dll"/>
     <ROW Component="Microsoft.Extensions.Configuration.CommandLine.dll" ComponentId="{EB642706-0EBF-4758-B7A6-3463ECDA8B1A}" Directory_="x64_Dir" Attributes="256" KeyPath="Microsoft.Extensions.Configuration.CommandLine.dll"/>
@@ -101,12 +110,14 @@
     <ROW Component="Microsoft.Extensions.DependencyInjection.Abstractions.dll" ComponentId="{25AB0872-EA8A-49CE-9756-589DE3B57562}" Directory_="x64_Dir" Attributes="256" KeyPath="Microsoft.Extensions.DependencyInjection.Abstractions.dll"/>
     <ROW Component="Microsoft.Extensions.DependencyInjection.dll" ComponentId="{4EB74C03-EB30-41F2-BC99-B38138658D97}" Directory_="x64_Dir" Attributes="256" KeyPath="Microsoft.Extensions.DependencyInjection.dll"/>
     <ROW Component="Microsoft.Extensions.DependencyModel.dll" ComponentId="{5CC8AAD2-BD8F-4C51-B605-9B737D8C1EC1}" Directory_="x64_Dir" Attributes="256" KeyPath="Microsoft.Extensions.DependencyModel.dll"/>
+    <ROW Component="Microsoft.Extensions.Features.dll" ComponentId="{C03B055A-0A0E-4B31-8EF9-613930CD4187}" Directory_="x64_Dir" Attributes="256" KeyPath="Microsoft.Extensions.Features.dll"/>
     <ROW Component="Microsoft.Extensions.FileProviders.Abstractions.dll" ComponentId="{40874754-E2C4-4627-B925-D68C78860CAF}" Directory_="x64_Dir" Attributes="256" KeyPath="Microsoft.Extensions.FileProviders.Abstractions.dll"/>
     <ROW Component="Microsoft.Extensions.FileProviders.Physical.dll" ComponentId="{ECF2A5CC-3B83-455E-8BF4-B6B835070833}" Directory_="x64_Dir" Attributes="256" KeyPath="Microsoft.Extensions.FileProviders.Physical.dll"/>
     <ROW Component="Microsoft.Extensions.FileSystemGlobbing.dll" ComponentId="{90FC434E-9FA5-41D6-973B-63652D97450C}" Directory_="x64_Dir" Attributes="256" KeyPath="Microsoft.Extensions.FileSystemGlobbing.dll"/>
     <ROW Component="Microsoft.Extensions.Hosting.Abstractions.dll" ComponentId="{5A623519-C0BE-4E9E-A3E9-ED80FE85CCB7}" Directory_="x64_Dir" Attributes="256" KeyPath="Microsoft.Extensions.Hosting.Abstractions.dll"/>
     <ROW Component="Microsoft.Extensions.Hosting.WindowsServices.dll" ComponentId="{52A01CBF-58B8-41C7-A6EE-C7561CCB8904}" Directory_="x64_Dir" Attributes="256" KeyPath="Microsoft.Extensions.Hosting.WindowsServices.dll"/>
     <ROW Component="Microsoft.Extensions.Hosting.dll" ComponentId="{0F9B88D9-52E2-4F13-BC67-F78E22E818C3}" Directory_="x64_Dir" Attributes="256" KeyPath="Microsoft.Extensions.Hosting.dll"/>
+    <ROW Component="Microsoft.Extensions.Http.Polly.dll" ComponentId="{9704D763-ED41-43CF-8EBF-46C2EE00B970}" Directory_="x64_Dir" Attributes="256" KeyPath="Microsoft.Extensions.Http.Polly.dll"/>
     <ROW Component="Microsoft.Extensions.Http.dll" ComponentId="{0D277461-978F-4238-875F-BA8BE4EA0DE6}" Directory_="x64_Dir" Attributes="256" KeyPath="Microsoft.Extensions.Http.dll"/>
     <ROW Component="Microsoft.Extensions.Logging.Abstractions.dll" ComponentId="{F503F26E-3091-47BF-9953-1E8390CD4748}" Directory_="x64_Dir" Attributes="256" KeyPath="Microsoft.Extensions.Logging.Abstractions.dll"/>
     <ROW Component="Microsoft.Extensions.Logging.Configuration.dll" ComponentId="{346B0E43-3477-44D9-AAA6-D3EDE4412EB0}" Directory_="x64_Dir" Attributes="256" KeyPath="Microsoft.Extensions.Logging.Configuration.dll"/>
@@ -119,9 +130,8 @@
     <ROW Component="Microsoft.Extensions.Options.dll" ComponentId="{FCC01ED1-1001-497E-9229-540777DE9198}" Directory_="x64_Dir" Attributes="256" KeyPath="Microsoft.Extensions.Options.dll"/>
     <ROW Component="Microsoft.Extensions.Primitives.dll" ComponentId="{79DBBD63-0F41-439A-9A25-288C69060F9D}" Directory_="x64_Dir" Attributes="256" KeyPath="Microsoft.Extensions.Primitives.dll"/>
     <ROW Component="Microsoft.OpenApi.dll" ComponentId="{246AB3CF-6200-469E-8E71-9BEBA95601EA}" Directory_="x64_Dir" Attributes="256" KeyPath="Microsoft.OpenApi.dll"/>
-    <ROW Component="Microsoft.Toolkit.Mvvm.dll" ComponentId="{520BC9C6-2A51-4382-9AB9-523163F3A590}" Directory_="x64_Dir" Attributes="256" KeyPath="Microsoft.Toolkit.Mvvm.dll"/>
-    <ROW Component="Microsoft.Toolkit.dll" ComponentId="{D718154D-E69B-4900-955C-FBF8DEC4BBBD}" Directory_="x64_Dir" Attributes="256" KeyPath="Microsoft.Toolkit.dll"/>
     <ROW Component="Microsoft.Windows.SDK.NET.dll" ComponentId="{C8167D4F-2A68-40C5-90AE-F354D7624A5B}" Directory_="x64_Dir" Attributes="0" KeyPath="Microsoft.Windows.SDK.NET.dll"/>
+    <ROW Component="Microsoft.Xaml.Behaviors.dll" ComponentId="{3836A688-AC5D-4B43-9965-9D6DCB907274}" Directory_="x64_Dir" Attributes="256" KeyPath="Microsoft.Xaml.Behaviors.dll"/>
     <ROW Component="NJsonSchema.Yaml.dll" ComponentId="{D86AEC21-70FB-43B7-9AB6-218486791EE6}" Directory_="x64_Dir" Attributes="256" KeyPath="NJsonSchema.Yaml.dll"/>
     <ROW Component="NJsonSchema.dll" ComponentId="{6B216092-CCF9-4814-A0CD-7C46D705FFC6}" Directory_="x64_Dir" Attributes="256" KeyPath="NJsonSchema.dll"/>
     <ROW Component="NSwag.Annotations.dll" ComponentId="{02A4018A-FC2E-43AD-80C2-47F3EEEF517D}" Directory_="x64_Dir" Attributes="256" KeyPath="NSwag.Annotations.dll"/>
@@ -131,7 +141,8 @@
     <ROW Component="NSwag.Generation.AspNetCore.dll" ComponentId="{3631A3EB-5801-4696-82F9-14E2BD83BB93}" Directory_="x64_Dir" Attributes="256" KeyPath="NSwag.Generation.AspNetCore.dll"/>
     <ROW Component="NSwag.Generation.dll" ComponentId="{0C77FE19-5072-45F7-8958-CB54B3DD265A}" Directory_="x64_Dir" Attributes="256" KeyPath="NSwag.Generation.dll"/>
     <ROW Component="Namotion.Reflection.dll" ComponentId="{B8E6A89E-7A86-4288-BC73-80FB6728A4D4}" Directory_="x64_Dir" Attributes="256" KeyPath="Namotion.Reflection.dll"/>
-    <ROW Component="Nefarius.Drivers.Identinator.dll" ComponentId="{797D8AB3-2906-4C7C-B637-FF2D4BD64949}" Directory_="x64_Dir" Attributes="256" KeyPath="Nefarius.Drivers.Identinator.dll"/>
+    <ROW Component="Nefarius.Drivers.HidHide.dll" ComponentId="{AF551EF0-2043-4D48-A5F8-DCFE0C7E049B}" Directory_="x64_Dir" Attributes="256" KeyPath="Nefarius.Drivers.HidHide.dll"/>
+    <ROW Component="Nefarius.Drivers.Nssidswap.dll" ComponentId="{2F34F6DE-9A51-468E-A1A7-986A0B9A7423}" Directory_="x64_Dir" Attributes="256" KeyPath="Nefarius.Drivers.Nssidswap.dll"/>
     <ROW Component="Nefarius.Drivers.WinUSB.dll" ComponentId="{B4418D7B-F187-4C63-B347-AA2C6D2B05FF}" Directory_="x64_Dir" Attributes="256" KeyPath="Nefarius.Drivers.WinUSB.dll"/>
     <ROW Component="Nefarius.Utilities.DeviceManagement.dll" ComponentId="{5E70927E-6DA9-4A19-B509-E44EB6670438}" Directory_="x64_Dir" Attributes="256" KeyPath="Nefarius.Utilities.DeviceManagement.dll"/>
     <ROW Component="Nefarius.ViGEm.Client.dll" ComponentId="{7AFBB1D8-F032-4EDC-AE86-CBCB6A4EFD72}" Directory_="x64_Dir" Attributes="256" KeyPath="Nefarius.ViGEm.Client.dll"/>
@@ -140,6 +151,9 @@
     <ROW Component="OpenTelemetry.Exporter.Jaeger.dll" ComponentId="{E5CD156C-724E-403D-8A6C-BB7E98B81822}" Directory_="x64_Dir" Attributes="256" KeyPath="OpenTelemetry.Exporter.Jaeger.dll"/>
     <ROW Component="OpenTelemetry.Extensions.Hosting.dll" ComponentId="{1531F73C-EAFB-4C99-965E-4BF5FF1C6172}" Directory_="x64_Dir" Attributes="256" KeyPath="OpenTelemetry.Extensions.Hosting.dll"/>
     <ROW Component="OpenTelemetry.dll" ComponentId="{E8C015D2-C602-4678-8952-B6ED417D9567}" Directory_="x64_Dir" Attributes="256" KeyPath="OpenTelemetry.dll"/>
+    <ROW Component="Polly.Contrib.WaitAndRetry.dll" ComponentId="{34A4377F-7515-44D8-9F79-87EB1B4C8FC9}" Directory_="x64_Dir" Attributes="256" KeyPath="Polly.Contrib.WaitAndRetry.dll"/>
+    <ROW Component="Polly.Extensions.Http.dll" ComponentId="{E91B8D2E-6916-49F9-A124-15BD7A70B5D3}" Directory_="x64_Dir" Attributes="256" KeyPath="Polly.Extensions.Http.dll"/>
+    <ROW Component="Polly.dll" ComponentId="{3DE07699-8AE6-49DC-B224-9DE4FF1A705F}" Directory_="x64_Dir" Attributes="256" KeyPath="Polly.dll"/>
     <ROW Component="ProductInformation" ComponentId="{83A89B78-D8C5-4B52-A020-2CA071F7693E}" Directory_="APPDIR" Attributes="260" KeyPath="Version"/>
     <ROW Component="Serilog.AspNetCore.dll" ComponentId="{E35A82CD-4D8C-44CC-BD7C-11233F9E7E44}" Directory_="x64_Dir" Attributes="256" KeyPath="Serilog.AspNetCore.dll"/>
     <ROW Component="Serilog.Extensions.Hosting.dll" ComponentId="{DAD37020-8F17-487E-8C08-7D33D00F42EB}" Directory_="x64_Dir" Attributes="256" KeyPath="Serilog.Extensions.Hosting.dll"/>
@@ -153,9 +167,8 @@
     <ROW Component="Swashbuckle.AspNetCore.Swagger.dll" ComponentId="{5AC9B4ED-28C1-4210-BAF0-E668FA2A35FB}" Directory_="x64_Dir" Attributes="256" KeyPath="Swashbuckle.AspNetCore.Swagger.dll"/>
     <ROW Component="Swashbuckle.AspNetCore.SwaggerGen.dll" ComponentId="{6E46E7BF-6010-4B58-9A55-2CC1C035DE30}" Directory_="x64_Dir" Attributes="256" KeyPath="Swashbuckle.AspNetCore.SwaggerGen.dll"/>
     <ROW Component="Swashbuckle.AspNetCore.SwaggerUI.dll" ComponentId="{E6FB17EB-E2C0-431E-91AC-678CA9A14C62}" Directory_="x64_Dir" Attributes="256" KeyPath="Swashbuckle.AspNetCore.SwaggerUI.dll"/>
-    <ROW Component="System.Diagnostics.DiagnosticSource.dll" ComponentId="{A73AE3A1-A25E-411D-87DF-6D13A5DEF06F}" Directory_="x64_Dir" Attributes="256" KeyPath="System.Diagnostics.DiagnosticSource.dll"/>
-    <ROW Component="System.Diagnostics.EventLog.Messages.dll" ComponentId="{472B379C-D741-4584-B11F-A597FEE4730B}" Directory_="x64_Dir" Attributes="0" KeyPath="System.Diagnostics.EventLog.Messages.dll"/>
-    <ROW Component="System.Reactive.dll" ComponentId="{55806EE5-1B04-4322-B0FC-6E6DE1A37DAC}" Directory_="x64_Dir" Attributes="256" KeyPath="System.Reactive.dll"/>
+    <ROW Component="System.IO.Pipelines.dll" ComponentId="{68884D88-A40A-469E-AAC0-FDF4E04122FE}" Directory_="x64_Dir" Attributes="256" KeyPath="System.IO.Pipelines.dll"/>
+    <ROW Component="System.Management.dll" ComponentId="{64E30E88-4375-48DC-BD12-CA6BB88CE307}" Directory_="x64_Dir" Attributes="256" KeyPath="System.Management.dll"/>
     <ROW Component="System.ServiceProcess.ServiceController.dll" ComponentId="{337CE73A-B68E-4337-A6DA-4057E415E78E}" Directory_="x64_Dir" Attributes="256" KeyPath="System.ServiceProcess.ServiceController.dll"/>
     <ROW Component="Vapour" ComponentId="{2BBDD45F-22D9-428C-A914-2B88C0711C40}" Directory_="Vapour_Dir" Attributes="0"/>
     <ROW Component="Vapour.Client.Core.Interfaces.dll" ComponentId="{5874FC18-2371-4A7E-A9C1-16EFE36ACF1F}" Directory_="x64_Dir" Attributes="256" KeyPath="Vapour.Client.Core.Interfaces.dll"/>
@@ -172,17 +185,17 @@
     <ROW Component="Vapour.Shared.Common.Interfaces.dll" ComponentId="{33B9B355-C19C-4E99-AA0B-954869E9FFE8}" Directory_="x64_Dir" Attributes="256" KeyPath="Vapour.Shared.Common.Interfaces.dll"/>
     <ROW Component="Vapour.Shared.Common.Util.dll" ComponentId="{B7DFF5BD-39E2-4193-9400-D4160836BEE4}" Directory_="x64_Dir" Attributes="256" KeyPath="Vapour.Shared.Common.Util.dll"/>
     <ROW Component="Vapour.Shared.Common.dll" ComponentId="{1FC993C4-F4F4-4935-8B37-DEA51CA9CB67}" Directory_="x64_Dir" Attributes="256" KeyPath="Vapour.Shared.Common.dll"/>
-    <ROW Component="Vapour.Shared.Configuration.Application.dll" ComponentId="{239A4E7B-6084-4A51-8A27-5BC1CEBEC4ED}" Directory_="x64_Dir" Attributes="256" KeyPath="Vapour.Shared.Configuration.Application.dll"/>
     <ROW Component="Vapour.Shared.Configuration.Profiles.Interfaces.dll" ComponentId="{9F2D6693-B4AE-4A51-B6DD-1D12F51D7804}" Directory_="x64_Dir" Attributes="256" KeyPath="Vapour.Shared.Configuration.Profiles.Interfaces.dll"/>
     <ROW Component="Vapour.Shared.Configuration.Profiles.dll" ComponentId="{54FAA12B-E985-4486-BCAD-F64E9AE4DFB8}" Directory_="x64_Dir" Attributes="256" KeyPath="Vapour.Shared.Configuration.Profiles.dll"/>
     <ROW Component="Vapour.Shared.Devices.Interfaces.dll" ComponentId="{04FA842C-4F71-45BF-99B3-DDBC150AA23B}" Directory_="x64_Dir" Attributes="256" KeyPath="Vapour.Shared.Devices.Interfaces.dll"/>
     <ROW Component="Vapour.Shared.Devices.dll" ComponentId="{20676FA0-0370-431C-B5D2-95846F7028D1}" Directory_="x64_Dir" Attributes="256" KeyPath="Vapour.Shared.Devices.dll"/>
     <ROW Component="Vapour.dll" ComponentId="{A9092669-E96B-490D-892C-ED834B8980A2}" Directory_="x64_Dir" Attributes="256" KeyPath="Vapour.dll"/>
     <ROW Component="Vapour.exe" ComponentId="{323424F2-9AF0-4FE8-989D-9C3A6E7D3A23}" Directory_="x64_Dir" Attributes="256" KeyPath="Vapour.exe"/>
-    <ROW Component="Websocket.Client.dll" ComponentId="{05ABBAE3-63E3-454E-B6CD-3093B0F0C59A}" Directory_="x64_Dir" Attributes="256" KeyPath="Websocket.Client.dll"/>
+    <ROW Component="VapourClient20230126.log" ComponentId="{BAD21152-9D30-4B61-9E7D-C2188ADC1525}" Directory_="Logs_Dir" Attributes="0" KeyPath="VapourClient20230126.log" Type="0"/>
+    <ROW Component="Warden.dll" ComponentId="{4AFD792F-62C4-4130-8833-F0CA4A07242A}" Directory_="x64_Dir" Attributes="256" KeyPath="Warden.dll"/>
     <ROW Component="WinRT.Runtime.dll" ComponentId="{37CBDB08-77D5-4071-A0B9-9D36C651E602}" Directory_="x64_Dir" Attributes="0" KeyPath="WinRT.Runtime.dll"/>
     <ROW Component="YamlDotNet.dll" ComponentId="{0FFCFFC4-963B-4AE1-860D-164B9895632A}" Directory_="x64_Dir" Attributes="256" KeyPath="YamlDotNet.dll"/>
-    <ROW Component="appsettings.Development.json" ComponentId="{2D676E5C-5E48-4243-8FC4-359EB118AA86}" Directory_="x64_Dir" Attributes="0" KeyPath="appsettings.Development.json" Type="0"/>
+    <ROW Component="appsettings.Development.json" ComponentId="{2D676E5C-5E48-4243-8FC4-359EB118AA86}" Directory_="x64_Dir" Attributes="0" KeyPath="Vapour.Client.TrayApplication.deps.json" Type="0"/>
     <ROW Component="build.js" ComponentId="{CB129E53-5DB9-43A9-8D60-561CEBCCEC8F}" Directory_="BezierCurveEditor_Dir" Attributes="0" KeyPath="build.js" Type="0"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFeatsComponent">
@@ -192,10 +205,7 @@
     <ATTRIBUTE name="CurrentFeature" value="MainFeature"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFilesComponent">
-    <ROW File="appsettings.Development.json" Component_="appsettings.Development.json" FileName="APPSET~1.JSO|appsettings.Development.json" Attributes="0" SourcePath="..\Publish\x64\appsettings.Development.json" SelfReg="false"/>
-    <ROW File="appsettings.json" Component_="appsettings.Development.json" FileName="APPSET~2.JSO|appsettings.json" Attributes="0" SourcePath="..\Publish\x64\appsettings.json" SelfReg="false"/>
     <ROW File="MaterialDesignExtensions.resources.dll" Component_="MaterialDesignExtensions.resources.dll" FileName="MATERI~1.DLL|MaterialDesignExtensions.resources.dll" Attributes="0" SourcePath="..\Publish\x64\ar-DZ\MaterialDesignExtensions.resources.dll" SelfReg="false"/>
-    <ROW File="AsyncErrorHandler.dll" Component_="AsyncErrorHandler.dll" FileName="ASYNCE~1.DLL|AsyncErrorHandler.dll" Attributes="0" SourcePath="..\Publish\x64\AsyncErrorHandler.dll" SelfReg="false"/>
     <ROW File="AutoMapper.dll" Component_="AutoMapper.dll" FileName="AUTOMA~1.DLL|AutoMapper.dll" Attributes="0" SourcePath="..\Publish\x64\AutoMapper.dll" SelfReg="false"/>
     <ROW File="AutoMapper.Extensions.Microsoft.DependencyInjection.dll" Component_="AutoMapper.Extensions.Microsoft.DependencyInjection.dll" FileName="AUTOMA~2.DLL|AutoMapper.Extensions.Microsoft.DependencyInjection.dll" Attributes="0" SourcePath="..\Publish\x64\AutoMapper.Extensions.Microsoft.DependencyInjection.dll" SelfReg="false"/>
     <ROW File="build.js" Component_="build.js" FileName="build.js" Attributes="0" SourcePath="..\Publish\x64\BezierCurveEditor\build.js" SelfReg="false"/>
@@ -239,8 +249,6 @@
     <ROW File="Vapour.Shared.Common.pdb" Component_="Vapour.Shared.Common.dll" FileName="DS4WI~12.PDB|Vapour.Shared.Common.pdb" Attributes="0" SourcePath="..\Publish\x64\Vapour.Shared.Common.pdb" SelfReg="false"/>
     <ROW File="Vapour.Shared.Common.Util.dll" Component_="Vapour.Shared.Common.Util.dll" FileName="DS4WI~13.DLL|Vapour.Shared.Common.Util.dll" Attributes="0" SourcePath="..\Publish\x64\Vapour.Shared.Common.Util.dll" SelfReg="false"/>
     <ROW File="Vapour.Shared.Common.Util.pdb" Component_="Vapour.Shared.Common.Util.dll" FileName="DS4WI~13.PDB|Vapour.Shared.Common.Util.pdb" Attributes="0" SourcePath="..\Publish\x64\Vapour.Shared.Common.Util.pdb" SelfReg="false"/>
-    <ROW File="Vapour.Shared.Configuration.Application.dll" Component_="Vapour.Shared.Configuration.Application.dll" FileName="DS4WI~14.DLL|Vapour.Shared.Configuration.Application.dll" Attributes="0" SourcePath="..\Publish\x64\Vapour.Shared.Configuration.Application.dll" SelfReg="false"/>
-    <ROW File="Vapour.Shared.Configuration.Application.pdb" Component_="Vapour.Shared.Configuration.Application.dll" FileName="DS4WI~14.PDB|Vapour.Shared.Configuration.Application.pdb" Attributes="0" SourcePath="..\Publish\x64\Vapour.Shared.Configuration.Application.pdb" SelfReg="false"/>
     <ROW File="Vapour.Shared.Configuration.Profiles.dll" Component_="Vapour.Shared.Configuration.Profiles.dll" FileName="DS4WI~15.DLL|Vapour.Shared.Configuration.Profiles.dll" Attributes="0" SourcePath="..\Publish\x64\Vapour.Shared.Configuration.Profiles.dll" SelfReg="false"/>
     <ROW File="Vapour.Shared.Configuration.Profiles.Interfaces.dll" Component_="Vapour.Shared.Configuration.Profiles.Interfaces.dll" FileName="DS4WI~16.DLL|Vapour.Shared.Configuration.Profiles.Interfaces.dll" Attributes="0" SourcePath="..\Publish\x64\Vapour.Shared.Configuration.Profiles.Interfaces.dll" SelfReg="false"/>
     <ROW File="Vapour.Shared.Configuration.Profiles.Interfaces.pdb" Component_="Vapour.Shared.Configuration.Profiles.Interfaces.dll" FileName="DS4WI~15.PDB|Vapour.Shared.Configuration.Profiles.Interfaces.pdb" Attributes="0" SourcePath="..\Publish\x64\Vapour.Shared.Configuration.Profiles.Interfaces.pdb" SelfReg="false"/>
@@ -253,7 +261,6 @@
     <ROW File="MaterialDesignExtensions.resources.dll_14" Component_="MaterialDesignExtensions.resources.dll_14" FileName="MATERI~1.DLL|MaterialDesignExtensions.resources.dll" Attributes="0" SourcePath="..\Publish\x64\fr\MaterialDesignExtensions.resources.dll" SelfReg="false"/>
     <ROW File="MaterialDesignExtensions.resources.dll_15" Component_="MaterialDesignExtensions.resources.dll_15" FileName="MATERI~1.DLL|MaterialDesignExtensions.resources.dll" Attributes="0" SourcePath="..\Publish\x64\fr-FR\MaterialDesignExtensions.resources.dll" SelfReg="false"/>
     <ROW File="Hardcodet.NotifyIcon.Wpf.dll" Component_="Hardcodet.NotifyIcon.Wpf.dll" FileName="HARDCO~1.DLL|Hardcodet.NotifyIcon.Wpf.dll" Attributes="0" SourcePath="..\Publish\x64\Hardcodet.NotifyIcon.Wpf.dll" SelfReg="false"/>
-    <ROW File="JetBrains.Annotations.dll" Component_="JetBrains.Annotations.dll" FileName="JETBRA~1.DLL|JetBrains.Annotations.dll" Attributes="0" SourcePath="..\Publish\x64\JetBrains.Annotations.dll" SelfReg="false"/>
     <ROW File="MaterialDesignColors.dll" Component_="MaterialDesignColors.dll" FileName="MATERI~1.DLL|MaterialDesignColors.dll" Attributes="0" SourcePath="..\Publish\x64\MaterialDesignColors.dll" SelfReg="false"/>
     <ROW File="MaterialDesignExtensions.dll" Component_="MaterialDesignExtensions.dll" FileName="MATERI~2.DLL|MaterialDesignExtensions.dll" Attributes="0" SourcePath="..\Publish\x64\MaterialDesignExtensions.dll" SelfReg="false"/>
     <ROW File="MaterialDesignThemes.Wpf.dll" Component_="MaterialDesignThemes.Wpf.dll" FileName="MATERI~3.DLL|MaterialDesignThemes.Wpf.dll" Attributes="0" SourcePath="..\Publish\x64\MaterialDesignThemes.Wpf.dll" SelfReg="false"/>
@@ -285,8 +292,6 @@
     <ROW File="Microsoft.Extensions.Options.dll" Component_="Microsoft.Extensions.Options.dll" FileName="MICRO~26.DLL|Microsoft.Extensions.Options.dll" Attributes="0" SourcePath="..\Publish\x64\Microsoft.Extensions.Options.dll" SelfReg="false"/>
     <ROW File="Microsoft.Extensions.Primitives.dll" Component_="Microsoft.Extensions.Primitives.dll" FileName="MICRO~27.DLL|Microsoft.Extensions.Primitives.dll" Attributes="0" SourcePath="..\Publish\x64\Microsoft.Extensions.Primitives.dll" SelfReg="false"/>
     <ROW File="Microsoft.OpenApi.dll" Component_="Microsoft.OpenApi.dll" FileName="MICRO~28.DLL|Microsoft.OpenApi.dll" Attributes="0" SourcePath="..\Publish\x64\Microsoft.OpenApi.dll" SelfReg="false"/>
-    <ROW File="Microsoft.Toolkit.dll" Component_="Microsoft.Toolkit.dll" FileName="MICRO~29.DLL|Microsoft.Toolkit.dll" Attributes="0" SourcePath="..\Publish\x64\Microsoft.Toolkit.dll" SelfReg="false"/>
-    <ROW File="Microsoft.Toolkit.Mvvm.dll" Component_="Microsoft.Toolkit.Mvvm.dll" FileName="MICRO~30.DLL|Microsoft.Toolkit.Mvvm.dll" Attributes="0" SourcePath="..\Publish\x64\Microsoft.Toolkit.Mvvm.dll" SelfReg="false"/>
     <ROW File="Microsoft.Windows.SDK.NET.dll" Component_="Microsoft.Windows.SDK.NET.dll" FileName="MICRO~31.DLL|Microsoft.Windows.SDK.NET.dll" Attributes="0" SourcePath="..\Publish\x64\Microsoft.Windows.SDK.NET.dll" SelfReg="false"/>
     <ROW File="Nefarius.Utilities.DeviceManagement.dll" Component_="Nefarius.Utilities.DeviceManagement.dll" FileName="NEFARI~1.DLL|Nefarius.Utilities.DeviceManagement.dll" Attributes="0" SourcePath="..\Publish\x64\Nefarius.Utilities.DeviceManagement.dll" SelfReg="false"/>
     <ROW File="Nefarius.ViGEm.Client.dll" Component_="Nefarius.ViGEm.Client.dll" FileName="NEFARI~2.DLL|Nefarius.ViGEm.Client.dll" Attributes="0" SourcePath="..\Publish\x64\Nefarius.ViGEm.Client.dll" SelfReg="false"/>
@@ -308,23 +313,17 @@
     <ROW File="Swashbuckle.AspNetCore.Swagger.dll" Component_="Swashbuckle.AspNetCore.Swagger.dll" FileName="SWASHB~1.DLL|Swashbuckle.AspNetCore.Swagger.dll" Attributes="0" SourcePath="..\Publish\x64\Swashbuckle.AspNetCore.Swagger.dll" SelfReg="false"/>
     <ROW File="Swashbuckle.AspNetCore.SwaggerGen.dll" Component_="Swashbuckle.AspNetCore.SwaggerGen.dll" FileName="SWASHB~2.DLL|Swashbuckle.AspNetCore.SwaggerGen.dll" Attributes="0" SourcePath="..\Publish\x64\Swashbuckle.AspNetCore.SwaggerGen.dll" SelfReg="false"/>
     <ROW File="Swashbuckle.AspNetCore.SwaggerUI.dll" Component_="Swashbuckle.AspNetCore.SwaggerUI.dll" FileName="SWASHB~3.DLL|Swashbuckle.AspNetCore.SwaggerUI.dll" Attributes="0" SourcePath="..\Publish\x64\Swashbuckle.AspNetCore.SwaggerUI.dll" SelfReg="false"/>
-    <ROW File="System.Diagnostics.EventLog.Messages.dll" Component_="System.Diagnostics.EventLog.Messages.dll" FileName="SYSTEM~1.DLL|System.Diagnostics.EventLog.Messages.dll" Attributes="0" SourcePath="..\Publish\x64\System.Diagnostics.EventLog.Messages.dll" SelfReg="false"/>
-    <ROW File="System.Reactive.dll" Component_="System.Reactive.dll" FileName="SYSTEM~2.DLL|System.Reactive.dll" Attributes="0" SourcePath="..\Publish\x64\System.Reactive.dll" SelfReg="false"/>
-    <ROW File="System.Reactive.xml" Component_="appsettings.Development.json" FileName="SYSTEM~1.XML|System.Reactive.xml" Attributes="0" SourcePath="..\Publish\x64\System.Reactive.xml" SelfReg="false"/>
     <ROW File="System.ServiceProcess.ServiceController.dll" Component_="System.ServiceProcess.ServiceController.dll" FileName="SYSTEM~3.DLL|System.ServiceProcess.ServiceController.dll" Attributes="0" SourcePath="..\Publish\x64\System.ServiceProcess.ServiceController.dll" SelfReg="false"/>
     <ROW File="MaterialDesignExtensions.resources.dll_20" Component_="MaterialDesignExtensions.resources.dll_20" FileName="MATERI~1.DLL|MaterialDesignExtensions.resources.dll" Attributes="0" SourcePath="..\Publish\x64\uz-Latn-UZ\MaterialDesignExtensions.resources.dll" SelfReg="false"/>
-    <ROW File="Websocket.Client.dll" Component_="Websocket.Client.dll" FileName="WEBSOC~1.DLL|Websocket.Client.dll" Attributes="0" SourcePath="..\Publish\x64\Websocket.Client.dll" SelfReg="false"/>
     <ROW File="WinRT.Runtime.dll" Component_="WinRT.Runtime.dll" FileName="WINRTR~1.DLL|WinRT.Runtime.dll" Attributes="0" SourcePath="..\Publish\x64\WinRT.Runtime.dll" SelfReg="false"/>
     <ROW File="Serilog.AspNetCore.dll" Component_="Serilog.AspNetCore.dll" FileName="SERILO~6.DLL|Serilog.AspNetCore.dll" Attributes="0" SourcePath="..\Publish\x64\Serilog.AspNetCore.dll" SelfReg="false"/>
     <ROW File="Serilog.Formatting.Compact.dll" Component_="Serilog.Formatting.Compact.dll" FileName="SERILO~7.DLL|Serilog.Formatting.Compact.dll" Attributes="0" SourcePath="..\Publish\x64\Serilog.Formatting.Compact.dll" SelfReg="false"/>
     <ROW File="Serilog.Sinks.Debug.dll" Component_="Serilog.Sinks.Debug.dll" FileName="SERILO~8.DLL|Serilog.Sinks.Debug.dll" Attributes="0" SourcePath="..\Publish\x64\Serilog.Sinks.Debug.dll" SelfReg="false"/>
-    <ROW File="System.Diagnostics.DiagnosticSource.dll" Component_="System.Diagnostics.DiagnosticSource.dll" FileName="SYSTEM~4.DLL|System.Diagnostics.DiagnosticSource.dll" Attributes="0" SourcePath="..\Publish\x64\System.Diagnostics.DiagnosticSource.dll" SelfReg="false"/>
     <ROW File="FastEndpoints.dll" Component_="FastEndpoints.dll" FileName="FASTEN~1.DLL|FastEndpoints.dll" Attributes="0" SourcePath="..\Publish\x64\FastEndpoints.dll" SelfReg="false"/>
     <ROW File="FastEndpoints.Swagger.dll" Component_="FastEndpoints.Swagger.dll" FileName="FASTEN~2.DLL|FastEndpoints.Swagger.dll" Attributes="0" SourcePath="..\Publish\x64\FastEndpoints.Swagger.dll" SelfReg="false"/>
     <ROW File="FluentValidation.dll" Component_="FluentValidation.dll" FileName="FLUENT~1.DLL|FluentValidation.dll" Attributes="0" SourcePath="..\Publish\x64\FluentValidation.dll" SelfReg="false"/>
     <ROW File="Microsoft.Extensions.Http.dll" Component_="Microsoft.Extensions.Http.dll" FileName="MICRO~32.DLL|Microsoft.Extensions.Http.dll" Attributes="0" SourcePath="..\Publish\x64\Microsoft.Extensions.Http.dll" SelfReg="false"/>
     <ROW File="Namotion.Reflection.dll" Component_="Namotion.Reflection.dll" FileName="NAMOTI~1.DLL|Namotion.Reflection.dll" Attributes="0" SourcePath="..\Publish\x64\Namotion.Reflection.dll" SelfReg="false"/>
-    <ROW File="Nefarius.Drivers.Identinator.dll" Component_="Nefarius.Drivers.Identinator.dll" FileName="NEFARI~3.DLL|Nefarius.Drivers.Identinator.dll" Attributes="0" SourcePath="..\Publish\x64\Nefarius.Drivers.Identinator.dll" SelfReg="false"/>
     <ROW File="Nefarius.Drivers.WinUSB.dll" Component_="Nefarius.Drivers.WinUSB.dll" FileName="NEFARI~4.DLL|Nefarius.Drivers.WinUSB.dll" Attributes="0" SourcePath="..\Publish\x64\Nefarius.Drivers.WinUSB.dll" SelfReg="false"/>
     <ROW File="NJsonSchema.dll" Component_="NJsonSchema.dll" FileName="NJSONS~1.DLL|NJsonSchema.dll" Attributes="0" SourcePath="..\Publish\x64\NJsonSchema.dll" SelfReg="false"/>
     <ROW File="NJsonSchema.Yaml.dll" Component_="NJsonSchema.Yaml.dll" FileName="NJSONS~2.DLL|NJsonSchema.Yaml.dll" Attributes="0" SourcePath="..\Publish\x64\NJsonSchema.Yaml.dll" SelfReg="false"/>
@@ -337,6 +336,35 @@
     <ROW File="Vapour.Server.Host.xml" Component_="appsettings.Development.json" FileName="VAPOUR~1.XML|Vapour.Server.Host.xml" Attributes="0" SourcePath="..\Publish\x64\Vapour.Server.Host.xml" SelfReg="false"/>
     <ROW File="Vapour.Server.Interfaces.xml" Component_="appsettings.Development.json" FileName="VAPOUR~2.XML|Vapour.Server.Interfaces.xml" Attributes="0" SourcePath="..\Publish\x64\Vapour.Server.Interfaces.xml" SelfReg="false"/>
     <ROW File="YamlDotNet.dll" Component_="YamlDotNet.dll" FileName="YAMLDO~1.DLL|YamlDotNet.dll" Attributes="0" SourcePath="..\Publish\x64\YamlDotNet.dll" SelfReg="false"/>
+    <ROW File="CliWrap.dll" Component_="CliWrap.dll" FileName="CliWrap.dll" Attributes="0" SourcePath="..\Publish\x64\CliWrap.dll" SelfReg="false"/>
+    <ROW File="CommunityToolkit.Mvvm.dll" Component_="CommunityToolkit.Mvvm.dll" FileName="COMMUN~1.DLL|CommunityToolkit.Mvvm.dll" Attributes="0" SourcePath="..\Publish\x64\CommunityToolkit.Mvvm.dll" SelfReg="false"/>
+    <ROW File="FastEndpoints.Attributes.dll" Component_="FastEndpoints.Attributes.dll" FileName="FASTEN~3.DLL|FastEndpoints.Attributes.dll" Attributes="0" SourcePath="..\Publish\x64\FastEndpoints.Attributes.dll" SelfReg="false"/>
+    <ROW File="Gameloop.Vdf.dll" Component_="Gameloop.Vdf.dll" FileName="GAMELO~1.DLL|Gameloop.Vdf.dll" Attributes="0" SourcePath="..\Publish\x64\Gameloop.Vdf.dll" SelfReg="false"/>
+    <ROW File="Gameloop.Vdf.JsonConverter.dll" Component_="Gameloop.Vdf.JsonConverter.dll" FileName="GAMELO~2.DLL|Gameloop.Vdf.JsonConverter.dll" Attributes="0" SourcePath="..\Publish\x64\Gameloop.Vdf.JsonConverter.dll" SelfReg="false"/>
+    <ROW File="VapourClient20230126.log" Component_="VapourClient20230126.log" FileName="VAPOUR~1.LOG|Vapour-Client20230126.log" Attributes="0" SourcePath="..\Publish\x64\Logs\Vapour-Client20230126.log" SelfReg="false"/>
+    <ROW File="VapourClient20230127.log" Component_="VapourClient20230126.log" FileName="VAPOUR~2.LOG|Vapour-Client20230127.log" Attributes="0" SourcePath="..\Publish\x64\Logs\Vapour-Client20230127.log" SelfReg="false"/>
+    <ROW File="VapourClient20230131.log" Component_="VapourClient20230126.log" FileName="VAPOUR~3.LOG|Vapour-Client20230131.log" Attributes="0" SourcePath="..\Publish\x64\Logs\Vapour-Client20230131.log" SelfReg="false"/>
+    <ROW File="Microsoft.AspNetCore.Connections.Abstractions.dll" Component_="Microsoft.AspNetCore.Connections.Abstractions.dll" FileName="MICRO~33.DLL|Microsoft.AspNetCore.Connections.Abstractions.dll" Attributes="0" SourcePath="..\Publish\x64\Microsoft.AspNetCore.Connections.Abstractions.dll" SelfReg="false"/>
+    <ROW File="Microsoft.AspNetCore.Http.Connections.Client.dll" Component_="Microsoft.AspNetCore.Http.Connections.Client.dll" FileName="MICRO~34.DLL|Microsoft.AspNetCore.Http.Connections.Client.dll" Attributes="0" SourcePath="..\Publish\x64\Microsoft.AspNetCore.Http.Connections.Client.dll" SelfReg="false"/>
+    <ROW File="Microsoft.AspNetCore.Http.Connections.Common.dll" Component_="Microsoft.AspNetCore.Http.Connections.Common.dll" FileName="MICRO~35.DLL|Microsoft.AspNetCore.Http.Connections.Common.dll" Attributes="0" SourcePath="..\Publish\x64\Microsoft.AspNetCore.Http.Connections.Common.dll" SelfReg="false"/>
+    <ROW File="Microsoft.AspNetCore.SignalR.Client.Core.dll" Component_="Microsoft.AspNetCore.SignalR.Client.Core.dll" FileName="MICRO~36.DLL|Microsoft.AspNetCore.SignalR.Client.Core.dll" Attributes="0" SourcePath="..\Publish\x64\Microsoft.AspNetCore.SignalR.Client.Core.dll" SelfReg="false"/>
+    <ROW File="Microsoft.AspNetCore.SignalR.Client.dll" Component_="Microsoft.AspNetCore.SignalR.Client.dll" FileName="MICRO~37.DLL|Microsoft.AspNetCore.SignalR.Client.dll" Attributes="0" SourcePath="..\Publish\x64\Microsoft.AspNetCore.SignalR.Client.dll" SelfReg="false"/>
+    <ROW File="Microsoft.AspNetCore.SignalR.Common.dll" Component_="Microsoft.AspNetCore.SignalR.Common.dll" FileName="MICRO~38.DLL|Microsoft.AspNetCore.SignalR.Common.dll" Attributes="0" SourcePath="..\Publish\x64\Microsoft.AspNetCore.SignalR.Common.dll" SelfReg="false"/>
+    <ROW File="Microsoft.AspNetCore.SignalR.Protocols.Json.dll" Component_="Microsoft.AspNetCore.SignalR.Protocols.Json.dll" FileName="MICRO~39.DLL|Microsoft.AspNetCore.SignalR.Protocols.Json.dll" Attributes="0" SourcePath="..\Publish\x64\Microsoft.AspNetCore.SignalR.Protocols.Json.dll" SelfReg="false"/>
+    <ROW File="Microsoft.Extensions.Features.dll" Component_="Microsoft.Extensions.Features.dll" FileName="MICRO~40.DLL|Microsoft.Extensions.Features.dll" Attributes="0" SourcePath="..\Publish\x64\Microsoft.Extensions.Features.dll" SelfReg="false"/>
+    <ROW File="Microsoft.Extensions.Http.Polly.dll" Component_="Microsoft.Extensions.Http.Polly.dll" FileName="MICRO~41.DLL|Microsoft.Extensions.Http.Polly.dll" Attributes="0" SourcePath="..\Publish\x64\Microsoft.Extensions.Http.Polly.dll" SelfReg="false"/>
+    <ROW File="Microsoft.Xaml.Behaviors.dll" Component_="Microsoft.Xaml.Behaviors.dll" FileName="MICRO~42.DLL|Microsoft.Xaml.Behaviors.dll" Attributes="0" SourcePath="..\Publish\x64\Microsoft.Xaml.Behaviors.dll" SelfReg="false"/>
+    <ROW File="Nefarius.Drivers.HidHide.dll" Component_="Nefarius.Drivers.HidHide.dll" FileName="NEFARI~5.DLL|Nefarius.Drivers.HidHide.dll" Attributes="0" SourcePath="..\Publish\x64\Nefarius.Drivers.HidHide.dll" SelfReg="false"/>
+    <ROW File="Nefarius.Drivers.Nssidswap.dll" Component_="Nefarius.Drivers.Nssidswap.dll" FileName="NEFARI~6.DLL|Nefarius.Drivers.Nssidswap.dll" Attributes="0" SourcePath="..\Publish\x64\Nefarius.Drivers.Nssidswap.dll" SelfReg="false"/>
+    <ROW File="Polly.Contrib.WaitAndRetry.dll" Component_="Polly.Contrib.WaitAndRetry.dll" FileName="POLLYC~1.DLL|Polly.Contrib.WaitAndRetry.dll" Attributes="0" SourcePath="..\Publish\x64\Polly.Contrib.WaitAndRetry.dll" SelfReg="false"/>
+    <ROW File="Polly.dll" Component_="Polly.dll" FileName="Polly.dll" Attributes="0" SourcePath="..\Publish\x64\Polly.dll" SelfReg="false"/>
+    <ROW File="Polly.Extensions.Http.dll" Component_="Polly.Extensions.Http.dll" FileName="POLLYE~1.DLL|Polly.Extensions.Http.dll" Attributes="0" SourcePath="..\Publish\x64\Polly.Extensions.Http.dll" SelfReg="false"/>
+    <ROW File="System.IO.Pipelines.dll" Component_="System.IO.Pipelines.dll" FileName="SYSTEM~5.DLL|System.IO.Pipelines.dll" Attributes="0" SourcePath="..\Publish\x64\System.IO.Pipelines.dll" SelfReg="false"/>
+    <ROW File="System.Management.dll" Component_="System.Management.dll" FileName="SYSTEM~6.DLL|System.Management.dll" Attributes="0" SourcePath="..\Publish\x64\System.Management.dll" SelfReg="false"/>
+    <ROW File="Vapour.appsettings.json" Component_="appsettings.Development.json" FileName="VAPOUR~1.JSO|Vapour.appsettings.json" Attributes="0" SourcePath="..\Publish\x64\Vapour.appsettings.json" SelfReg="false"/>
+    <ROW File="Vapour.Client.TrayApplication.appsettings.json" Component_="appsettings.Development.json" FileName="VAPOUR~2.JSO|Vapour.Client.TrayApplication.appsettings.json" Attributes="0" SourcePath="..\Publish\x64\Vapour.Client.TrayApplication.appsettings.json" SelfReg="false"/>
+    <ROW File="Vapour.Server.Host.appsettings.json" Component_="appsettings.Development.json" FileName="VAPOUR~3.JSO|Vapour.Server.Host.appsettings.json" Attributes="0" SourcePath="..\Publish\x64\Vapour.Server.Host.appsettings.json" SelfReg="false"/>
+    <ROW File="Warden.dll" Component_="Warden.dll" FileName="Warden.dll" Attributes="0" SourcePath="..\Publish\x64\Warden.dll" SelfReg="false"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.custcomp.MsiShortcutPropertyComponent">
     <ROW MsiShortcutProperty="Vapour.Client.TrayApplication0" Shortcut_="Vapour.Client.TrayApplication" PropertyKey="System.AppUserModel.PreventPinning" PropVariantValue="1"/>
@@ -521,7 +549,6 @@
     <ROW Feature_="MainFeature" Component_="ProductInformation"/>
     <ROW Feature_="MainFeature" Component_="appsettings.Development.json"/>
     <ROW Feature_="MainFeature" Component_="MaterialDesignExtensions.resources.dll"/>
-    <ROW Feature_="MainFeature" Component_="AsyncErrorHandler.dll"/>
     <ROW Feature_="MainFeature" Component_="AutoMapper.dll"/>
     <ROW Feature_="MainFeature" Component_="AutoMapper.Extensions.Microsoft.DependencyInjection.dll"/>
     <ROW Feature_="MainFeature" Component_="build.js"/>
@@ -545,7 +572,6 @@
     <ROW Feature_="MainFeature" Component_="Vapour.Shared.Common.dll"/>
     <ROW Feature_="MainFeature" Component_="Vapour.Shared.Common.Interfaces.dll"/>
     <ROW Feature_="MainFeature" Component_="Vapour.Shared.Common.Util.dll"/>
-    <ROW Feature_="MainFeature" Component_="Vapour.Shared.Configuration.Application.dll"/>
     <ROW Feature_="MainFeature" Component_="Vapour.Shared.Configuration.Profiles.dll"/>
     <ROW Feature_="MainFeature" Component_="Vapour.Shared.Configuration.Profiles.Interfaces.dll"/>
     <ROW Feature_="MainFeature" Component_="Vapour.Shared.Devices.dll"/>
@@ -554,7 +580,6 @@
     <ROW Feature_="MainFeature" Component_="MaterialDesignExtensions.resources.dll_14"/>
     <ROW Feature_="MainFeature" Component_="MaterialDesignExtensions.resources.dll_15"/>
     <ROW Feature_="MainFeature" Component_="Hardcodet.NotifyIcon.Wpf.dll"/>
-    <ROW Feature_="MainFeature" Component_="JetBrains.Annotations.dll"/>
     <ROW Feature_="MainFeature" Component_="MaterialDesignColors.dll"/>
     <ROW Feature_="MainFeature" Component_="MaterialDesignExtensions.dll"/>
     <ROW Feature_="MainFeature" Component_="MaterialDesignThemes.Wpf.dll"/>
@@ -586,8 +611,6 @@
     <ROW Feature_="MainFeature" Component_="Microsoft.Extensions.Options.dll"/>
     <ROW Feature_="MainFeature" Component_="Microsoft.Extensions.Primitives.dll"/>
     <ROW Feature_="MainFeature" Component_="Microsoft.OpenApi.dll"/>
-    <ROW Feature_="MainFeature" Component_="Microsoft.Toolkit.dll"/>
-    <ROW Feature_="MainFeature" Component_="Microsoft.Toolkit.Mvvm.dll"/>
     <ROW Feature_="MainFeature" Component_="Microsoft.Windows.SDK.NET.dll"/>
     <ROW Feature_="MainFeature" Component_="Nefarius.Utilities.DeviceManagement.dll"/>
     <ROW Feature_="MainFeature" Component_="Nefarius.ViGEm.Client.dll"/>
@@ -609,24 +632,19 @@
     <ROW Feature_="MainFeature" Component_="Swashbuckle.AspNetCore.Swagger.dll"/>
     <ROW Feature_="MainFeature" Component_="Swashbuckle.AspNetCore.SwaggerGen.dll"/>
     <ROW Feature_="MainFeature" Component_="Swashbuckle.AspNetCore.SwaggerUI.dll"/>
-    <ROW Feature_="MainFeature" Component_="System.Diagnostics.EventLog.Messages.dll"/>
-    <ROW Feature_="MainFeature" Component_="System.Reactive.dll"/>
     <ROW Feature_="MainFeature" Component_="System.ServiceProcess.ServiceController.dll"/>
     <ROW Feature_="MainFeature" Component_="MaterialDesignExtensions.resources.dll_20"/>
-    <ROW Feature_="MainFeature" Component_="Websocket.Client.dll"/>
     <ROW Feature_="MainFeature" Component_="WinRT.Runtime.dll"/>
     <ROW Feature_="MainFeature" Component_="AI_ExePath"/>
     <ROW Feature_="MainFeature" Component_="Vapour"/>
     <ROW Feature_="MainFeature" Component_="Serilog.AspNetCore.dll"/>
     <ROW Feature_="MainFeature" Component_="Serilog.Formatting.Compact.dll"/>
     <ROW Feature_="MainFeature" Component_="Serilog.Sinks.Debug.dll"/>
-    <ROW Feature_="MainFeature" Component_="System.Diagnostics.DiagnosticSource.dll"/>
     <ROW Feature_="MainFeature" Component_="FastEndpoints.dll"/>
     <ROW Feature_="MainFeature" Component_="FastEndpoints.Swagger.dll"/>
     <ROW Feature_="MainFeature" Component_="FluentValidation.dll"/>
     <ROW Feature_="MainFeature" Component_="Microsoft.Extensions.Http.dll"/>
     <ROW Feature_="MainFeature" Component_="Namotion.Reflection.dll"/>
-    <ROW Feature_="MainFeature" Component_="Nefarius.Drivers.Identinator.dll"/>
     <ROW Feature_="MainFeature" Component_="Nefarius.Drivers.WinUSB.dll"/>
     <ROW Feature_="MainFeature" Component_="NJsonSchema.dll"/>
     <ROW Feature_="MainFeature" Component_="NJsonSchema.Yaml.dll"/>
@@ -639,6 +657,30 @@
     <ROW Feature_="MainFeature" Component_="YamlDotNet.dll"/>
     <ROW Feature_="C63A5E8718343189D035A252D1450C5" Component_="C63A5E8718343189D035A252D1450C5"/>
     <ROW Feature_="D527574497494DA8C80F142814E315" Component_="D527574497494DA8C80F142814E315"/>
+    <ROW Feature_="MainFeature" Component_="CliWrap.dll"/>
+    <ROW Feature_="MainFeature" Component_="CommunityToolkit.Mvvm.dll"/>
+    <ROW Feature_="MainFeature" Component_="FastEndpoints.Attributes.dll"/>
+    <ROW Feature_="MainFeature" Component_="Gameloop.Vdf.dll"/>
+    <ROW Feature_="MainFeature" Component_="Gameloop.Vdf.JsonConverter.dll"/>
+    <ROW Feature_="MainFeature" Component_="VapourClient20230126.log"/>
+    <ROW Feature_="MainFeature" Component_="Microsoft.AspNetCore.Connections.Abstractions.dll"/>
+    <ROW Feature_="MainFeature" Component_="Microsoft.AspNetCore.Http.Connections.Client.dll"/>
+    <ROW Feature_="MainFeature" Component_="Microsoft.AspNetCore.Http.Connections.Common.dll"/>
+    <ROW Feature_="MainFeature" Component_="Microsoft.AspNetCore.SignalR.Client.Core.dll"/>
+    <ROW Feature_="MainFeature" Component_="Microsoft.AspNetCore.SignalR.Client.dll"/>
+    <ROW Feature_="MainFeature" Component_="Microsoft.AspNetCore.SignalR.Common.dll"/>
+    <ROW Feature_="MainFeature" Component_="Microsoft.AspNetCore.SignalR.Protocols.Json.dll"/>
+    <ROW Feature_="MainFeature" Component_="Microsoft.Extensions.Features.dll"/>
+    <ROW Feature_="MainFeature" Component_="Microsoft.Extensions.Http.Polly.dll"/>
+    <ROW Feature_="MainFeature" Component_="Microsoft.Xaml.Behaviors.dll"/>
+    <ROW Feature_="MainFeature" Component_="Nefarius.Drivers.HidHide.dll"/>
+    <ROW Feature_="MainFeature" Component_="Nefarius.Drivers.Nssidswap.dll"/>
+    <ROW Feature_="MainFeature" Component_="Polly.Contrib.WaitAndRetry.dll"/>
+    <ROW Feature_="MainFeature" Component_="Polly.dll"/>
+    <ROW Feature_="MainFeature" Component_="Polly.Extensions.Http.dll"/>
+    <ROW Feature_="MainFeature" Component_="System.IO.Pipelines.dll"/>
+    <ROW Feature_="MainFeature" Component_="System.Management.dll"/>
+    <ROW Feature_="MainFeature" Component_="Warden.dll"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiIconsComponent">
     <ROW Name="Vapour.exe" SourcePath="Images\Vapour.ico" Index="0"/>
@@ -671,10 +713,10 @@
     <ROW Action="StopProcess" Condition="( ( NOT Installed AND OLDPRODUCTS ) OR ( Installed AND REMOVE &lt;&gt; &quot;ALL&quot; AND AI_INSTALL_MODE &lt;&gt; &quot;Remove&quot; ) OR ( Installed AND ( REMOVE = &quot;ALL&quot; OR AI_INSTALL_MODE = &quot;Remove&quot; ) ) )" Sequence="1204"/>
     <ROW Action="AI_DATA_SETTER_2" Condition="( ( NOT Installed AND OLDPRODUCTS ) OR ( Installed AND REMOVE &lt;&gt; &quot;ALL&quot; AND AI_INSTALL_MODE &lt;&gt; &quot;Remove&quot; ) OR ( Installed AND ( REMOVE = &quot;ALL&quot; OR AI_INSTALL_MODE = &quot;Remove&quot; ) ) )" Sequence="1203"/>
     <ROW Action="AI_AiRemoveFilesRebootImmediate" Sequence="3498"/>
-    <ROW Action="AI_AiRemoveFilesImmediate" Sequence="3499"/>
     <ROW Action="AI_ConfigureChainer" Condition="((UILevel = 2) OR (UILevel = 3)) AND (NOT UPGRADINGPRODUCTCODE)" Sequence="6598"/>
     <ROW Action="AI_LaunchChainer" Condition="AI_PREREQ_CHAINER AND (NOT UPGRADINGPRODUCTCODE)" Sequence="6599"/>
     <ROW Action="AI_VerifyPrereq" Sequence="1101"/>
+    <ROW Action="AI_AiRemoveFilesImmediate" Sequence="3499"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstallUISequenceComponent">
     <ROW Action="AI_RESTORE_LOCATION" Condition="APPDIR=&quot;&quot;" Sequence="749"/>
