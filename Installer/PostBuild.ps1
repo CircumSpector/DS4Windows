@@ -18,16 +18,15 @@ if (Test-Path -Path $artifacts)
 	Remove-Item -Path $artifacts -Recurse
 }
 
+New-Item $artifacts -itemtype directory
+
 if ($env:APPVEYOR_REPO_TAG -eq "true")
 {
 	& "$adi" /register $(gc $serial)
 	& "$adi" /edit $installerProject /SetVersion $env:APPVEYOR_BUILD_VERSION
 	& "$adi" /build $installerProject 
 
-	Write-Host "Setup: $installerOutputExe"
-	Write-Host "Destination: $installerOutputArtifact"
 	Move-Item -Path $installerOutputExe -Destination $installerOutputArtifact
 }
 
-New-Item $artifacts -itemtype directory
 Compress-Archive -Path $publishFolder -DestinationPath $publishOutputArtifact
