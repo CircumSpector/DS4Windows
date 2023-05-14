@@ -24,6 +24,8 @@ if ($env:APPVEYOR_REPO_TAG -eq "true")
 	& "$adi" /edit $installerProject /SetVersion $env:APPVEYOR_BUILD_VERSION
 	& "$adi" /build $installerProject 
 
+	Write-Host "Setup: $installerOutputExe"
+	Write-Host "Destination: $installerOutputArtifact"
 	Move-Item -Path $installerOutputExe -Destination $installerOutputArtifact
 }
 
