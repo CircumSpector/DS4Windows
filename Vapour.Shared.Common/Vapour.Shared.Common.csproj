@@ -12,7 +12,7 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="OpenTelemetry.Exporter.Jaeger" Version="1.4.0" />
+		<PackageReference Include="OpenTelemetry.Exporter.Jaeger" Version="1.5.0" />
 		<PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.5.0" />
 		<PackageReference Include="PropertyChanged.Fody" Version="4.1.0" PrivateAssets="All" />
 		<PackageReference Include="ConfigureAwait.Fody" Version="3.3.2">
