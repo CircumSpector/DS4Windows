@@ -43,7 +43,7 @@ There are none. Until this message changes, the rework is in constant motion and
 
 ## Where can I get more information
 
-[Join our Discord server](https://discord.vigem.org/) 🎉
+[Join our Discord server](https://discord.nefarius.at/) 🎉
 
 ## Contributing
 
@@ -142,7 +142,7 @@ This application benefits from these awesome projects ❤ (appearance in no spec
 ### Device handling, driver interaction
 
 - [Nefarius.Drivers.HidHide](https://github.com/nefarius/Nefarius.Drivers.HidHide)
-- [Nefarius' Identinator](https://vigem.org/projects/Identinator/)
+- [Nefarius' Identinator](https://docs.nefarius.at/projects/Identinator/)
 - [Nefarius.Utilities.DeviceManagement](https://github.com/nefarius/Nefarius.Utilities.DeviceManagement)
 - [ViGEm Client .NET SDK](https://github.com/ViGEm/ViGEm.NET)
 - [Nefarius.Utilities.Bluetooth](https://github.com/nefarius/Nefarius.Utilities.Bluetooth)
