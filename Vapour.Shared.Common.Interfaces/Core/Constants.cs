@@ -45,7 +45,7 @@ public static class Constants
 
     public const string ViGEmBusGen1DownloadUri = "https://github.com/ViGEm/ViGEmBus/releases/latest";
 
-    public const string ViGEmBusGen1GuideUri = "https://vigem.org/projects/ViGEm/How-to-Install/#troubleshooting";
+    public const string ViGEmBusGen1GuideUri = "https://docs.nefarius.at/projects/ViGEm/How-to-Install/#troubleshooting";
 
     public const string HidHideDownloadUri = "https://github.com/ViGEm/HidHide/releases/latest";
 
