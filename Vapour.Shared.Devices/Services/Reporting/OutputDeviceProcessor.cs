@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 using Nefarius.Utilities.HID.Devices;
+using Nefarius.Utilities.HID.Util;
 
 using Vapour.Shared.Common.Types;
 using Vapour.Shared.Devices.Services.Configuration;
@@ -17,9 +18,6 @@ internal sealed class OutputDeviceProcessor : IOutputDeviceProcessor
 {
     private readonly IAsyncSubscriber<string, InputSourceFinalReport> _inputReportSubscriber;
     private IDisposable _inputReportSubscription;
-    private const float RecipInputPosResolution = 1 / 127f;
-    private const float RecipInputNegResolution = 1 / 128f;
-    private const int OutputResolution = 32767 - -32768;
     private IOutDevice _controllerDevice;
 
     public OutputDeviceProcessor(IServiceProvider serviceProvider,
@@ -115,13 +113,13 @@ internal sealed class OutputDeviceProcessor : IOutputDeviceProcessor
         {
             case AxisRangeType.Short when
                 InputSource.Configuration.OutputDeviceType != OutputDeviceType.Xbox360Controller:
-                report.LeftThumbX = ScaleDown(report.LeftThumbX, false);
-                report.LeftThumbY = ScaleDown(report.LeftThumbY, true);
+                report.LeftThumbX = AxisScaling.ScaleDown(report.LeftThumbX, false);
+                report.LeftThumbY = AxisScaling.ScaleDown(report.LeftThumbY, true);
                 break;
             case AxisRangeType.Byte when
                 InputSource.Configuration.OutputDeviceType != OutputDeviceType.DualShock4Controller:
-                report.LeftThumbX = ScaleUp(report.LeftThumbX, false);
-                report.LeftThumbY = ScaleUp(report.LeftThumbY, true);
+                report.LeftThumbX = AxisScaling.ScaleUp(report.LeftThumbX, false);
+                report.LeftThumbY = AxisScaling.ScaleUp(report.LeftThumbY, true);
                 break;
         }
 
@@ -129,48 +127,14 @@ internal sealed class OutputDeviceProcessor : IOutputDeviceProcessor
         {
             case AxisRangeType.Short when
                 InputSource.Configuration.OutputDeviceType != OutputDeviceType.Xbox360Controller:
-                report.RightThumbX = ScaleDown(report.RightThumbX, false);
-                report.RightThumbY = ScaleDown(report.RightThumbY, true);
+                report.RightThumbX = AxisScaling.ScaleDown(report.RightThumbX, false);
+                report.RightThumbY = AxisScaling.ScaleDown(report.RightThumbY, true);
                 break;
             case AxisRangeType.Byte when
                 InputSource.Configuration.OutputDeviceType != OutputDeviceType.DualShock4Controller:
-                report.RightThumbX = ScaleUp(report.RightThumbX, false);
-                report.RightThumbY = ScaleUp(report.RightThumbY, true);
+                report.RightThumbX = AxisScaling.ScaleUp(report.RightThumbX, false);
+                report.RightThumbY = AxisScaling.ScaleUp(report.RightThumbY, true);
                 break;
-        }
-    }
-
-    private static byte ScaleDown(short value, bool flip)
-    {
-        unchecked
-        {
-            byte newValue = (byte)((value + 0x8000) / 257);
-            if (flip)
-            {
-                newValue = (byte)(byte.MaxValue - newValue);
-            }
-
-            return newValue;
-        }
-    }
-
-    private static short ScaleUp(int value, bool flip)
-    {
-        unchecked
-        {
-            value -= 0x80;
-            float recipRun = value >= 0 ? RecipInputPosResolution : RecipInputNegResolution;
-
-            float temp = value * recipRun;
-            //if (Flip) temp = (temp - 0.5f) * -1.0f + 0.5f;
-            if (flip)
-            {
-                temp = -temp;
-            }
-
-            temp = (temp + 1.0f) * 0.5f;
-
-            return (short)((temp * OutputResolution) + -32768);
         }
     }
 }
