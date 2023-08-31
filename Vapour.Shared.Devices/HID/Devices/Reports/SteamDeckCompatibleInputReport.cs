@@ -1,13 +1,12 @@
 ﻿using Nefarius.Utilities.HID.Devices;
 
-using Vapour.Shared.Devices.HID.InputTypes;
 using Vapour.Shared.Devices.HID.InputTypes.SteamDeck.In;
 
 namespace Vapour.Shared.Devices.HID.Devices.Reports;
 
 public sealed class SteamDeckCompatibleInputReport : InputSourceReport, IStructInputSourceReport<InputReport>
 {
-    public override InputAxisType AxisScaleInputType => InputAxisType.Xbox;
+    public override AxisRangeType AxisScaleInputType => AxisRangeType.Short;
 
     public void Parse(ref InputReport inputReport)
     {

@@ -1,7 +1,6 @@
 ﻿using Nefarius.Utilities.HID.Devices;
 
 using Vapour.Shared.Common.Util;
-using Vapour.Shared.Devices.HID.InputTypes;
 using Vapour.Shared.Devices.HID.InputTypes.JoyCon.In;
 using Vapour.Shared.Devices.Services.Configuration;
 
@@ -12,7 +11,7 @@ public sealed class JoyConCompatibleInputReport : InputSourceReport, IRawInputSo
     private readonly short[] _finalStickData = new short[2];
     private readonly float[] _tempStickData = new float[2];
 
-    public override InputAxisType AxisScaleInputType => InputAxisType.Xbox;
+    public override AxisRangeType AxisScaleInputType => AxisRangeType.Short;
 
     public ushort[] StickCalibration { get; } = new ushort[6];
     public ushort DeadZone { get; set; }

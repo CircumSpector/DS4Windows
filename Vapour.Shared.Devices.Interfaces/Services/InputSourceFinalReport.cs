@@ -12,8 +12,8 @@ public class InputSourceFinalReport
         InputSource = inputSource;
     }
 
-    public InputAxisType LThumbAxisScaleInputType { get; set; }
-    public InputAxisType RThumbAxisScaleInputType { get; set; }
+    public AxisRangeType LThumbAxisScaleInputType { get; set; }
+    public AxisRangeType RThumbAxisScaleInputType { get; set; }
     
     /// <summary>
     ///     Gets the battery state.

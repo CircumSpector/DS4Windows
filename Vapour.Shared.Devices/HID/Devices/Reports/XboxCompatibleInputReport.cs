@@ -7,7 +7,7 @@ namespace Vapour.Shared.Devices.HID.Devices.Reports;
 
 public class XboxCompatibleInputReport : InputSourceReport, IStructInputSourceReport<InputReport>
 {
-    public override InputAxisType AxisScaleInputType => InputAxisType.Xbox;
+    public override AxisRangeType AxisScaleInputType => AxisRangeType.Short;
 
     public void Parse(ref InputReport inputReport)
     {

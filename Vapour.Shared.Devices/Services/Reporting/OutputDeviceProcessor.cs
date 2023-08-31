@@ -5,8 +5,9 @@ using MessagePipe;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
+using Nefarius.Utilities.HID.Devices;
+
 using Vapour.Shared.Common.Types;
-using Vapour.Shared.Devices.HID.InputTypes;
 using Vapour.Shared.Devices.Services.Configuration;
 using Vapour.Shared.Devices.Services.Configuration.Messages;
 
@@ -112,12 +113,12 @@ internal sealed class OutputDeviceProcessor : IOutputDeviceProcessor
     {
         switch (report.LThumbAxisScaleInputType)
         {
-            case InputAxisType.Xbox when
+            case AxisRangeType.Short when
                 InputSource.Configuration.OutputDeviceType != OutputDeviceType.Xbox360Controller:
                 report.LeftThumbX = ScaleDown(report.LeftThumbX, false);
                 report.LeftThumbY = ScaleDown(report.LeftThumbY, true);
                 break;
-            case InputAxisType.DualShock4 when
+            case AxisRangeType.Byte when
                 InputSource.Configuration.OutputDeviceType != OutputDeviceType.DualShock4Controller:
                 report.LeftThumbX = ScaleUp(report.LeftThumbX, false);
                 report.LeftThumbY = ScaleUp(report.LeftThumbY, true);
@@ -126,12 +127,12 @@ internal sealed class OutputDeviceProcessor : IOutputDeviceProcessor
 
         switch (report.RThumbAxisScaleInputType)
         {
-            case InputAxisType.Xbox when
+            case AxisRangeType.Short when
                 InputSource.Configuration.OutputDeviceType != OutputDeviceType.Xbox360Controller:
                 report.RightThumbX = ScaleDown(report.RightThumbX, false);
                 report.RightThumbY = ScaleDown(report.RightThumbY, true);
                 break;
-            case InputAxisType.DualShock4 when
+            case AxisRangeType.Byte when
                 InputSource.Configuration.OutputDeviceType != OutputDeviceType.DualShock4Controller:
                 report.RightThumbX = ScaleUp(report.RightThumbX, false);
                 report.RightThumbY = ScaleUp(report.RightThumbY, true);

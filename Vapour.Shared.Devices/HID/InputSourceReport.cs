@@ -1,6 +1,5 @@
 ﻿using Nefarius.Utilities.HID.Devices;
 
-using Vapour.Shared.Devices.HID.InputTypes;
 using Vapour.Shared.Devices.Services.Configuration;
 
 namespace Vapour.Shared.Devices.HID;
@@ -10,7 +9,7 @@ namespace Vapour.Shared.Devices.HID;
 /// </summary>
 public abstract class InputSourceReport : IInputSourceReport
 {
-    public abstract InputAxisType AxisScaleInputType { get; }
+    public abstract AxisRangeType AxisScaleInputType { get; }
 
     /// <summary>
     ///     Gets the report ID.

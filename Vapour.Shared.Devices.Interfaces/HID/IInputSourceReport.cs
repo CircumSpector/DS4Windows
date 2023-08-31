@@ -7,7 +7,7 @@ namespace Vapour.Shared.Devices.HID;
 
 public interface IInputSourceReport
 {
-    InputAxisType AxisScaleInputType { get; }
+    AxisRangeType AxisScaleInputType { get; }
 
     /// <summary>
     ///     Gets the report ID.

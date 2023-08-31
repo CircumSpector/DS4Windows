@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
+using Nefarius.Utilities.HID.Devices;
+
 using Vapour.Shared.Devices.HID.InputTypes;
 using Nefarius.Utilities.HID.Devices.DualShock4.In;
 
@@ -24,7 +26,7 @@ public struct TrackPadTouch
 [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
 public class DualShock4CompatibleInputReport : InputSourceReport, IStructInputSourceReport<InputReportData>
 {
-    public override InputAxisType AxisScaleInputType => InputAxisType.DualShock4;
+    public override AxisRangeType AxisScaleInputType => AxisRangeType.Byte;
 
     public TrackPadTouch TrackPadTouch1 { get; protected set; }
 

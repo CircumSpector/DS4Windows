@@ -1,11 +1,13 @@
-﻿using Vapour.Shared.Devices.HID.InputTypes;
+﻿using Nefarius.Utilities.HID.Devices;
+
+using Vapour.Shared.Devices.HID.InputTypes;
 using Nefarius.Utilities.HID.Devices.DualSense.In;
 
 namespace Vapour.Shared.Devices.HID.Devices.Reports;
 
 public sealed class DualSenseCompatibleInputReport : InputSourceReport, IStructInputSourceReport<InputReportData>
 {
-    public override InputAxisType AxisScaleInputType => InputAxisType.DualShock4;
+    public override AxisRangeType AxisScaleInputType => AxisRangeType.Byte;
 
     public TrackPadTouch TrackPadTouch1 { get; protected set; }
 
