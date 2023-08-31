@@ -1,4 +1,6 @@
-﻿using Vapour.Shared.Common.Util;
+﻿using Nefarius.Utilities.HID.Devices;
+
+using Vapour.Shared.Common.Util;
 using Vapour.Shared.Devices.HID.InputTypes;
 using Vapour.Shared.Devices.HID.InputTypes.JoyCon.In;
 using Vapour.Shared.Devices.Services.Configuration;

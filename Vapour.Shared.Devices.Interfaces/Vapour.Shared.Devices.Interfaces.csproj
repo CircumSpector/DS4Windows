@@ -13,6 +13,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Nefarius.Utilities.HIDReportKit" Version="1.0.2" />
 		<PackageReference Include="Nefarius.ViGEm.Client" Version="1.21.256" />
     <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.2.188-beta">
       <PrivateAssets>all</PrivateAssets>
@@ -31,7 +32,6 @@
 	</ItemGroup>
 
     <ItemGroup>
-      <Folder Include="HID\InputTypes\DualShock4\Feature\" />
       <Folder Include="HID\InputTypes\JoyCon\In\" />
       <Folder Include="HID\InputTypes\JoyCon\Out\" />
       <Folder Include="HID\InputTypes\SteamDeck\In\" />

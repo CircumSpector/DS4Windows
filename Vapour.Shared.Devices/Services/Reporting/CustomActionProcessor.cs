@@ -1,5 +1,7 @@
 ﻿using MessagePipe;
 
+using Nefarius.Utilities.HID.Devices;
+
 using Vapour.Shared.Devices.HID;
 using Vapour.Shared.Devices.Services.Reporting.CustomActions;
 

@@ -7,9 +7,9 @@ using Vapour.Shared.Common.Util;
 using Vapour.Shared.Devices.HID.DeviceInfos;
 using Vapour.Shared.Devices.HID.DeviceInfos.Meta;
 using Vapour.Shared.Devices.HID.Devices.Reports;
-using Vapour.Shared.Devices.HID.InputTypes.DualShock4.Feature;
-using Vapour.Shared.Devices.HID.InputTypes.DualShock4.In;
-using Vapour.Shared.Devices.HID.InputTypes.DualShock4.Out;
+using Nefarius.Utilities.HID.Devices.DualShock4.Feature;
+using Nefarius.Utilities.HID.Devices.DualShock4.In;
+using Nefarius.Utilities.HID.Devices.DualShock4.Out;
 using Vapour.Shared.Devices.Services.Reporting;
 
 namespace Vapour.Shared.Devices.HID.Devices;
@@ -83,7 +83,7 @@ public sealed class DualShock4CompatibleHidDevice : CompatibleHidDevice
         if (CurrentConfiguration.LoadedLightbar != null)
         {
             Color rgb = (Color)ColorConverter.ConvertFromString(CurrentConfiguration.LoadedLightbar);
-            reportData.LedData.SetLightbarColor(rgb);
+            reportData.LedData.SetLightbarColor(System.Drawing.Color.FromArgb(rgb.A, rgb.R, rgb.G, rgb.B));
         }
         SendReport(reportData);
     }
