@@ -1,6 +1,5 @@
 ﻿using Nefarius.Utilities.HID.Devices;
 
-using Vapour.Shared.Devices.HID.InputTypes;
 using Vapour.Shared.Devices.Services.Configuration;
 
 namespace Vapour.Shared.Devices.HID;

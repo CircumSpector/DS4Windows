@@ -1,8 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
 using Nefarius.Utilities.HID.Devices;
-
-using Vapour.Shared.Devices.HID.InputTypes;
 using Nefarius.Utilities.HID.Devices.DualShock4.In;
 
 namespace Vapour.Shared.Devices.HID.Devices.Reports;

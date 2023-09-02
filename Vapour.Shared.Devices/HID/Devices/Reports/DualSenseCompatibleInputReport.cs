@@ -1,6 +1,4 @@
 ﻿using Nefarius.Utilities.HID.Devices;
-
-using Vapour.Shared.Devices.HID.InputTypes;
 using Nefarius.Utilities.HID.Devices.DualSense.In;
 
 namespace Vapour.Shared.Devices.HID.Devices.Reports;
