@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 	  <RootNamespace>Vapour.Shared.Devices</RootNamespace>
@@ -13,7 +13,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Nefarius.Utilities.HIDReportKit" Version="1.0.12" />
+		<PackageReference Include="Nefarius.Utilities.HIDReportKit" Version="1.0.13" />
 		<PackageReference Include="Nefarius.ViGEm.Client" Version="1.21.256" />
     <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.2.188-beta">
       <PrivateAssets>all</PrivateAssets>
