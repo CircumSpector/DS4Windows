@@ -15,7 +15,7 @@
 		<PackageReference Include="Gameloop.Vdf" Version="0.6.2" />
 		<PackageReference Include="Gameloop.Vdf.JsonConverter" Version="0.2.1" />
 		<PackageReference Include="MessagePipe" Version="1.7.4" />
-		<PackageReference Include="Nefarius.Drivers.HidHide" Version="1.8.60" />
+		<PackageReference Include="Nefarius.Drivers.HidHide" Version="1.9.1" />
 		<PackageReference Include="Nefarius.Drivers.Nssidswap" Version="2.3.0" />
 		<PackageReference Include="Nefarius.Drivers.WinUSB" Version="4.3.83" />
 		<PackageReference Include="Nefarius.Utilities.Bluetooth" Version="1.1.40-pre" />
