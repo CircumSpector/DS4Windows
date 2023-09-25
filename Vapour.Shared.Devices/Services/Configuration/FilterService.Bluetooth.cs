@@ -5,6 +5,7 @@ using Windows.Win32.Foundation;
 using Microsoft.Extensions.Logging;
 
 using Nefarius.Utilities.Bluetooth;
+using Nefarius.Utilities.Bluetooth.Exceptions;
 using Nefarius.Utilities.Bluetooth.SDP;
 using Nefarius.Utilities.DeviceManagement.PnP;
 
@@ -47,7 +48,7 @@ public partial class FilterService
         _logger.LogInformation("Performing filter of bluetooth device {Address}",
             bthDevice.RemoteAddress.ToFriendlyName());
 
-        if (!SdpPatcher.AlterHidDeviceToVenderDefined(bthDevice.CachedServices, out byte[] patched))
+        if (!SdpPatcher.AlterHidDeviceToVendorDefined(bthDevice.CachedServices, out byte[] patched))
         {
             throw new FilterServiceException(
                 $"Failed to patch device with address {bthDevice.RemoteAddress.ToFriendlyName()}.");
