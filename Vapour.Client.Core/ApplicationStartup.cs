@@ -38,7 +38,7 @@ public static class ApplicationStartup
             .SetBasePath(AppContext.BaseDirectory)
             .AddJsonFile($"{Process.GetCurrentProcess().ProcessName}.appsettings.json")
             .AddJsonFile(
-                $"{Process.GetCurrentProcess().ProcessName}.appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json",
+                $"{Process.GetCurrentProcess().ProcessName}.appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? Environments.Production}.json",
                 true)
             .Build();
 
