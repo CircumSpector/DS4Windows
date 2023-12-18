@@ -35,11 +35,11 @@
 		<PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="3.17.406" />
 		<PackageReference Include="Nefarius.ViGEm.Client" Version="1.21.256" />
 		<PackageReference Include="OpenTelemetry.Exporter.Jaeger" Version="1.5.1" />
-		<PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.6.0" />
+		<PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.7.0" />
 		<PackageReference Include="PropertyChanged.Fody" Version="4.1.0" PrivateAssets="All" />
-		<PackageReference Include="Serilog.Extensions.Hosting" Version="7.0.0" />
-		<PackageReference Include="Serilog.Extensions.Logging" Version="7.0.0" />
-		<PackageReference Include="Serilog.Settings.Configuration" Version="7.0.1" />
+		<PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" />
+		<PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0" />
+		<PackageReference Include="Serilog.Settings.Configuration" Version="8.0.0" />
 		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
 	</ItemGroup>
 
