@@ -71,11 +71,11 @@
 		<PackageReference Include="MaterialDesignColors" Version="2.1.4" />
 		<PackageReference Include="MaterialDesignExtensions" Version="3.3.0" />
 		<PackageReference Include="MaterialDesignThemes" Version="4.9.0" />
-		<PackageReference Include="Microsoft.Extensions.ApiDescription.Client" Version="7.0.13">
+		<PackageReference Include="Microsoft.Extensions.ApiDescription.Client" Version="8.0.0">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
 		<PackageReference Include="NSwag.ApiDescription.Client" Version="13.20.0">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

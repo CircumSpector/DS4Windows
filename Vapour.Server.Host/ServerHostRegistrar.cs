@@ -1,5 +1,4 @@
 ﻿using FastEndpoints;
-using FastEndpoints.Swagger;
 
 using MessagePipe;
 
@@ -40,8 +39,7 @@ public sealed class ServerHostRegistrar : IServiceRegistrar
     private static void SetupWebServices(IServiceCollection services)
     {
         services.AddSignalR();
-        services.AddFastEndpoints();
-        services.AddSwaggerDoc();
+        services.AddFastEndpoints().AddSwaggerGen();
         services.AddSingleton<SystemService>();
         services.AddSingleton<IInputSourceMessageForwarder, InputSourceMessageForwarder>();
         services.AddSingleton<ISystemMessageForwarder, SystemMessageForwarder>();
