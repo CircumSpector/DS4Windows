@@ -3,7 +3,7 @@
 # Codename: Vapour Input
 
 [![Build status](https://ci.appveyor.com/api/projects/status/gt6hhm5aqy04ou7u?svg=true)](https://ci.appveyor.com/project/nefarius/ds4windows)
-[![Requirements](https://img.shields.io/badge/Requirements-.NET%207.0-blue.svg)](https://github.com/dotnet/core/blob/main/release-notes/7.0/supported-os.md) <!--![Lines of code](https://img.shields.io/tokei/lines/github/CircumSpector/DS4Windows) -->![GitHub issues by-label](https://img.shields.io/github/issues/CircumSpector/DS4Windows/bug) ![GitHub issues by-label](https://img.shields.io/github/issues/CircumSpector/DS4Windows/enhancement)
+[![Requirements](https://img.shields.io/badge/Requirements-.NET%208.0-blue.svg)](https://github.com/dotnet/core/blob/main/release-notes/8.0/supported-os.md) <!--![Lines of code](https://img.shields.io/tokei/lines/github/CircumSpector/DS4Windows) -->![GitHub issues by-label](https://img.shields.io/github/issues/CircumSpector/DS4Windows/bug) ![GitHub issues by-label](https://img.shields.io/github/issues/CircumSpector/DS4Windows/enhancement)
 
 A reimagination of DS4Windows.
 
