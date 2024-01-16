@@ -1,6 +1,6 @@
-﻿using System.ComponentModel;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using Vapour.Client.Core.ViewModel;
@@ -10,18 +10,18 @@ using Vapour.Server.System;
 
 namespace Vapour.Client.TrayApplication;
 
-public interface ITrayViewModel : IViewModel<ITrayViewModel>
-{
-}
+public interface ITrayViewModel : IViewModel<ITrayViewModel>;
 
-public class TrayViewModel : ViewModel<ITrayViewModel>, ITrayViewModel
+public partial class TrayViewModel : ViewModel<ITrayViewModel>, ITrayViewModel
 {
     private readonly IProfileServiceClient _profileServiceClient;
     private readonly ISystemServiceClient _systemServiceClient;
     private readonly IViewModelFactory _viewModelFactory;
 
-    private string _hostButtonText;
+    public string HostButtonText => IsHostRunning ? "Stop" : "Start";
 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HostButtonText))]
     private bool _isHostRunning;
 
     public TrayViewModel(IProfileServiceClient profileServiceClient, IViewModelFactory viewModelFactory,
@@ -32,18 +32,6 @@ public class TrayViewModel : ViewModel<ITrayViewModel>, ITrayViewModel
         _systemServiceClient = systemServiceClient;
         ShowClientCommand = new RelayCommand(OnShowClient);
         ChangeHostStateCommand = new RelayCommand(ChangeHostState);
-    }
-
-    public bool IsHostRunning
-    {
-        get => _isHostRunning;
-        set => SetProperty(ref _isHostRunning, value);
-    }
-
-    public string HostButtonText
-    {
-        get => _hostButtonText;
-        set => SetProperty(ref _hostButtonText, value);
     }
 
     public IRelayCommand ShowClientCommand { get; }
@@ -79,15 +67,6 @@ public class TrayViewModel : ViewModel<ITrayViewModel>, ITrayViewModel
         else
         {
             await _systemServiceClient.StartHost();
-        }
-    }
-
-    protected override void OnPropertyChanged(PropertyChangedEventArgs e)
-    {
-        base.OnPropertyChanged(e);
-        if (e.PropertyName == nameof(IsHostRunning))
-        {
-            HostButtonText = IsHostRunning ? "Stop" : "Start";
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Windows.Media;
 
+using CommunityToolkit.Mvvm.ComponentModel;
+
 using Vapour.Shared.Common.Types;
 using Vapour.Shared.Devices.Services.Configuration;
 
@@ -9,12 +11,23 @@ namespace Vapour.Client.Modules.InputSource;
 [SuppressMessage("ReSharper", "UnusedMember.Local")]
 public sealed partial class InputSourceItemViewModel
 {
+    [ObservableProperty]
     private List<IInputSourceControllerItemViewModel> _controllers = new();
 
+    [ObservableProperty]
     private SolidColorBrush _currentColor;
 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(SelectedProfileId))]
+    [NotifyPropertyChangedFor(nameof(IsPassthru))]
+    [NotifyPropertyChangedFor(nameof(OutputDeviceType))]
+    [NotifyPropertyChangedFor(nameof(IsProfileSetEnabled))]
+    [NotifyPropertyChangedFor(nameof(IsGameConfiguration))]
+    [NotifyPropertyChangedFor(nameof(GameInfo))]
+    [NotifyPropertyChangedFor(nameof(GameSource))]
     private InputSourceConfiguration _currentConfiguration;
 
+    [ObservableProperty]
     private string _inputSourceKey;
 
     public bool IsProfileSetEnabled => !IsPassthru && OutputDeviceType != OutputDeviceType.None;
@@ -61,12 +74,6 @@ public sealed partial class InputSourceItemViewModel
 
     public bool ConfigurationSetFromUser { get; set; } = true;
 
-    public string InputSourceKey
-    {
-        get => _inputSourceKey;
-        set => SetProperty(ref _inputSourceKey, value);
-    }
-    
     public Guid SelectedProfileId
     {
         get => CurrentConfiguration.ProfileId;
@@ -78,33 +85,5 @@ public sealed partial class InputSourceItemViewModel
                 OnPropertyChanged();
             }
         }
-    }
-
-    public SolidColorBrush CurrentColor
-    {
-        get => _currentColor;
-        set => SetProperty(ref _currentColor, value);
-    }
-
-    public InputSourceConfiguration CurrentConfiguration
-    {
-        get => _currentConfiguration;
-        set
-        {
-            SetProperty(ref _currentConfiguration, value);
-            OnPropertyChanged(nameof(SelectedProfileId));
-            OnPropertyChanged(nameof(IsPassthru));
-            OnPropertyChanged(nameof(OutputDeviceType));
-            OnPropertyChanged(nameof(IsProfileSetEnabled));
-            OnPropertyChanged(nameof(IsGameConfiguration));
-            OnPropertyChanged(nameof(GameInfo));
-            OnPropertyChanged(nameof(GameSource));
-        }
-    }
-
-    public List<IInputSourceControllerItemViewModel> Controllers
-    {
-        get => _controllers;
-        set => SetProperty(ref _controllers, value);
     }
 }

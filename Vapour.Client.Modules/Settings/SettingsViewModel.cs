@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using MaterialDesignThemes.Wpf;
@@ -17,13 +18,16 @@ namespace Vapour.Client.Modules.Settings;
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
-public sealed class SettingsViewModel : NavigationTabViewModel<ISettingsViewModel, ISettingsView>, ISettingsViewModel
+public sealed partial class SettingsViewModel : NavigationTabViewModel<ISettingsViewModel, ISettingsView>, ISettingsViewModel
 {
     private readonly ISystemServiceClient _systemServiceClient;
 
+    [ObservableProperty]
     private bool _isFilterDriverEnabled;
 
+    [ObservableProperty]
     private bool _isFilterDriverInstalled;
+
     private bool _isInitializing = true;
 
     public SettingsViewModel(ISystemServiceClient systemServiceClient)
@@ -35,25 +39,7 @@ public sealed class SettingsViewModel : NavigationTabViewModel<ISettingsViewMode
 
     public RelayCommand InstallFilterDriverCommand { get; }
 
-    public bool IsFilterDriverEnabled
-    {
-        get => _isFilterDriverEnabled;
-        set => SetProperty(ref _isFilterDriverEnabled, value);
-    }
-
-    public bool IsFilterDriverInstalled
-    {
-        get => _isFilterDriverInstalled;
-        private set => SetProperty(ref _isFilterDriverInstalled, value);
-    }
-
-    public string InstallDriverContent
-    {
-        get
-        {
-            return IsFilterDriverInstalled ? "Uninstall Filter Driver" : "Install Filter Driver";
-        }
-    }
+    public string InstallDriverContent => IsFilterDriverInstalled ? "Uninstall Filter Driver" : "Install Filter Driver";
 
     public override async Task Initialize()
     {

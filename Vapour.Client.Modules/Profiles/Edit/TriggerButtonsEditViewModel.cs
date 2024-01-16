@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics;
 
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using Vapour.Client.Core;
@@ -10,28 +11,36 @@ using Vapour.Shared.Common.Types;
 
 namespace Vapour.Client.Modules.Profiles.Edit;
 
-public sealed class TriggerButtonsEditViewModel :
+public sealed partial class TriggerButtonsEditViewModel :
     ViewModel<ITriggerButtonsEditViewModel>,
     ITriggerButtonsEditViewModel
 {
     private readonly IDeviceValueConverters _deviceValueConverters;
 
+    [ObservableProperty]
     private int _antiDeadZone;
 
+    [ObservableProperty]
     private BezierCurve _customCurve;
 
+    [ObservableProperty]
     private int _hipFireDelay;
 
+    [ObservableProperty]
     private int _maxOutput;
 
+    [ObservableProperty]
     private int _maxZone;
 
+    [ObservableProperty]
     private CurveMode _outputCurve;
 
     private double _sensitivity;
 
+    [ObservableProperty]
     private TriggerEffects _triggerEffect;
 
+    [ObservableProperty]
     private TwoStageTriggerMode _twoStageTriggerMode;
 
     public TriggerButtonsEditViewModel(IDeviceValueConverters deviceValueConverters)
@@ -52,60 +61,12 @@ public sealed class TriggerButtonsEditViewModel :
         set => DeadZone = _deviceValueConverters.DeadZoneDoubleToInt(value);
     }
 
-    public int AntiDeadZone
-    {
-        get => _antiDeadZone;
-        set => SetProperty(ref _antiDeadZone, value);
-    }
-
-    public int MaxZone
-    {
-        get => _maxZone;
-        set => SetProperty(ref _maxZone, value);
-    }
-
-    public int MaxOutput
-    {
-        get => _maxOutput;
-        set => SetProperty(ref _maxOutput, value);
-    }
-
     public double Sensitivity
     {
         get => _sensitivity;
         set => SetProperty(ref _sensitivity, Math.Round(value, 1));
         //Math round needed because wpf slider control when binding to double and tick increment
         //of 0.1 when it hits values like 1.2 and 2.2 it sends 1.20000000002 or something like that
-    }
-
-    public int HipFireDelay
-    {
-        get => _hipFireDelay;
-        set => SetProperty(ref _hipFireDelay, value);
-    }
-
-    public CurveMode OutputCurve
-    {
-        get => _outputCurve;
-        set => SetProperty(ref _outputCurve, value);
-    }
-
-    public BezierCurve CustomCurve
-    {
-        get => _customCurve;
-        set => SetProperty(ref _customCurve, value);
-    }
-
-    public TwoStageTriggerMode TwoStageTriggerMode
-    {
-        get => _twoStageTriggerMode;
-        set => SetProperty(ref _twoStageTriggerMode, value);
-    }
-
-    public TriggerEffects TriggerEffect
-    {
-        get => _triggerEffect;
-        set => SetProperty(ref _triggerEffect, value);
     }
 
     private void OnShowCustomCurve()

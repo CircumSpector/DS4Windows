@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics;
 
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using Vapour.Client.Core;
@@ -10,26 +11,35 @@ using Vapour.Shared.Common.Types;
 
 namespace Vapour.Client.Modules.Profiles.Edit;
 
-public sealed class StickControlModeSettingsViewModel :
+public sealed partial class StickControlModeSettingsViewModel :
     ViewModel<IStickControlModeSettingsViewModel>,
     IStickControlModeSettingsViewModel
 {
     private readonly IDeviceValueConverters _deviceValueConverters;
 
+    [ObservableProperty]
     private int _antiSnapbackDelta;
 
+    [ObservableProperty]
     private int _antiSnapbackTimeout;
 
+    [ObservableProperty]
     private BezierCurve _customCurve;
 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsRadialSet))]
     private StickDeadZoneInfo.DeadZoneType _deadZoneType;
 
+    [ObservableProperty]
     private int _fuzz;
 
+    [ObservableProperty]
     private bool _isAntiSnapback;
 
+    [ObservableProperty]
     private bool _isSquareStick;
 
+    [ObservableProperty]
     private CurveMode _outputCurve;
 
     private double _squareStickRoundness;
@@ -52,30 +62,6 @@ public sealed class StickControlModeSettingsViewModel :
         set => Rotation = _deviceValueConverters.RotationConvertTo(value);
     }
 
-    public StickDeadZoneInfo.DeadZoneType DeadZoneType
-    {
-        get => _deadZoneType;
-        set => SetProperty(ref _deadZoneType, value);
-    }
-
-    public CurveMode OutputCurve
-    {
-        get => _outputCurve;
-        set => SetProperty(ref _outputCurve, value);
-    }
-
-    public BezierCurve CustomCurve
-    {
-        get => _customCurve;
-        set => SetProperty(ref _customCurve, value);
-    }
-
-    public bool IsSquareStick
-    {
-        get => _isSquareStick;
-        set => SetProperty(ref _isSquareStick, value);
-    }
-
     public double SquareStickRoundness
     {
         get => _squareStickRoundness;
@@ -83,30 +69,6 @@ public sealed class StickControlModeSettingsViewModel :
     }
 
     public double Rotation { get; set; }
-
-    public int Fuzz
-    {
-        get => _fuzz;
-        set => SetProperty(ref _fuzz, value);
-    }
-
-    public bool IsAntiSnapback
-    {
-        get => _isAntiSnapback;
-        set => SetProperty(ref _isAntiSnapback, value);
-    }
-
-    public int AntiSnapbackDelta
-    {
-        get => _antiSnapbackDelta;
-        set => SetProperty(ref _antiSnapbackDelta, value);
-    }
-
-    public int AntiSnapbackTimeout
-    {
-        get => _antiSnapbackTimeout;
-        set => SetProperty(ref _antiSnapbackTimeout, value);
-    }
 
     private void OnShowCustomCurve()
     {
@@ -117,11 +79,7 @@ public sealed class StickControlModeSettingsViewModel :
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)
     {
         base.OnPropertyChanged(e);
-        if (e.PropertyName == nameof(DeadZoneType))
-        {
-            OnPropertyChanged(nameof(IsRadialSet));
-        }
-        else if (e.PropertyName == nameof(DeadZone))
+        if (e.PropertyName == nameof(DeadZone))
         {
             OnPropertyChanged(nameof(DeadZoneConverted));
         }
@@ -162,45 +120,20 @@ public sealed class StickControlModeSettingsViewModel :
         set => DeadZone = _deviceValueConverters.DeadZoneDoubleToInt(value);
     }
 
+    [ObservableProperty]
     private int _antiDeadZone;
 
-    public int AntiDeadZone
-    {
-        get => _antiDeadZone;
-        set => SetProperty(ref _antiDeadZone, value);
-    }
-
+    [ObservableProperty]
     private int _maxZone;
 
-    public int MaxZone
-    {
-        get => _maxZone;
-        set => SetProperty(ref _maxZone, value);
-    }
-
+    [ObservableProperty]
     private int _maxOutput;
 
-    public int MaxOutput
-    {
-        get => _maxOutput;
-        set => SetProperty(ref _maxOutput, value);
-    }
-
+    [ObservableProperty]
     private bool _forceMaxOutput;
 
-    public bool ForceMaxOutput
-    {
-        get => _forceMaxOutput;
-        set => SetProperty(ref _forceMaxOutput, value);
-    }
-
+    [ObservableProperty]
     private int _verticalScale;
-
-    public int VerticalScale
-    {
-        get => _verticalScale;
-        set => SetProperty(ref _verticalScale, value);
-    }
 
     private double _sensitivity;
 
@@ -224,29 +157,14 @@ public sealed class StickControlModeSettingsViewModel :
         set => XDeadZone = _deviceValueConverters.DeadZoneDoubleToInt(value);
     }
 
+    [ObservableProperty]
     private int _xMaxZone;
 
-    public int XMaxZone
-    {
-        get => _xMaxZone;
-        set => SetProperty(ref _xMaxZone, value);
-    }
-
+    [ObservableProperty]
     private int _xAntiDeadZone;
 
-    public int XAntiDeadZone
-    {
-        get => _xAntiDeadZone;
-        set => SetProperty(ref _xAntiDeadZone, value);
-    }
-
+    [ObservableProperty]
     private int _xMaxOutput;
-
-    public int XMaxOutput
-    {
-        get => _xMaxOutput;
-        set => SetProperty(ref _xMaxOutput, value);
-    }
 
     #endregion
 
@@ -260,29 +178,14 @@ public sealed class StickControlModeSettingsViewModel :
         set => YDeadZone = _deviceValueConverters.DeadZoneDoubleToInt(value);
     }
 
+    [ObservableProperty]
     private int _yMaxZone;
 
-    public int YMaxZone
-    {
-        get => _yMaxZone;
-        set => SetProperty(ref _yMaxZone, value);
-    }
-
+    [ObservableProperty]
     private int _yAntiDeadZone;
 
-    public int YAntiDeadZone
-    {
-        get => _yAntiDeadZone;
-        set => SetProperty(ref _yAntiDeadZone, value);
-    }
-
+    [ObservableProperty]
     private int _yMaxOutput;
-
-    public int YMaxOutput
-    {
-        get => _yMaxOutput;
-        set => SetProperty(ref _yMaxOutput, value);
-    }
 
     #endregion
 }

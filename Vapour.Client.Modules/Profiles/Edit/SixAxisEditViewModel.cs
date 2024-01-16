@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using Vapour.Client.Core;
@@ -9,7 +10,7 @@ using Vapour.Shared.Common.Types;
 
 namespace Vapour.Client.Modules.Profiles.Edit;
 
-public sealed class SixAxisEditViewModel :
+public sealed partial class SixAxisEditViewModel :
     ViewModel<ISixAxisEditViewModel>,
     ISixAxisEditViewModel
 {
@@ -17,12 +18,14 @@ public sealed class SixAxisEditViewModel :
 
     private double _antiDeadZone;
 
+    [ObservableProperty]
     private BezierCurve _customCurve;
 
     private double _deadZone;
 
     private double _maxZone;
 
+    [ObservableProperty]
     private CurveMode _outputCurve;
 
     private double _sensitivity;
@@ -61,18 +64,6 @@ public sealed class SixAxisEditViewModel :
         set => SetProperty(ref _sensitivity, Math.Round(value, 1));
         //Math round needed because wpf slider control when binding to double and tick increment
         //of 0.1 when it hits values like 1.2 and 2.2 it sends 1.20000000002 or something like that
-    }
-
-    public CurveMode OutputCurve
-    {
-        get => _outputCurve;
-        set => SetProperty(ref _outputCurve, value);
-    }
-
-    public BezierCurve CustomCurve
-    {
-        get => _customCurve;
-        set => SetProperty(ref _customCurve, value);
     }
 
     private void OnShowCustomCurve()
