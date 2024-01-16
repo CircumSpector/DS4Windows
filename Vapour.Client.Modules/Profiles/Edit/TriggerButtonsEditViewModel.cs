@@ -10,7 +10,7 @@ using Vapour.Shared.Common.Types;
 
 namespace Vapour.Client.Modules.Profiles.Edit;
 
-public sealed class TriggerButtonsEditViewModel :
+public sealed partial class TriggerButtonsEditViewModel :
     ViewModel<ITriggerButtonsEditViewModel>,
     ITriggerButtonsEditViewModel
 {
@@ -37,12 +37,9 @@ public sealed class TriggerButtonsEditViewModel :
     public TriggerButtonsEditViewModel(IDeviceValueConverters deviceValueConverters)
     {
         _deviceValueConverters = deviceValueConverters;
-        ShowCustomCurveCommand = new RelayCommand(OnShowCustomCurve);
     }
 
     public bool IsCustomCurveSelected => OutputCurve == CurveMode.Custom;
-
-    public RelayCommand ShowCustomCurveCommand { get; }
 
     public int DeadZone { get; set; }
 
@@ -108,7 +105,8 @@ public sealed class TriggerButtonsEditViewModel :
         set => SetProperty(ref _triggerEffect, value);
     }
 
-    private void OnShowCustomCurve()
+    [RelayCommand]
+    private void ShowCustomCurve()
     {
         ProcessStartInfo processStartInfo = new ProcessStartInfo(Constants.BezierCurveEditorPath);
         processStartInfo.UseShellExecute = true;

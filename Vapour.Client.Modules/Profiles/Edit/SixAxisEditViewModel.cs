@@ -9,7 +9,7 @@ using Vapour.Shared.Common.Types;
 
 namespace Vapour.Client.Modules.Profiles.Edit;
 
-public sealed class SixAxisEditViewModel :
+public sealed partial class SixAxisEditViewModel :
     ViewModel<ISixAxisEditViewModel>,
     ISixAxisEditViewModel
 {
@@ -30,12 +30,9 @@ public sealed class SixAxisEditViewModel :
     public SixAxisEditViewModel(IDeviceValueConverters deviceValueConverters)
     {
         _deviceValueConverters = deviceValueConverters;
-        ShowCustomCurveCommand = new RelayCommand(OnShowCustomCurve);
     }
 
     public bool IsCustomCurveSelected => OutputCurve == CurveMode.Custom;
-
-    public RelayCommand ShowCustomCurveCommand { get; }
 
     public double DeadZone
     {
@@ -75,7 +72,8 @@ public sealed class SixAxisEditViewModel :
         set => SetProperty(ref _customCurve, value);
     }
 
-    private void OnShowCustomCurve()
+    [RelayCommand]
+    private void ShowCustomCurve()
     {
         ProcessStartInfo processStartInfo = new ProcessStartInfo(Constants.BezierCurveEditorPath);
         processStartInfo.UseShellExecute = true;

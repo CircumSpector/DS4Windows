@@ -10,7 +10,7 @@ using Vapour.Shared.Common.Types;
 
 namespace Vapour.Client.Modules.Profiles.Edit;
 
-public sealed class StickControlModeSettingsViewModel :
+public sealed partial class StickControlModeSettingsViewModel :
     ViewModel<IStickControlModeSettingsViewModel>,
     IStickControlModeSettingsViewModel
 {
@@ -37,14 +37,11 @@ public sealed class StickControlModeSettingsViewModel :
     public StickControlModeSettingsViewModel(IDeviceValueConverters deviceValueConverters)
     {
         _deviceValueConverters = deviceValueConverters;
-        ShowCustomCurveCommand = new RelayCommand(OnShowCustomCurve);
     }
 
     public bool IsRadialSet => DeadZoneType == StickDeadZoneInfo.DeadZoneType.Radial;
 
     public bool IsCustomCurveSelected => OutputCurve == CurveMode.Custom;
-
-    public RelayCommand ShowCustomCurveCommand { get; }
 
     public double RotationConverted
     {
@@ -108,7 +105,8 @@ public sealed class StickControlModeSettingsViewModel :
         set => SetProperty(ref _antiSnapbackTimeout, value);
     }
 
-    private void OnShowCustomCurve()
+    [RelayCommand]
+    private void ShowCustomCurve()
     {
         ProcessStartInfo processStartInfo = new(Constants.BezierCurveEditorPath) { UseShellExecute = true };
         Process.Start(processStartInfo);
