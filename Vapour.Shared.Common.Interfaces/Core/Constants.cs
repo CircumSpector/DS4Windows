@@ -51,7 +51,7 @@ public static class Constants
 
     public const string HidHideGuideUri = "https://docs.ds4windows.app/troubleshooting/hidhide-troubleshoot/";
 
-    public const string HttpPort = "50317";
+    public const string HttpPort = "8837";
     
     public const string HttpUrl = $"http://localhost:{HttpPort}";
     
