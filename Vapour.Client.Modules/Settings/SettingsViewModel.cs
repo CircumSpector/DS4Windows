@@ -17,7 +17,7 @@ namespace Vapour.Client.Modules.Settings;
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
-public sealed class SettingsViewModel : NavigationTabViewModel<ISettingsViewModel, ISettingsView>, ISettingsViewModel
+public sealed partial class SettingsViewModel : NavigationTabViewModel<ISettingsViewModel, ISettingsView>, ISettingsViewModel
 {
     private readonly ISystemServiceClient _systemServiceClient;
 
@@ -29,11 +29,7 @@ public sealed class SettingsViewModel : NavigationTabViewModel<ISettingsViewMode
     public SettingsViewModel(ISystemServiceClient systemServiceClient)
     {
         _systemServiceClient = systemServiceClient;
-
-        InstallFilterDriverCommand = new RelayCommand(OnInstallFilterDriver);
     }
-
-    public RelayCommand InstallFilterDriverCommand { get; }
 
     public bool IsFilterDriverEnabled
     {
@@ -83,7 +79,8 @@ public sealed class SettingsViewModel : NavigationTabViewModel<ISettingsViewMode
         IsFilterDriverEnabled = filterDriverStatus.IsFilteringEnabled;
     }
 
-    private async void OnInstallFilterDriver()
+    [RelayCommand]
+    private async Task InstallFilterDriver()
     {
         if (!IsFilterDriverInstalled)
         {

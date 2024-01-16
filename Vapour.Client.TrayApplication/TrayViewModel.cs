@@ -14,7 +14,7 @@ public interface ITrayViewModel : IViewModel<ITrayViewModel>
 {
 }
 
-public class TrayViewModel : ViewModel<ITrayViewModel>, ITrayViewModel
+public partial class TrayViewModel : ViewModel<ITrayViewModel>, ITrayViewModel
 {
     private readonly IProfileServiceClient _profileServiceClient;
     private readonly ISystemServiceClient _systemServiceClient;
@@ -30,8 +30,6 @@ public class TrayViewModel : ViewModel<ITrayViewModel>, ITrayViewModel
         _profileServiceClient = profileServiceClient;
         _viewModelFactory = viewModelFactory;
         _systemServiceClient = systemServiceClient;
-        ShowClientCommand = new RelayCommand(OnShowClient);
-        ChangeHostStateCommand = new RelayCommand(ChangeHostState);
     }
 
     public bool IsHostRunning
@@ -45,10 +43,6 @@ public class TrayViewModel : ViewModel<ITrayViewModel>, ITrayViewModel
         get => _hostButtonText;
         set => SetProperty(ref _hostButtonText, value);
     }
-
-    public IRelayCommand ShowClientCommand { get; }
-
-    public IRelayCommand ChangeHostStateCommand { get; }
 
     public IInputSourceListViewModel InputSourceListViewModel { get; private set; }
 
@@ -65,12 +59,14 @@ public class TrayViewModel : ViewModel<ITrayViewModel>, ITrayViewModel
         IsHostRunning = obj.IsRunning;
     }
 
-    private void OnShowClient()
+    [RelayCommand]
+    private void ShowClient()
     {
         Process.Start($"{AppContext.BaseDirectory}\\Vapour.exe");
     }
 
-    private async void ChangeHostState()
+    [RelayCommand]
+    private async Task ChangeHostState()
     {
         if (IsHostRunning)
         {
