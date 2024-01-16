@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -19,10 +18,10 @@ public partial class TrayViewModel : ViewModel<ITrayViewModel>, ITrayViewModel
     private readonly ISystemServiceClient _systemServiceClient;
     private readonly IViewModelFactory _viewModelFactory;
 
-    [ObservableProperty]
-    private string _hostButtonText;
+    public string HostButtonText => IsHostRunning ? "Stop" : "Start";
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HostButtonText))]
     private bool _isHostRunning;
 
     public TrayViewModel(IProfileServiceClient profileServiceClient, IViewModelFactory viewModelFactory,
@@ -68,15 +67,6 @@ public partial class TrayViewModel : ViewModel<ITrayViewModel>, ITrayViewModel
         else
         {
             await _systemServiceClient.StartHost();
-        }
-    }
-
-    protected override void OnPropertyChanged(PropertyChangedEventArgs e)
-    {
-        base.OnPropertyChanged(e);
-        if (e.PropertyName == nameof(IsHostRunning))
-        {
-            HostButtonText = IsHostRunning ? "Stop" : "Start";
         }
     }
 }
