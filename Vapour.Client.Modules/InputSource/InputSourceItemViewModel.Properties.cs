@@ -18,7 +18,6 @@ public sealed partial class InputSourceItemViewModel
     private SolidColorBrush _currentColor;
 
     [ObservableProperty]
-
     [NotifyPropertyChangedFor(nameof(SelectedProfileId))]
     [NotifyPropertyChangedFor(nameof(IsPassthru))]
     [NotifyPropertyChangedFor(nameof(OutputDeviceType))]
