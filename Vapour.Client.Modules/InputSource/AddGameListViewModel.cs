@@ -8,7 +8,7 @@ using Vapour.Shared.Devices.Services.Configuration;
 
 namespace Vapour.Client.Modules.InputSource;
 
-public sealed class AddGameListViewModel : ViewModel<IAddGameListViewModel>, IAddGameListViewModel
+public sealed partial class AddGameListViewModel : ViewModel<IAddGameListViewModel>, IAddGameListViewModel
 {
     private readonly IInputSourceServiceClient _inputSourceServiceClient;
     private string _inputSourceKey;
@@ -19,14 +19,9 @@ public sealed class AddGameListViewModel : ViewModel<IAddGameListViewModel>, IAd
     public AddGameListViewModel(IInputSourceServiceClient inputSourceServiceClient)
     {
         _inputSourceServiceClient = inputSourceServiceClient;
-
-        AddGameCommand = new RelayCommand(OnAddGame);
-        CancelCommand = new RelayCommand(async () => await OnCancel());
     }
 
     public ObservableCollection<GameInfo> Games { get; private set; }
-    public RelayCommand AddGameCommand { get; }
-    public RelayCommand CancelCommand { get; }
 
     public GameInfo SelectedGame
     {
@@ -42,13 +37,15 @@ public sealed class AddGameListViewModel : ViewModel<IAddGameListViewModel>, IAd
         Games = new ObservableCollection<GameInfo>(gameList);
     }
 
-    private async void OnAddGame()
+    [RelayCommand]
+    private async Task OnAddGame()
     {
         await _inputSourceServiceClient.SaveGameConfiguration(_inputSourceKey, SelectedGame, null);
-        await OnCancel();
+        await Cancel();
     }
 
-    private async Task OnCancel()
+    [RelayCommand]
+    private async Task Cancel()
     {
         await _onCompletedAction();
         _onCompletedAction = null;
