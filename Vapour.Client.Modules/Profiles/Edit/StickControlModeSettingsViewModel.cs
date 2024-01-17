@@ -47,14 +47,11 @@ public sealed partial class StickControlModeSettingsViewModel :
     public StickControlModeSettingsViewModel(IDeviceValueConverters deviceValueConverters)
     {
         _deviceValueConverters = deviceValueConverters;
-        ShowCustomCurveCommand = new RelayCommand(OnShowCustomCurve);
     }
 
     public bool IsRadialSet => DeadZoneType == StickDeadZoneInfo.DeadZoneType.Radial;
 
     public bool IsCustomCurveSelected => OutputCurve == CurveMode.Custom;
-
-    public RelayCommand ShowCustomCurveCommand { get; }
 
     public double RotationConverted
     {
@@ -70,7 +67,8 @@ public sealed partial class StickControlModeSettingsViewModel :
 
     public double Rotation { get; set; }
 
-    private void OnShowCustomCurve()
+    [RelayCommand]
+    private void ShowCustomCurve()
     {
         ProcessStartInfo processStartInfo = new(Constants.BezierCurveEditorPath) { UseShellExecute = true };
         Process.Start(processStartInfo);

@@ -46,12 +46,9 @@ public sealed partial class TriggerButtonsEditViewModel :
     public TriggerButtonsEditViewModel(IDeviceValueConverters deviceValueConverters)
     {
         _deviceValueConverters = deviceValueConverters;
-        ShowCustomCurveCommand = new RelayCommand(OnShowCustomCurve);
     }
 
     public bool IsCustomCurveSelected => OutputCurve == CurveMode.Custom;
-
-    public RelayCommand ShowCustomCurveCommand { get; }
 
     public int DeadZone { get; set; }
 
@@ -69,7 +66,8 @@ public sealed partial class TriggerButtonsEditViewModel :
         //of 0.1 when it hits values like 1.2 and 2.2 it sends 1.20000000002 or something like that
     }
 
-    private void OnShowCustomCurve()
+    [RelayCommand]
+    private void ShowCustomCurve()
     {
         ProcessStartInfo processStartInfo = new ProcessStartInfo(Constants.BezierCurveEditorPath);
         processStartInfo.UseShellExecute = true;

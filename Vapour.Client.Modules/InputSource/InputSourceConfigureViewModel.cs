@@ -31,12 +31,7 @@ public sealed partial class InputSourceConfigureViewModel : ViewModel<InputSourc
     {
         _viewModelFactory = viewModelFactory;
         _inputSourceServiceClient = inputSourceServiceClient;
-        AddGameCommand = new RelayCommand<GameSource>(OpenAddGame);
-        DeleteGameConfigurationCommand = new RelayCommand<IGameConfigurationItemViewModel>(OnDeleteGameConfiguration);
     }
-
-    public RelayCommand<GameSource> AddGameCommand { get; }
-    public RelayCommand<IGameConfigurationItemViewModel> DeleteGameConfigurationCommand { get; }
 
     public bool IsGameListPresent => GameListView != null;
 
@@ -57,7 +52,8 @@ public sealed partial class InputSourceConfigureViewModel : ViewModel<InputSourc
         }
     }
 
-    private async void OpenAddGame(GameSource source)
+    [RelayCommand]
+    private async Task AddGame(GameSource source)
     {
         if (source != GameSource.Folder)
         {
@@ -113,7 +109,8 @@ public sealed partial class InputSourceConfigureViewModel : ViewModel<InputSourc
         }
     }
 
-    private async void OnDeleteGameConfiguration(IGameConfigurationItemViewModel viewModel)
+    [RelayCommand]
+    private async Task DeleteGameConfiguration(IGameConfigurationItemViewModel viewModel)
     {
         await _inputSourceServiceClient.DeleteGameConfiguration(InputSourceItem.InputSourceKey, viewModel.GameId);
         GameConfigurations.Remove(viewModel);

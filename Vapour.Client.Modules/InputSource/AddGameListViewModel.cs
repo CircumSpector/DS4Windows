@@ -21,14 +21,9 @@ public sealed partial class AddGameListViewModel : ViewModel<IAddGameListViewMod
     public AddGameListViewModel(IInputSourceServiceClient inputSourceServiceClient)
     {
         _inputSourceServiceClient = inputSourceServiceClient;
-
-        AddGameCommand = new RelayCommand(OnAddGame);
-        CancelCommand = new RelayCommand(async () => await OnCancel());
     }
 
     public ObservableCollection<GameInfo> Games { get; private set; }
-    public RelayCommand AddGameCommand { get; }
-    public RelayCommand CancelCommand { get; }
 
     public async Task Initialize(string inputSourceKey, GameSource gameSource, Func<Task> onCompleted)
     {
@@ -38,13 +33,15 @@ public sealed partial class AddGameListViewModel : ViewModel<IAddGameListViewMod
         Games = new ObservableCollection<GameInfo>(gameList);
     }
 
-    private async void OnAddGame()
+    [RelayCommand]
+    private async Task OnAddGame()
     {
         await _inputSourceServiceClient.SaveGameConfiguration(_inputSourceKey, SelectedGame, null);
-        await OnCancel();
+        await Cancel();
     }
 
-    private async Task OnCancel()
+    [RelayCommand]
+    private async Task Cancel()
     {
         await _onCompletedAction();
         _onCompletedAction = null;

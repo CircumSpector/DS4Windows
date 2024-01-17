@@ -25,7 +25,7 @@ namespace Vapour.Client.Modules.InputSource;
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
-public sealed class InputSourceListViewModel :
+public sealed partial class InputSourceListViewModel :
     NavigationTabViewModel<IInputSourceListViewModel, IInputSourceListView>,
     IInputSourceListViewModel
 {
@@ -47,14 +47,9 @@ public sealed class InputSourceListViewModel :
         _viewModelFactory = viewModelFactory;
         _profilesService = profilesService;
 
-        ConfigureCommand = new RelayCommand<IInputSourceItemViewModel>(OnConfigure);
-        PairCommand = new RelayCommand<IInputSourceItemViewModel>(OnPair);
-
         CreateSelectableProfileItems();
     }
 
-    public RelayCommand<IInputSourceItemViewModel> ConfigureCommand { get; }
-    public RelayCommand<IInputSourceItemViewModel> PairCommand { get; }
     public ObservableCollection<IInputSourceItemViewModel> InputSourceItems { get; } = new();
     public ObservableCollection<ISelectableProfileItemViewModel> SelectableProfileItems { get; } = new();
 
@@ -154,7 +149,8 @@ public sealed class InputSourceListViewModel :
         }
     }
 
-    private async void OnConfigure(IInputSourceItemViewModel inputSourceItem)
+    [RelayCommand]
+    private async Task Configure(IInputSourceItemViewModel inputSourceItem)
     {
         IInputSourceConfigureViewModel inputSourceConfigureViewModel =
             await _viewModelFactory.Create<IInputSourceConfigureViewModel, IInputSourceConfigureView>();
@@ -166,7 +162,8 @@ public sealed class InputSourceListViewModel :
             }));
     }
 
-    private async void OnPair(IInputSourceItemViewModel inputSourceItem)
+    [RelayCommand]
+    private async Task Pair(IInputSourceItemViewModel inputSourceItem)
     {
         //if (string.IsNullOrEmpty(_pair1DeviceKey))
         //{

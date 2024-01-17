@@ -33,11 +33,7 @@ public sealed partial class SettingsViewModel : NavigationTabViewModel<ISettings
     public SettingsViewModel(ISystemServiceClient systemServiceClient)
     {
         _systemServiceClient = systemServiceClient;
-
-        InstallFilterDriverCommand = new RelayCommand(OnInstallFilterDriver);
     }
-
-    public RelayCommand InstallFilterDriverCommand { get; }
 
     public string InstallDriverContent => IsFilterDriverInstalled ? "Uninstall Filter Driver" : "Install Filter Driver";
 
@@ -69,7 +65,8 @@ public sealed partial class SettingsViewModel : NavigationTabViewModel<ISettings
         IsFilterDriverEnabled = filterDriverStatus.IsFilteringEnabled;
     }
 
-    private async void OnInstallFilterDriver()
+    [RelayCommand]
+    private async Task InstallFilterDriver()
     {
         if (!IsFilterDriverInstalled)
         {

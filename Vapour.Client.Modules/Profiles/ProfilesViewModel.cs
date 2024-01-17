@@ -24,7 +24,7 @@ namespace Vapour.Client.Modules.Profiles;
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
 [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
-public sealed class ProfilesViewModel :
+public sealed partial class ProfilesViewModel :
     NavigationTabViewModel<IProfilesViewModel, IProfilesView>,
     IProfilesViewModel
 {
@@ -37,32 +37,24 @@ public sealed class ProfilesViewModel :
     {
         _viewModelFactory = viewModelFactory;
         _profilesService = profilesService;
-
-        AddCommand = new RelayCommand(AddProfile);
-        ShareCommand = new RelayCommand<IProfileListItemViewModel>(ShareProfile);
-        EditCommand = new RelayCommand<IProfileListItemViewModel>(EditProfile);
-        DeleteCommand = new RelayCommand<IProfileListItemViewModel>(DeleteProfile);
     }
 
     public ObservableCollection<IProfileListItemViewModel> ProfileItems { get; } = new();
-
-    public RelayCommand AddCommand { get; }
-    public RelayCommand<IProfileListItemViewModel> ShareCommand { get; }
-    public RelayCommand<IProfileListItemViewModel> EditCommand { get; }
-    public RelayCommand<IProfileListItemViewModel> DeleteCommand { get; }
 
     public override async Task Initialize()
     {
         await CreateProfileItems();
     }
 
-    private async void AddProfile()
+    [RelayCommand]
+    private async Task Add()
     {
         IProfile newProfile = await _profilesService.CreateNewProfile();
         ShowProfile(newProfile, true);
     }
 
-    private async void ShareProfile(IProfileListItemViewModel profile)
+    [RelayCommand]
+    private async Task Share(IProfileListItemViewModel profile)
     {
         IProfile sourceProfile = _profilesService.ProfileList.SingleOrDefault(p => p.Id == profile.Id);
 
@@ -109,12 +101,14 @@ public sealed class ProfilesViewModel :
         //}
     }
 
-    private void EditProfile(IProfileListItemViewModel profile)
+    [RelayCommand]
+    private void Edit(IProfileListItemViewModel profile)
     {
         ShowProfile(_profilesService.ProfileList.SingleOrDefault(p => p.Id == profile.Id));
     }
 
-    private async void DeleteProfile(IProfileListItemViewModel profile)
+    [RelayCommand]
+    private async Task Delete(IProfileListItemViewModel profile)
     {
         await _profilesService.DeleteProfile(profile.Id);
         RemoveProfileItem(profile.Id);
