@@ -1,23 +1,34 @@
 ﻿using System.Windows.Media.Imaging;
 
+using CommunityToolkit.Mvvm.ComponentModel;
+
 using Vapour.Client.Core.ViewModel;
 
 namespace Vapour.Client.Modules.InputSource;
-public class InputSourceControllerItemViewModel : ViewModel<IInputSourceControllerItemViewModel>, IInputSourceControllerItemViewModel
+
+public partial class InputSourceControllerItemViewModel : ViewModel<IInputSourceControllerItemViewModel>, IInputSourceControllerItemViewModel
 {
+    [ObservableProperty]
     private decimal _batteryPercentage;
 
+    [ObservableProperty]
     private BitmapImage _connectionTypeImage;
 
+    [ObservableProperty]
     private BitmapImage _deviceImage;
 
+    [ObservableProperty]
     private string _displayText;
 
+    [ObservableProperty]
     private bool _isFiltered;
 
+    [ObservableProperty]
     private string _serial;
 
+    [ObservableProperty]
     private string _deviceKey;
+    
     private const string ImageLocationRoot =
         "pack://application:,,,/Vapour.Client.Modules;component/InputSource/Images";
 
@@ -45,48 +56,6 @@ public class InputSourceControllerItemViewModel : ViewModel<IInputSourceControll
                 return null;
             }
         }
-    }
-
-    public string Serial
-    {
-        get => _serial;
-        private set => SetProperty(ref _serial, value);
-    }
-
-    public BitmapImage DeviceImage
-    {
-        get => _deviceImage;
-        private set => SetProperty(ref _deviceImage, value);
-    }
-
-    public string DisplayText
-    {
-        get => _displayText;
-        private set => SetProperty(ref _displayText, value);
-    }
-
-    public BitmapImage ConnectionTypeImage
-    {
-        get => _connectionTypeImage;
-        private set => SetProperty(ref _connectionTypeImage, value);
-    }
-
-    public decimal BatteryPercentage
-    {
-        get => _batteryPercentage;
-        private set => SetProperty(ref _batteryPercentage, value);
-    }
-
-    public bool IsFiltered
-    {
-        get => _isFiltered;
-        set => SetProperty(ref _isFiltered, value);
-    }
-
-    public string DeviceKey
-    {
-        get => _deviceKey;
-        set => SetProperty(ref _deviceKey, value);
     }
 
     public string InstanceId { get; set; }

@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using MaterialDesignThemes.Wpf;
@@ -21,9 +22,12 @@ public sealed partial class SettingsViewModel : NavigationTabViewModel<ISettings
 {
     private readonly ISystemServiceClient _systemServiceClient;
 
+    [ObservableProperty]
     private bool _isFilterDriverEnabled;
 
+    [ObservableProperty]
     private bool _isFilterDriverInstalled;
+
     private bool _isInitializing = true;
 
     public SettingsViewModel(ISystemServiceClient systemServiceClient)
@@ -31,25 +35,7 @@ public sealed partial class SettingsViewModel : NavigationTabViewModel<ISettings
         _systemServiceClient = systemServiceClient;
     }
 
-    public bool IsFilterDriverEnabled
-    {
-        get => _isFilterDriverEnabled;
-        set => SetProperty(ref _isFilterDriverEnabled, value);
-    }
-
-    public bool IsFilterDriverInstalled
-    {
-        get => _isFilterDriverInstalled;
-        private set => SetProperty(ref _isFilterDriverInstalled, value);
-    }
-
-    public string InstallDriverContent
-    {
-        get
-        {
-            return IsFilterDriverInstalled ? "Uninstall Filter Driver" : "Install Filter Driver";
-        }
-    }
+    public string InstallDriverContent => IsFilterDriverInstalled ? "Uninstall Filter Driver" : "Install Filter Driver";
 
     public override async Task Initialize()
     {

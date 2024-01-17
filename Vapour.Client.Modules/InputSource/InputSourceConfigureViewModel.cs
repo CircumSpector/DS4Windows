@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.IO;
 
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using Microsoft.Win32;
@@ -18,8 +19,11 @@ public sealed partial class InputSourceConfigureViewModel : ViewModel<InputSourc
     private readonly IInputSourceServiceClient _inputSourceServiceClient;
     private readonly IViewModelFactory _viewModelFactory;
 
+    [ObservableProperty]
     private ObservableCollection<IGameConfigurationItemViewModel> _gameConfigurations;
 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsGameListPresent))]
     private IView _gameListView;
 
     public InputSourceConfigureViewModel(IViewModelFactory viewModelFactory,
@@ -29,25 +33,9 @@ public sealed partial class InputSourceConfigureViewModel : ViewModel<InputSourc
         _inputSourceServiceClient = inputSourceServiceClient;
     }
 
-    public ObservableCollection<IGameConfigurationItemViewModel> GameConfigurations
-    {
-        get => _gameConfigurations;
-        private set => SetProperty(ref _gameConfigurations, value);
-    }
-
     public bool IsGameListPresent => GameListView != null;
 
     public IInputSourceItemViewModel InputSourceItem { get; private set; }
-
-    public IView GameListView
-    {
-        get => _gameListView;
-        private set
-        {
-            SetProperty(ref _gameListView, value);
-            OnPropertyChanged(nameof(IsGameListPresent));
-        }
-    }
 
     public async Task SetInputSourceToConfigure(IInputSourceItemViewModel inputSourceItemViewModel)
     {

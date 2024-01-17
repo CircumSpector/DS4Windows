@@ -1,11 +1,11 @@
-﻿using System.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 
 using Vapour.Client.Core.ViewModel;
 using Vapour.Shared.Common.Types;
 
 namespace Vapour.Client.Modules.Profiles.Edit;
 
-public sealed class StickEditViewModel :
+public sealed partial class StickEditViewModel :
     ViewModel<IStickEditViewModel>,
     IStickEditViewModel
 {
@@ -13,12 +13,16 @@ public sealed class StickEditViewModel :
 
     private double _flickMinAngleThreshold;
 
+    [ObservableProperty]
     private double _flickRealWorldCalibration;
 
     private double _flickThreshold;
 
     private double _flickTime;
 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsControlModeSet))]
+    [NotifyPropertyChangedFor(nameof(IsFlickStickSet))]
     private StickMode _outputSettings;
 
     public StickEditViewModel(IViewModelFactory viewModelFactory)
@@ -35,19 +39,7 @@ public sealed class StickEditViewModel :
             await _viewModelFactory.Create<IStickControlModeSettingsViewModel, IStickControlModeSettingsView>();
     }
 
-    public StickMode OutputSettings
-    {
-        get => _outputSettings;
-        set => SetProperty(ref _outputSettings, value);
-    }
-
     public IStickControlModeSettingsViewModel ControlModeSettings { get; private set; }
-
-    public double FlickRealWorldCalibration
-    {
-        get => _flickRealWorldCalibration;
-        set => SetProperty(ref _flickRealWorldCalibration, value);
-    }
 
     public double FlickThreshold
     {
@@ -65,16 +57,6 @@ public sealed class StickEditViewModel :
     {
         get => _flickMinAngleThreshold;
         set => SetProperty(ref _flickMinAngleThreshold, Math.Round(value, 1));
-    }
-
-    protected override void OnPropertyChanged(PropertyChangedEventArgs e)
-    {
-        base.OnPropertyChanged(e);
-        if (e.PropertyName == nameof(OutputSettings))
-        {
-            OnPropertyChanged(nameof(IsControlModeSet));
-            OnPropertyChanged(nameof(IsFlickStickSet));
-        }
     }
 
     protected override void Dispose(bool disposing)

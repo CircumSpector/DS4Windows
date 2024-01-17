@@ -2,6 +2,8 @@
 
 using AutoMapper;
 
+using CommunityToolkit.Mvvm.ComponentModel;
+
 using Vapour.Client.Core.ViewModel;
 using Vapour.Shared.Configuration.Profiles;
 using Vapour.Shared.Configuration.Profiles.Schema;
@@ -9,37 +11,37 @@ using Vapour.Shared.Configuration.Profiles.Types;
 
 namespace Vapour.Client.Modules.Profiles;
 
-public sealed class ProfileListItemViewModel :
+public sealed partial class ProfileListItemViewModel :
     ViewModel<IProfileListItemViewModel>,
     IProfileListItemViewModel
 {
-    private readonly IMapper mapper;
-    private IProfile profile;
+    private readonly IMapper _mapper;
+    private IProfile _profile;
 
     public ProfileListItemViewModel(IMapper mapper)
     {
-        this.mapper = mapper;
+        _mapper = mapper;
     }
 
     public void SetProfile(IProfile profile)
     {
-        this.profile = profile;
-        this.profile.ProfilePropertyChanged += Profile_ProfilePropertyChanged;
+        _profile = profile;
+        _profile.ProfilePropertyChanged += Profile_ProfilePropertyChanged;
 
-        mapper.Map(profile, this);
+        _mapper.Map(profile, this);
     }
 
     private void Profile_ProfilePropertyChanged(object sender, ProfilePropertyChangedEventArgs e)
     {
-        mapper.Map(profile, this);
+        _mapper.Map(_profile, this);
     }
 
     protected override void Dispose(bool disposing)
     {
         if (disposing)
         {
-            profile.ProfilePropertyChanged -= Profile_ProfilePropertyChanged;
-            profile = null;
+            _profile.ProfilePropertyChanged -= Profile_ProfilePropertyChanged;
+            _profile = null;
         }
 
         base.Dispose(disposing);
@@ -47,61 +49,26 @@ public sealed class ProfileListItemViewModel :
 
     #region Properties
 
-    private Guid id;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(NotIsDefaultProfile))]
+    private Guid _id;
 
-    public Guid Id
-    {
-        get => id;
-        private set => SetProperty(ref id, value);
-    }
+    [ObservableProperty]
+    private string _name;
 
-    private string name;
+    [ObservableProperty]
+    private string _outputControllerType;
 
-    public string Name
-    {
-        get => name;
-        private set => SetProperty(ref name, value);
-    }
+    [ObservableProperty]
+    private SolidColorBrush _lightbarColor;
 
-    private string outputControllerType;
+    [ObservableProperty]
+    private string _touchpadMode;
 
-    public string OutputControllerType
-    {
-        get => outputControllerType;
-        private set => SetProperty(ref outputControllerType, value);
-    }
+    [ObservableProperty]
+    private string _gyroMode;
 
-    private SolidColorBrush lightbarColor;
-
-    public SolidColorBrush LightbarColor
-    {
-        get => lightbarColor;
-        private set => SetProperty(ref lightbarColor, value);
-    }
-
-    private string touchpadMode;
-
-    public string TouchpadMode
-    {
-        get => touchpadMode;
-        private set => SetProperty(ref touchpadMode, value);
-    }
-
-    private string gyroMode;
-
-    public string GyroMode
-    {
-        get => gyroMode;
-        private set => SetProperty(ref gyroMode, value);
-    }
-
-    public bool NotIsDefaultProfile
-    {
-        get
-        {
-            return Id != Constants.DefaultProfileId;
-        }
-    }
+    public bool NotIsDefaultProfile => Id != Constants.DefaultProfileId;
 
     #endregion
 }

@@ -1,10 +1,12 @@
 ﻿using System.Collections.ObjectModel;
 
+using CommunityToolkit.Mvvm.ComponentModel;
+
 using Vapour.Client.Core.ViewModel;
 
 namespace Vapour.Client.Modules.Main;
 
-public sealed class MainWindowViewModel : 
+public sealed partial class MainWindowViewModel : 
     ViewModel<IMainViewModel>, 
     IMainViewModel
 {
@@ -27,13 +29,8 @@ public sealed class MainWindowViewModel :
 
     public ObservableCollection<IViewModel> NavigationItems { get; private set; }
 
+    [ObservableProperty]
     private IViewModel _selectedPage;
-
-    public IViewModel SelectedPage
-    {
-        get => _selectedPage;
-        set => SetProperty(ref _selectedPage, value);
-    }
 
     #endregion
 }

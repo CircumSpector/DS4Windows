@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using Vapour.Client.Core.ViewModel;
@@ -14,6 +15,7 @@ public sealed partial class AddGameListViewModel : ViewModel<IAddGameListViewMod
     private string _inputSourceKey;
     private Func<Task> _onCompletedAction;
 
+    [ObservableProperty]
     private GameInfo _selectedGame;
 
     public AddGameListViewModel(IInputSourceServiceClient inputSourceServiceClient)
@@ -22,12 +24,6 @@ public sealed partial class AddGameListViewModel : ViewModel<IAddGameListViewMod
     }
 
     public ObservableCollection<GameInfo> Games { get; private set; }
-
-    public GameInfo SelectedGame
-    {
-        get => _selectedGame;
-        set => SetProperty(ref _selectedGame, value);
-    }
 
     public async Task Initialize(string inputSourceKey, GameSource gameSource, Func<Task> onCompleted)
     {
