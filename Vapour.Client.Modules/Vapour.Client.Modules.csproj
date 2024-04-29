@@ -70,7 +70,7 @@
 		</PackageReference>
 		<PackageReference Include="MaterialDesignColors" Version="3.0.0" />
 		<PackageReference Include="MaterialDesignExtensions" Version="3.3.0" />
-		<PackageReference Include="MaterialDesignThemes" Version="4.9.0" />
+		<PackageReference Include="MaterialDesignThemes" Version="5.0.0" />
 		<PackageReference Include="Microsoft.Extensions.ApiDescription.Client" Version="8.0.4">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

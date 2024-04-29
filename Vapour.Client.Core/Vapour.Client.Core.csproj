@@ -26,7 +26,7 @@
 		</PackageReference>
 		<PackageReference Include="MaterialDesignColors" Version="3.0.0" />
 		<PackageReference Include="MaterialDesignExtensions" Version="3.3.0" />
-		<PackageReference Include="MaterialDesignThemes" Version="4.9.0" />
+		<PackageReference Include="MaterialDesignThemes" Version="5.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
