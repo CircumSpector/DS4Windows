@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="FastEndpoints" Version="5.25.0" />
-    <PackageReference Include="FastEndpoints.Generator" Version="5.24.0">
+    <PackageReference Include="FastEndpoints.Generator" Version="5.25.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
