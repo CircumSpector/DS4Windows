@@ -8,12 +8,12 @@
   <Import Project="..\CommonProjectProperties.targets" />
 
   <ItemGroup>
-    <PackageReference Include="FastEndpoints" Version="5.24.0" />
+    <PackageReference Include="FastEndpoints" Version="5.25.0" />
     <PackageReference Include="FastEndpoints.Generator" Version="5.24.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="FastEndpoints.Swagger" Version="5.24.0" />
+    <PackageReference Include="FastEndpoints.Swagger" Version="5.25.0" />
     <PackageReference Include="MessagePipe" Version="1.8.1" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="8.0.0" />
