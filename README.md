@@ -32,11 +32,6 @@ Over its lifespan of of *nearly a decade* DS4Windows has seen many contributors,
 
 In October 2022 we started a rebranding which includes an intermediate project name change to further distance this work from the current dominant and maintained DS4Windows version(s). An official new app name is yet to be settled on.
 
-<!--
-### What this is NOT
-
-As of time of writing we don't strife to be considered the "new maintainers" and dethrone [Ryochan7](https://github.com/Ryochan7/DS4Windows) who's on a well-deserved hiatus from the project for a yet to be known duration (disclaimer: we don't speak on behalf of Ryochan7, we're merely observers as well). Time will tell if Ryochan7 comes back from a vacation and continues working on DS4Windows with help from the members of [CircumSpector](https://github.com/CircumSpector).
--->
 ## Where are the download links
 
 There are none. Until this message changes, the rework is in constant motion and there is no value for us to provide binaries at this point. Feel free to clone and build yourself if you're brave 😜
@@ -50,6 +45,14 @@ There are none. Until this message changes, the rework is in constant motion and
 If you are a **developer** looking to join the team just drop @nefarius a message! ⌨️
 
 If you **want to see this project succeed** give it a GitHub star to show interest! ❤️
+
+## Activity
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://ghstats.api.nefarius.systems/widgets/github/CircumSpector/DS4Windows/changes/latest?foregroundColour=%23C4D1DE">
+  <source media="(prefers-color-scheme: light)" srcset="https://ghstats.api.nefarius.systems/widgets/github/CircumSpector/DS4Windows/changes/latest">
+  <img alt="Repository activity" src="https://ghstats.api.nefarius.systems/widgets/github/CircumSpector/DS4Windows/changes/latest">
+</picture>
 
 ## How to build
 
