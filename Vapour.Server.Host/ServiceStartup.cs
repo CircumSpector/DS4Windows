@@ -1,4 +1,4 @@
-﻿using FastEndpoints;
+﻿global using FastEndpoints;
 using FastEndpoints.Swagger;
 
 using Microsoft.AspNetCore.Builder;
