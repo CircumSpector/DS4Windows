@@ -11,6 +11,6 @@ if (Test-Path -Path $publishFolder)
 
 Write-Host "Starting dotnet publish" -ForegroundColor Green
 
-dotnet publish ($env:APPVEYOR_BUILD_FOLDER + "/Vapour.sln") -r win-$env:PLATFORM --no-self-contained /p:PlatformTarget=$env:PLATFORM /p:PublishProfile=release-win-$env:PLATFORM
+dotnet publish ($env:APPVEYOR_BUILD_FOLDER + "/Vapour.sln") -r win-$env:PLATFORM --no-self-contained /p:PlatformTarget=$env:PLATFORM /p:PublishProfile=./release-win-$env:PLATFORM.pubxml
 
 Write-Host "Finished dotnet publish" -ForegroundColor Green
