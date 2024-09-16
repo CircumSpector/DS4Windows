@@ -11,6 +11,13 @@ if (Test-Path -Path $publishFolder)
 
 Write-Host "Starting dotnet publish" -ForegroundColor Green
 
-dotnet publish ($env:APPVEYOR_BUILD_FOLDER + "/Vapour.sln") --configuration Release --framework net8.0-windows10.0.17763.0 --runtime win-$env:PLATFORM --output ($env:APPVEYOR_BUILD_FOLDER + "/Publish/x64") --no-self-contained --no-publish-single-file --p:PublishReadyToRun=true
+dotnet publish ($env:APPVEYOR_BUILD_FOLDER + "/Vapour.sln") `
+    --configuration Release `
+    --framework net8.0-windows10.0.17763.0 `
+    --runtime win-$env:PLATFORM `
+    --output ($env:APPVEYOR_BUILD_FOLDER + "/Publish/x64") `
+    --self-contained false `
+    --p:PublishSingleFile=false `
+    --p:PublishReadyToRun=true
 
 Write-Host "Finished dotnet publish" -ForegroundColor Green
