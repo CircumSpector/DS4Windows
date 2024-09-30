@@ -32,7 +32,7 @@
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
-		<PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="3.23.0" />
+		<PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="4.0.0" />
 		<PackageReference Include="Nefarius.ViGEm.Client" Version="1.21.256" />
 		<PackageReference Include="OpenTelemetry.Exporter.Jaeger" Version="1.5.1" />
 		<PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.9.0" />
