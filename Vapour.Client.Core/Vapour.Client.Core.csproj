@@ -35,7 +35,7 @@
 		<PackageReference Include="PropertyChanged.Fody" Version="4.1.0" PrivateAssets="All" />
 		<PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" />
 		<PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0" />
-		<PackageReference Include="Serilog.Settings.Configuration" Version="8.0.2" />
+		<PackageReference Include="Serilog.Settings.Configuration" Version="8.0.4" />
 	</ItemGroup>
 
 	<ItemGroup>
