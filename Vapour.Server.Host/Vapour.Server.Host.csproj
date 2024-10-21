@@ -8,20 +8,20 @@
   <Import Project="..\CommonProjectProperties.targets" />
 
   <ItemGroup>
-    <PackageReference Include="FastEndpoints" Version="5.29.0" />
+    <PackageReference Include="FastEndpoints" Version="5.30.0" />
     <PackageReference Include="FastEndpoints.Generator" Version="5.30.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="FastEndpoints.Swagger" Version="5.29.0" />
+    <PackageReference Include="FastEndpoints.Swagger" Version="5.30.0" />
     <PackageReference Include="MessagePipe" Version="1.8.1" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="8.0.1" />
     <PackageReference Include="Microsoft.Windows.SDK.Win32Metadata" Version="41.0.25-preview" />
     <PackageReference Include="OpenTelemetry.Exporter.Jaeger" Version="1.5.1" />
     <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.9.0" />
-    <PackageReference Include="Serilog.AspNetCore" Version="8.0.2" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.8.1" />
+    <PackageReference Include="Serilog.AspNetCore" Version="8.0.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.9.0" />
     <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.2.188-beta">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
