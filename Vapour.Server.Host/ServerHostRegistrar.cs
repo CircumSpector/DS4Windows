@@ -27,7 +27,8 @@ public sealed class ServerHostRegistrar : IServiceRegistrar
         SetupWebServices(services);
     }
 
-    private static void SetupWindowsService(IHostBuilder builder, HostBuilderContext context, IServiceCollection services)
+    private static void SetupWindowsService(IHostBuilder builder, HostBuilderContext context,
+        IServiceCollection services)
     {
         if (!context.HostingEnvironment.IsDevelopment() && !Environment.UserInteractive)
         {

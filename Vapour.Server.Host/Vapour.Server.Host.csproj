@@ -9,10 +9,6 @@
 
   <ItemGroup>
     <PackageReference Include="FastEndpoints" Version="5.31.0" />
-    <PackageReference Include="FastEndpoints.Generator" Version="5.30.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="FastEndpoints.Swagger" Version="5.31.0" />
     <PackageReference Include="MessagePipe" Version="1.8.1" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />

@@ -15,8 +15,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="AutoMapper" Version="12.0.1" />
-		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+		<PackageReference Include="AutoMapper" Version="13.0.1" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
 		<PackageReference Include="ConfigureAwait.Fody" Version="3.3.2" PrivateAssets="All" />
 		<PackageReference Include="Fody" Version="6.8.2">
@@ -32,7 +31,7 @@
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
 		<PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.1" />
-		<PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="4.0.1" />
+		<PackageReference Include="Nefarius.Utilities.DeviceManagement" Version="4.0.3" />
 		<PackageReference Include="Nefarius.ViGEm.Client" Version="1.21.256" />
 		<PackageReference Include="OpenTelemetry.Exporter.Jaeger" Version="1.5.1" />
 		<PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.9.0" />
