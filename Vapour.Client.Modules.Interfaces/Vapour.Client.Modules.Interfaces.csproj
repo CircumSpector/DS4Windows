@@ -6,6 +6,10 @@
 	</PropertyGroup>
 	
 	<Import Project="..\CommonProjectProperties.targets" />
+	
+	<ItemGroup>
+	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\Vapour.Client.Core.Interfaces\Vapour.Client.Core.Interfaces.csproj" />
