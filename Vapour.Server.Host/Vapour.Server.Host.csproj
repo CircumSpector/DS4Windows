@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="FastEndpoints" Version="5.32.0" />
-    <PackageReference Include="FastEndpoints.Swagger" Version="5.31.0" />
+    <PackageReference Include="FastEndpoints.Swagger" Version="5.32.0" />
     <PackageReference Include="MessagePipe" Version="1.8.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.0" />
