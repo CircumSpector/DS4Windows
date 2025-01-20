@@ -27,7 +27,7 @@
 		<PackageReference Include="MaterialDesignExtensions" Version="3.3.0" />
 		<PackageReference Include="MaterialDesignThemes" Version="5.1.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.0" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.1" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.0" />
 		<PackageReference Include="OpenTelemetry.Exporter.Jaeger" Version="1.5.1" />
