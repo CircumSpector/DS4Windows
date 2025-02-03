@@ -8,7 +8,7 @@
   <Import Project="..\CommonProjectProperties.targets" />
 
   <ItemGroup>
-    <PackageReference Include="FastEndpoints" Version="5.33.0" />
+    <PackageReference Include="FastEndpoints" Version="5.34.0" />
     <PackageReference Include="FastEndpoints.Swagger" Version="5.33.0" />
     <PackageReference Include="MessagePipe" Version="1.8.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.1" />
