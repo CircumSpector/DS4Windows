@@ -83,7 +83,10 @@ public sealed class OutputReportProcessor : IOutputReportProcessor
             while (!_outputReportCancellationToken.IsCancellationRequested)
             {
                 byte[] buffer = await _device.ReadOutputReport(_outputReportCancellationToken.Token);
-                _device.SourceDevice.WriteOutputReportViaInterrupt(buffer, 500);
+                if (_device.Connection == ConnectionType.Bluetooth)
+                    _device.SourceDevice.WriteOutputReportViaControl(buffer);
+                else
+                    _device.SourceDevice.WriteOutputReportViaInterrupt(buffer, 500);
                 OutputReportsSentCounter.Add(1);
             }
         }
